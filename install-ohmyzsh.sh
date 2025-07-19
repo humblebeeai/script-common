@@ -8,6 +8,17 @@ _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
+if ! command -v curl >/dev/null 2>&1; then
+	echo "[ERROR]: 'curl' not found or not installed!"
+	exit 1
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+	echo "[ERROR]: 'git' not found or not installed!"
+	exit 1
+fi
+
+
 # Loading .env file:
 if [ -r .env ]; then
 	# shellcheck disable=SC1091
@@ -40,6 +51,13 @@ fi
 ## --- Base --- ##
 
 
+## --- Variables --- ##
+# Flags:
+RUNZSH=${RUNZSH:-no}
+CHSH=${CHSH:-no}
+## --- Variables --- ##
+
+
 ## --- Main --- ##
 update_zshrc()
 {
@@ -59,18 +77,14 @@ main()
 {
 	echo "[INFO]: Settting up 'Oh My Zsh'..."
 
-	## Installing 'zsh' and other dependencies:
+	## Installing 'zsh':
 	if [ "${_OS}" = "Linux" ]; then
-		sudo apt-get update || exit 2
-		sudo apt-get install -y zsh curl git || exit 2
-	else
-		if ! command -v brew >/dev/null 2>&1; then
-			echo "[INFO]: 'Homebrew' is not installed, installing it now..."
-			/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
+		if ! command -v zsh >/dev/null 2>&1; then
+			echo "[INFO]: Installing 'zsh'..."
+			sudo apt-get update || exit 2
+			sudo apt-get install -y zsh || exit 2
 			echo -e "[OK]: Done.\n"
 		fi
-		brew update || exit 2
-		brew install git || exit 2
 	fi
 
 
@@ -84,7 +98,7 @@ main()
 	## Setting up 'Oh My Zsh':
 	if [ ! -d "${ZSH:-${HOME}/.oh-my-zsh}" ]; then
 		echo "[INFO]: Installing 'Oh My Zsh'..."
-		RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || exit 2
+		RUNZSH=${RUNZSH} CHSH=${CHSH} sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 

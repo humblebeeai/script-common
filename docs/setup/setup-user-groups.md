@@ -6,6 +6,8 @@ This document explains how to use the `setup-user-groups.sh` script to create cu
 
 The script creates users and groups with specified configurations, supporting both primary and secondary group memberships. It follows Linux best practices for user and group management, preferring `groupadd` over `addgroup` and providing comprehensive error handling.
 
+**Default Behavior**: When run without any configuration, the script creates an `ubuntu` user in a `devs` group (GID 1000).
+
 ### Configuration Variables
 
 - `SETUP_GROUPS` - Space-separated list of groups to create (format: "name:gid name:gid ...")
@@ -21,6 +23,16 @@ The script creates users and groups with specified configurations, supporting bo
 - `--help` - Show help message and usage examples
 
 ## Usage Examples
+
+### Default Usage (No Configuration Required)
+
+```bash
+# Creates ubuntu user in devs group (GID 1000)
+sudo ./setup-user-groups.sh
+
+# See what would be created without making changes
+sudo ./setup-user-groups.sh --dry-run
+```
 
 ### Create Groups Only
 
@@ -109,7 +121,7 @@ SETUP_USERS="user1:group1:group2,group3 user2:group2"
 
 ## Requirements
 
-- **Root privileges**: Script must be run with `sudo`
+- **Root privileges**: Script must be run with `sudo` (root can create first users on fresh systems)
 - **Linux/macOS**: Currently supports Linux and macOS systems
 - **Dependencies**: `groupadd`, `useradd`, `usermod` commands must be available
 - **Group dependencies**: When creating users, their primary groups must already exist
@@ -137,6 +149,34 @@ This script works well with other system setup scripts:
 - Use after installing development tools to configure user environments
 
 ## Examples
+
+### Fresh System Setup (Root User Creating First Users)
+
+When setting up a new system where only root exists, this script creates the initial users:
+
+```bash
+# Create initial groups and users on a fresh system
+sudo SETUP_GROUPS="users:1000 admin:1001 developers:1002" \
+     SETUP_USERS="john:users:admin,developers jane:developers alice:admin" \
+     ./setup-user-groups.sh
+
+# Alternative: Use .env file for cleaner configuration
+cat > .env << EOF
+SETUP_GROUPS="users:1000 admin:1001 developers:1002"
+SETUP_USERS="john:users:admin,developers jane:developers alice:admin"
+USER_HOME_BASE="/home"
+USER_SHELL="/bin/bash"
+CREATE_HOME="yes"
+EOF
+
+sudo ./setup-user-groups.sh
+```
+
+This is particularly useful for:
+
+- **New server setup**: Creating initial user accounts
+- **Container initialization**: Setting up users in Docker containers
+- **VM provisioning**: Automated user creation during deployment
 
 ### Development Team Setup
 

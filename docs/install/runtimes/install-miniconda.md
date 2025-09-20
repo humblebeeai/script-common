@@ -4,7 +4,7 @@ This document explains how to use the `install-miniconda.sh` script to install M
 
 ## install-miniconda.sh
 
-- `MINICONDA_INSTALL_DIR` - Installation directory (default: `${HOME}/miniconda3`)
+- `MINICONDA_INSTALL_DIR` - Installation directory (default: `${HOME}/workspaces/runtimes/miniconda3`)
 - `MINICONDA_AUTO_ACTIVATE` - Auto-activate base environment: `yes`/`no` (default: `no`)
 - `MINICONDA_CREATE_ENV` - Create custom environment: `yes`/`no` (default: `yes`)
 - `MINICONDA_PYTHON_VERSION` - Python version for custom environment (default: `3.11`)
@@ -14,7 +14,7 @@ This document explains how to use the `install-miniconda.sh` script to install M
 Set variables before running scripts:
 
 ```bash
-MINICONDA_INSTALL_DIR="/opt/miniconda3" ./install-miniconda.sh
+MINICONDA_PYTHON_VERSION="3.10" MINICONDA_CREATE_ENV="yes" ./install-miniconda.sh
 ```
 
 Or use a `.env` file:

@@ -4,7 +4,7 @@ This document explains how to use the `install-nvm.sh` script to install NVM (No
 
 ## install-nvm.sh
 
-- `NVM_INSTALL_DIR` - NVM installation directory (default: `${HOME}/.nvm`)
+- `NVM_INSTALL_DIR` - NVM installation directory (default: `${HOME}/workspaces/runtimes/.nvm`)
 
 ## Usage
 

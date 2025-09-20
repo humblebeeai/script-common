@@ -232,6 +232,8 @@ This script creates custom users and groups according to configuration.
 USAGE:
     sudo ${0} [--dry-run] [--help]
 
+    When run without configuration, creates default: ubuntu user in devs group (GID 1000)
+
 OPTIONS:
     --dry-run    Show what would be done without making changes
     --help       Show this help message
@@ -253,6 +255,9 @@ CONFIGURATION (via environment variables or .env file):
     DRY_RUN="no"              # Show what would be done without executing (yes/no)
 
 EXAMPLES:
+    # Use defaults (ubuntu user in devs group)
+    sudo ${0}
+
     # Create groups only
     sudo SETUP_GROUPS="developers:1001 admins:1002" ${0}
 
@@ -263,11 +268,15 @@ EXAMPLES:
     sudo SETUP_GROUPS="developers:1001 admins:1002" \\
          SETUP_USERS="john:developers:admins jane:admins" ${0}
 
-    # Dry run to see what would be done
+    # Dry run to see what would be done (with defaults)
+    sudo ${0} --dry-run
+
+    # Dry run with custom configuration
     sudo SETUP_GROUPS="developers:1001" SETUP_USERS="john:developers" ${0} --dry-run
 
 NOTES:
     - Script must be run as root (use sudo)
+    - If no configuration provided, defaults to creating ubuntu:devs:1000
     - Groups must exist before creating users that reference them
     - Secondary groups in user specification are comma-separated
     - Existing users/groups are skipped (idempotent operation)
@@ -306,11 +315,11 @@ main()
         echo "[INFO]: DRY RUN MODE - No changes will be made"
     fi
     
-    # Validate we have something to do
+    # Validate we have something to do, or set defaults
     if [ -z "${SETUP_GROUPS}" ] && [ -z "${SETUP_USERS}" ]; then
-        echo "[ERROR]: No groups or users specified. Set SETUP_GROUPS and/or SETUP_USERS variables." >&2
-        show_usage
-        exit 1
+        echo "[INFO]: No groups or users specified. Using defaults: ubuntu user in devs group."
+        SETUP_GROUPS="devs:1000"
+        SETUP_USERS="ubuntu:devs"
     fi
     
     # Create groups first (users may depend on them)

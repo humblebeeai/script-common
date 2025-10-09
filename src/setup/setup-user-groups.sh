@@ -74,27 +74,27 @@ create_group()
     local _group_spec="${1}"
     local _group_name
     local _gid
-    
+
     # Parse group specification (name:gid)
     IFS=':' read -r _group_name _gid <<< "${_group_spec}"
-    
+
     if [ -z "${_group_name}" ] || [ -z "${_gid}" ]; then
         echo "[ERROR]: Invalid group specification: ${_group_spec} (expected: name:gid)" >&2
         return 1
     fi
-    
+
     if check_group_exists "${_group_name}"; then
         echo "[INFO]: Group '${_group_name}' already exists"
         return 0
     fi
-    
+
     if [ "${DRY_RUN}" = "yes" ]; then
         echo "[INFO]: [DRY RUN] Would create group: ${_group_name} (GID: ${_gid})"
         return 0
     fi
-    
+
     echo "[INFO]: Creating group: ${_group_name} (GID: ${_gid})"
-    
+
     # Use groupadd with -f flag (force) to avoid errors if group exists
     if groupadd -f -g "${_gid}" "${_group_name}"; then
         echo "[OK]: Created group: ${_group_name}"
@@ -110,21 +110,21 @@ create_user()
     local _username
     local _primary_group
     local _secondary_groups
-    
+
     # Parse user specification (username:primary_group:secondary_groups)
     IFS=':' read -r _username _primary_group _secondary_groups <<< "${_user_spec}"
-    
+
     if [ -z "${_username}" ] || [ -z "${_primary_group}" ]; then
         echo "[ERROR]: Invalid user specification: ${_user_spec} (expected: username:primary_group[:secondary_groups])" >&2
         return 1
     fi
-    
+
     # Check if primary group exists
     if ! check_group_exists "${_primary_group}"; then
         echo "[ERROR]: Primary group '${_primary_group}' does not exist for user '${_username}'" >&2
         return 1
     fi
-    
+
     if check_user_exists "${_username}"; then
         echo "[INFO]: User '${_username}' already exists"
         # Still try to update group memberships
@@ -143,33 +143,33 @@ create_user()
         fi
         return 0
     fi
-    
+
     if [ "${DRY_RUN}" = "yes" ]; then
         echo "[INFO]: [DRY RUN] Would create user: ${_username} (primary: ${_primary_group}, secondary: ${_secondary_groups:-none})"
         return 0
     fi
-    
+
     echo "[INFO]: Creating user: ${_username} (primary group: ${_primary_group})"
-    
+
     # Build useradd command
     local _useradd_args=()
     _useradd_args+=(-s "${USER_SHELL}")
     _useradd_args+=(-g "${_primary_group}")
-    
+
     if [ "${CREATE_HOME}" = "yes" ]; then
         _useradd_args+=(-m)
         _useradd_args+=(-d "${USER_HOME_BASE}/${_username}")
     fi
-    
+
     _useradd_args+=("${_username}")
-    
+
     if useradd "${_useradd_args[@]}"; then
         echo "[OK]: Created user: ${_username}"
     else
         echo "[ERROR]: Failed to create user: ${_username}" >&2
         return 1
     fi
-    
+
     # Add to secondary groups if specified
     if [ -n "${_secondary_groups}" ]; then
         echo "[INFO]: Adding user '${_username}' to secondary groups: ${_secondary_groups}"
@@ -188,9 +188,9 @@ setup_groups()
         echo "[INFO]: No groups specified, skipping group creation"
         return 0
     fi
-    
+
     echo "[INFO]: Setting up groups..."
-    
+
     # Split SETUP_GROUPS by space and process each group
     for _group_spec in ${SETUP_GROUPS}; do
         if ! create_group "${_group_spec}"; then
@@ -198,7 +198,7 @@ setup_groups()
             exit 2
         fi
     done
-    
+
     echo -e "[OK]: Groups setup completed.\n"
 }
 
@@ -208,9 +208,9 @@ setup_users()
         echo "[INFO]: No users specified, skipping user creation"
         return 0
     fi
-    
+
     echo "[INFO]: Setting up users..."
-    
+
     # Split SETUP_USERS by space and process each user
     for _user_spec in ${SETUP_USERS}; do
         if ! create_user "${_user_spec}"; then
@@ -218,7 +218,7 @@ setup_users()
             exit 2
         fi
     done
-    
+
     echo -e "[OK]: Users setup completed.\n"
 }
 
@@ -245,7 +245,7 @@ CONFIGURATION (via environment variables or .env file):
         Format: space-separated "name:gid" pairs
 
     SETUP_USERS="user1:primary_group:secondary_groups user2:primary_group ..."
-        Create users with primary and secondary group memberships  
+        Create users with primary and secondary group memberships
         Format: space-separated "username:primary_group[:secondary_groups]"
         Secondary groups are comma-separated (optional)
 
@@ -308,26 +308,26 @@ main()
                 ;;
         esac
     done
-    
+
     echo "[INFO]: Setting up users and groups on ${_OS}..."
-    
+
     if [ "${DRY_RUN}" = "yes" ]; then
         echo "[INFO]: DRY RUN MODE - No changes will be made"
     fi
-    
+
     # Validate we have something to do, or set defaults
     if [ -z "${SETUP_GROUPS}" ] && [ -z "${SETUP_USERS}" ]; then
         echo "[INFO]: No groups or users specified. Using defaults: ubuntu user in devs group."
         SETUP_GROUPS="devs:1000"
         SETUP_USERS="ubuntu:devs"
     fi
-    
+
     # Create groups first (users may depend on them)
     setup_groups
-    
+
     # Create users
     setup_users
-    
+
     if [ "${DRY_RUN}" = "yes" ]; then
         echo "[OK]: Dry run completed successfully!"
     else

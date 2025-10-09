@@ -1,0 +1,40 @@
+name: 2. Build and Publish
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["1. Bump Version"]
+    types:
+      - completed
+  push:
+    tags:
+      - "v*.*.*-*"
+
+env:
+  _WORKFLOW_STATE: active
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Get latest version
+        run: |
+          git pull origin main
+          echo "Current version: v$(./scripts/get-version.sh)"
+      - name: Create release
+        run: ./scripts/release.sh
+      - name: Check Workflow
+        run: |
+          _WORKFLOW_STATE=$(gh api repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/actions/workflows/3.update-changelog.yml | jq -r '.state')
+          echo "_WORKFLOW_STATE=${_WORKFLOW_STATE}" >> ${GITHUB_ENV}
+      - name: Trigger Changelog
+        if: ${{ env._WORKFLOW_STATE == 'active' }}
+        run: gh workflow run 3.update-changelog.yml

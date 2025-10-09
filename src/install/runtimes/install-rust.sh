@@ -51,11 +51,11 @@ main()
 
 	# Download and install Rust via rustup
 	echo "[INFO]: Downloading and installing Rust ${RUST_TOOLCHAIN} (${RUST_PROFILE} profile)..."
-	
+
 	# Set environment variables for rustup installation
 	export CARGO_HOME="${RUST_INSTALL_DIR}"
 	export RUSTUP_HOME="${RUST_INSTALL_DIR}/rustup"
-	
+
 	# Download and run rustup installer
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- \
 		--default-toolchain "${RUST_TOOLCHAIN}" \

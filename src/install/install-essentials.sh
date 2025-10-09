@@ -67,9 +67,9 @@ install_packages()
 	local _packages="${2}"
 	local _pkg_mgr
 	_pkg_mgr="$(get_package_manager)"
-	
+
 	echo "[INFO]: Installing ${_category} packages..."
-	
+
 	if [ "${_pkg_mgr}" = "apt-get" ]; then
 		# Install packages (no update here since base handles it, or individual categories don't need frequent updates)
 		# shellcheck disable=SC2086
@@ -79,7 +79,7 @@ install_packages()
 		# shellcheck disable=SC2086
 		brew install ${_packages} || exit 2
 	fi
-	
+
 	echo -e "[OK]: ${_category} packages installed.\n"
 }
 
@@ -87,7 +87,7 @@ install_base_packages()
 {
 	local _pkg_mgr
 	_pkg_mgr="$(get_package_manager)"
-	
+
 	# Update package manager first
 	echo "[INFO]: Updating package manager..."
 	if [ "${_pkg_mgr}" = "apt-get" ]; then
@@ -96,13 +96,13 @@ install_base_packages()
 		brew update || exit 2
 	fi
 	echo -e "[OK]: Package manager updated.\n"
-	
+
 	if [ "${_OS}" = "Darwin" ]; then
 		_packages="curl wget git vim htop rsync screen tmux ncdu"
 	else
 		_packages="curl wget git vim htop rsync screen tmux ncdu build-essential"
 	fi
-	
+
 	install_packages "Base System" "${_packages}"
 }
 
@@ -113,7 +113,7 @@ install_monitoring_packages()
 	else
 		_packages="lsof strace iotop iftop bmon dstat sysstat pv moreutils"
 	fi
-	
+
 	install_packages "Monitoring & Performance" "${_packages}"
 }
 
@@ -124,7 +124,7 @@ install_networking_packages()
 	else
 		_packages="dnsutils nmap mtr-tiny traceroute socat tcpdump whois"
 	fi
-	
+
 	install_packages "Networking & Diagnostics" "${_packages}"
 }
 
@@ -135,7 +135,7 @@ install_compression_packages()
 	else
 		_packages="zip unzip p7zip-full xz-utils pigz"
 	fi
-	
+
 	install_packages "Compression & Archiving" "${_packages}"
 }
 
@@ -146,7 +146,7 @@ install_development_packages()
 	else
 		_packages="cmake pkg-config gpg openssl"
 	fi
-	
+
 	install_packages "Development Tools" "${_packages}"
 }
 
@@ -157,14 +157,14 @@ install_file_utils_packages()
 	else
 		_packages="tree fd-find ripgrep jq yq"
 	fi
-	
+
 	install_packages "File & Search Utilities" "${_packages}"
 }
 
 install_productivity_packages()
 {
 	_packages="fzf bat eza tldr"
-	
+
 	install_packages "CLI Productivity & UX" "${_packages}"
 }
 
@@ -184,7 +184,7 @@ is_valid_category()
 install_category()
 {
 	local _category="${1}"
-	
+
 	case "${_category}" in
 		base)
 			install_base_packages
@@ -219,10 +219,10 @@ main()
 {
 	echo "[INFO]: Setting up 'Essential System Binaries'..."
 	echo "[INFO]: OS: ${_OS} (${_OS_DISTRO})"
-	
+
 	# Parse command-line arguments for categories to install
 	local _categories_to_install=()
-	
+
 	if [ $# -eq 0 ]; then
 		# No arguments provided, use default
 		_categories_to_install=("base")
@@ -240,14 +240,14 @@ main()
 				exit 2
 			fi
 		done
-		
+
 		# All categories are valid, add them to install list (skip empty args)
 		for _arg in "${@}"; do
 			if [ -n "${_arg}" ]; then
 				_categories_to_install+=("${_arg}")
 			fi
 		done
-		
+
 		# Check if we have any valid categories after filtering
 		if [ ${#_categories_to_install[@]} -eq 0 ]; then
 			echo "[INFO]: No valid categories provided, installing default: base"
@@ -256,12 +256,12 @@ main()
 			echo "[INFO]: Installing categories: ${_categories_to_install[*]}"
 		fi
 	fi
-	
+
 	# Install each requested category
 	for _category in "${_categories_to_install[@]}"; do
 		install_category "${_category}"
 	done
-	
+
 	echo -e "[OK]: 'Essential System Binaries' setup completed successfully!"
 	echo "[INFO]: Installed categories: ${_categories_to_install[*]}"
 	echo "[INFO]: Available categories: base, monitoring, networking, compression, development, file-utils, productivity"

@@ -33,13 +33,13 @@ WORKSPACE_SUBDIRS=${WORKSPACE_SUBDIRS:-"projects services runtimes archives data
 create_workspace_structure()
 {
 	echo "[INFO]: Creating workspace structure at ${WORKSPACE_BASE_DIR}..."
-	
+
 	# Create base directory if it doesn't exist
 	if [ ! -d "${WORKSPACE_BASE_DIR}" ]; then
 		mkdir -p "${WORKSPACE_BASE_DIR}" || exit 2
 		echo "[INFO]: Created base workspace directory: ${WORKSPACE_BASE_DIR}"
 	fi
-	
+
 	# Create subdirectories
 	for _subdir in ${WORKSPACE_SUBDIRS}; do
 		local _full_path="${WORKSPACE_BASE_DIR}/${_subdir}"
@@ -50,9 +50,9 @@ create_workspace_structure()
 			echo "[INFO]: Directory already exists: ${_full_path}"
 		fi
 	done
-	
+
 	echo -e "[OK]: Workspace structure created successfully!\n"
-	
+
 	# Display the created structure
 	echo "[INFO]: Workspace structure:"
 	tree "${WORKSPACE_BASE_DIR}" 2>/dev/null || ls -la "${WORKSPACE_BASE_DIR}"
@@ -61,9 +61,9 @@ create_workspace_structure()
 main()
 {
 	echo "[INFO]: Setting up 'Workspace Structure'..."
-	
+
 	create_workspace_structure
-	
+
 	echo -e "[OK]: 'Workspace Structure' setup completed successfully!"
 	echo "[INFO]: Base directory: ${WORKSPACE_BASE_DIR}"
 	echo "[INFO]: Created subdirectories: ${WORKSPACE_SUBDIRS}"

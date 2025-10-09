@@ -1,0 +1,103 @@
+site_name: HBAI - Common Scripts
+site_description: "This repository contains a collection of common scripts."
+repo_name: humblebeeai/script-common
+repo_url: https://github.com/humblebeeai/script-common
+theme:
+  name: material
+  # name: readthedocs
+  language: en
+  font:
+    text: Roboto
+    code: Roboto Mono
+  # logo: assets/images/logo.png
+  # favicon: assets/images/logo.png
+  icon:
+    # logo: fontawesome/brands/python
+    repo: fontawesome/brands/github
+  features:
+    - navigation.indexes
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    # - navigation.tabs.sticky
+    # - navigation.sections
+    # - navigation.expand
+    # - navigation.instant
+    - toc.follow
+    # - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme)"
+      primary: black
+      accent: black
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: white
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: black
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - footnotes
+  - tables
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.blocks.caption
+  - pymdownx.smartsymbols
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - assets/js/mathjax.js
+  - assets/js/tex-mml-chtml.js
+plugins:
+  - meta
+  - tags
+  - search
+  - awesome-nav
+  # - render_swagger
+  # - mkdocstrings
+extra:
+  version:
+    provider: mike
+copyright: Copyright &copy; 2025 - Humblebee AI

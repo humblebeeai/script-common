@@ -1,26 +1,80 @@
-# Script Common
+# HBAI - Common Scripts
 
-Collection of shell scripts for system setup, development environment configuration, and essential tool installation.
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/humblebeeai/script-common?logo=GitHub&color=blue)](https://github.com/humblebeeai/script-common/releases)
+
+This repository contains a collection of common scripts.
+
+## ✨ Features
+
+- Shell scripts
+- Setup and installation scripts
+- Configuration scripts
+- Preparation for environments
+- Pre-configured for ease of use
+
+## 🐤 Getting Started
+
+### 1. 🚧 Prerequisites
+
+[OPTIONAL] For **DEVELOPMENT** environment:
+
+- Install [**git**](https://git-scm.com/downloads)
+- Setup an [**SSH key**](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
+
+### 2. 📥 Download or clone the repository
+
+**2.1.** Prepare projects directory (if not exists):
+
+```sh
+# Create projects directory:
+mkdir -pv ~/workspaces/projects
+
+# Enter into projects directory:
+cd ~/workspaces/projects
+```
+
+**2.2.** Follow one of the below options **[A]**, **[B]** or **[C]**:
+
+**OPTION A.** Clone the repository:
+
+```sh
+git clone https://github.com/humblebeeai/script-common.git && \
+    cd script-common
+```
+
+**OPTION B.** Clone the repository (for **DEVELOPMENT**: git + ssh key):
+
+```sh
+git clone git@github.com:humblebeeai/script-common.git && \
+    cd script-common
+```
+
+**OPTION C.** Download source code:
+
+1. Download archived **zip** or **tar.gz** file from [**releases**](https://github.com/humblebeeai/script-common/releases).
+2. Extract it into the projects directory.
+3. Enter into the project directory.
 
 ## Scripts Overview
 
 ### 🛠️ System Setup
 
-- **[setup-user-groups.sh](scripts/setup/setup-user-groups.sh)** - Create users and groups | [📖 docs](docs/setup/setup-user-groups.md)
-- **[setup-dir-structure.sh](scripts/setup/setup-dir-structure.sh)** - Create workspace directory structure | [📖 docs](docs/setup/setup-dir-structure.md)
+- **[setup-user-groups.sh](src/setup/setup-user-groups.sh)** - Create users and groups | [📖 docs](docs/setup/setup-user-groups.md)
+- **[setup-dir-structure.sh](src/setup/setup-dir-structure.sh)** - Create workspace directory structure | [📖 docs](docs/setup/setup-dir-structure.md)
 
 ### 📦 Installation Scripts
 
-- **[install-essentials.sh](scripts/install/install-essentials.sh)** - Install essential system packages | [📖 docs](docs/install/install-essentials.md)
-- **[install-docker.sh](scripts/install/install-docker.sh)** - Install Docker with logging & data directory config | [📖 docs](docs/install/install-docker.md)
-- **[install-ohmyzsh.sh](scripts/install/install-ohmyzsh.sh)** - Install Oh My Zsh with plugins | [📖 docs](docs/install/install-ohmyzsh.md)
+- **[install-essentials.sh](src/install/install-essentials.sh)** - Install essential system packages | [📖 docs](docs/install/install-essentials.md)
+- **[install-docker.sh](src/install/install-docker.sh)** - Install Docker with logging & data directory config | [📖 docs](docs/install/install-docker.md)
+- **[install-ohmyzsh.sh](src/install/install-ohmyzsh.sh)** - Install Oh My Zsh with plugins | [📖 docs](docs/install/install-ohmyzsh.md)
 
 ### 🚀 Runtime Environments
 
-- **[install-go.sh](scripts/install/runtimes/install-go.sh)** - Install Go programming language | [📖 docs](docs/install/runtimes/install-go.md)
-- **[install-rust.sh](scripts/install/runtimes/install-rust.sh)** - Install Rust via rustup | [📖 docs](docs/install/runtimes/install-rust.md)
-- **[install-nvm.sh](scripts/install/runtimes/install-nvm.sh)** - Install Node Version Manager | [📖 docs](docs/install/runtimes/install-nvm.md)
-- **[install-miniconda.sh](scripts/install/runtimes/install-miniconda.sh)** - Install Miniconda Python distribution | [📖 docs](docs/install/runtimes/install-miniconda.md)
+- **[install-go.sh](src/install/runtimes/install-go.sh)** - Install Go programming language | [📖 docs](docs/install/runtimes/install-go.md)
+- **[install-rust.sh](src/install/runtimes/install-rust.sh)** - Install Rust via rustup | [📖 docs](docs/install/runtimes/install-rust.md)
+- **[install-nvm.sh](src/install/runtimes/install-nvm.sh)** - Install Node Version Manager | [📖 docs](docs/install/runtimes/install-nvm.md)
+- **[install-miniconda.sh](src/install/runtimes/install-miniconda.sh)** - Install Miniconda Python distribution | [📖 docs](docs/install/runtimes/install-miniconda.md)
 
 ## Quick Start
 
@@ -30,18 +84,18 @@ git clone <repository-url>
 cd script.common
 
 # Make scripts executable
-chmod +x scripts/**/*.sh
+chmod +x src/**/*.sh
 
 # Install essential packages
-./scripts/install/install-essentials.sh
+./src/install/install-essentials.sh
 
 # Create workspace structure
-./scripts/setup/setup-dir-structure.sh
+./src/setup/setup-dir-structure.sh
 
 # Install development tools
-./scripts/install/runtimes/install-go.sh
-./scripts/install/runtimes/install-rust.sh
-./scripts/install/install-docker.sh
+./src/install/runtimes/install-go.sh
+./src/install/runtimes/install-rust.sh
+./src/install/install-docker.sh
 ```
 
 ## Configuration
@@ -89,3 +143,37 @@ See [coding standards](.vscode/copilot-instructions.md) for detailed guidelines.
 - Bash 4.0+
 - Standard Unix utilities (curl/wget, git, etc.)
 - Root access for system-level installations
+
+---
+
+## 📝 Generate Docs
+
+To build the documentation, run the following command:
+
+```sh
+# Install python documentation dependencies:
+pip install -r ./requirements.txt
+
+# Serve documentation locally (for development):
+./src/docs.sh
+# Or:
+mkdocs serve -a 0.0.0.0:8000
+
+# Or build documentation:
+./src/docs.sh -b
+# Or:
+mkdocs build
+```
+
+## 📚 Documentation
+
+- [Docs](./docs)
+
+---
+
+## 📑 References
+
+- <https://www.shellscript.sh>
+- <https://www.gnu.org/software/bash/manual/bash.html>
+- <https://www.zsh.org>
+- <https://ohmyz.sh>

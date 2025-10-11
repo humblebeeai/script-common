@@ -94,7 +94,7 @@ main()
 
 
 	## Backup existing .zshrc file:
-	if [ -r "${HOME}/.zshrc" ] && [ ! -r "${HOME}/.zshrc.bak" ]; then
+	if [ -f "${HOME}/.zshrc" ] && [ ! -f "${HOME}/.zshrc.bak" ]; then
 		echo "[INFO]: Backing up existing .zshrc file..."
 		cp -v ~/.zshrc ~/.zshrc.bak || exit 2
 		echo -e "[OK]: Done.\n"
@@ -107,7 +107,7 @@ main()
 		echo -e "[OK]: Done.\n"
 	fi
 
-	if [ ! -r "${HOME}/.zshrc" ]; then
+	if [ ! -f "${HOME}/.zshrc" ]; then
 		echo "[INFO]: Creating default .zshrc file..."
 		cp -v "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" "${HOME}/.zshrc" || exit 2
 		echo -e "[OK]: Done.\n"
@@ -176,10 +176,10 @@ main()
 
 	local _p10k_theme="p10k-rainbow.zsh"
 	if [ "${_IS_ROOT_USER}" = true ]; then
-		_p10k_theme="p10k-lean.zsh"
+		_p10k_theme="p10k-classic.zsh"
 	fi
 
-	if [ ! -r "${HOME}/.p10k.zsh" ]; then
+	if [ ! -f "${HOME}/.p10k.zsh" ]; then
 		echo "[INFO]: Copying 'powerlevel10k's 'rainbow' theme config to ~/.p10k.zsh..."
 		cp -v "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k/config/${_p10k_theme}" ~/.p10k.zsh || exit 2
 		echo -e "[OK]: Done.\n"

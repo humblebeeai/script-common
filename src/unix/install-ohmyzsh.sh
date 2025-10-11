@@ -8,6 +8,13 @@ _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
+# Loading .env file:
+if [ -f ".env" ]; then
+	# shellcheck disable=SC1091
+	source .env
+fi
+
+
 if ! command -v curl >/dev/null 2>&1; then
 	echo "[ERROR]: 'curl' not found or not installed!"
 	exit 1
@@ -18,20 +25,14 @@ if ! command -v git >/dev/null 2>&1; then
 	exit 1
 fi
 
-
-# Loading .env file:
-if [ -r .env ]; then
-	# shellcheck disable=SC1091
-	. .env
-fi
-
 _OS="$(uname)"
 _OS_DISTRO=""
+_IS_ROOT_USER=false
 if [ "${_OS}" = "Linux" ]; then
 	_OS_DISTRO=""
 	if [ -r /etc/os-release ]; then
 		# shellcheck disable=SC1091
-		_OS_DISTRO="$(. /etc/os-release && echo "${ID}")"
+		_OS_DISTRO="$(source /etc/os-release && echo "${ID}")"
 		_OS_DISTRO="$(echo "${_OS_DISTRO}" | tr '[:upper:]' '[:lower:]')"
 
 		if [ "${_OS_DISTRO}" != "ubuntu" ] && [ "${_OS_DISTRO}" != "debian" ]; then
@@ -41,6 +42,10 @@ if [ "${_OS}" = "Linux" ]; then
 	else
 		echo "[ERROR]: Unable to determine Linux distro!"
 		exit 1
+	fi
+
+	if [ "$(id -u)" -eq 0 ]; then
+		_IS_ROOT_USER=true
 	fi
 elif [ "${_OS}" = "Darwin" ]; then
 	_OS_DISTRO="macos"
@@ -66,11 +71,11 @@ update_zshrc()
 		exit 2
 	fi
 
-    if [ "${_OS}" = "Linux" ]; then
-        sed -i "${1}" ~/.zshrc || exit 2
-    else
-        sed -i '' "${1}" ~/.zshrc || exit 2
-    fi
+	if [ "${_OS}" = "Linux" ]; then
+		sed -i "${1}" ~/.zshrc || exit 2
+	else
+		sed -i '' "${1}" ~/.zshrc || exit 2
+	fi
 }
 
 main()
@@ -145,7 +150,8 @@ main()
 
 
 	## Adding other recommended plugins:
-	_plugins="docker docker-compose python pip nvm node npm"
+	local _plugins="docker docker-compose python pip nvm node npm"
+	local _plugin
 	for _plugin in ${_plugins}; do
 		if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
 			echo "[INFO]: Adding '${_plugin}' plugin to .zshrc..."
@@ -168,9 +174,14 @@ main()
 		echo -e '\nZSH_THEME="powerlevel10k/powerlevel10k"\n' >> ~/.zshrc || exit 2
 	fi
 
+	local _p10k_theme="p10k-rainbow.zsh"
+	if [ "${_IS_ROOT_USER}" = true ]; then
+		_p10k_theme="p10k-lean.zsh"
+	fi
+
 	if [ ! -r "${HOME}/.p10k.zsh" ]; then
 		echo "[INFO]: Copying 'powerlevel10k's 'rainbow' theme config to ~/.p10k.zsh..."
-		cp -v "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k/config/p10k-rainbow.zsh" ~/.p10k.zsh || exit 2
+		cp -v "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k/config/${_p10k_theme}" ~/.p10k.zsh || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 

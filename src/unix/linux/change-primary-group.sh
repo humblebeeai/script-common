@@ -107,25 +107,28 @@ main()
 		for _user_home_dir in /home/*; do
 			local _username
 			_username=$(basename "${_user_home_dir}")
-			if ! getent passwd "${_username}" >/dev/null; then
+			if ! id "${_username}" >/dev/null 2>&1; then
 				echo "[WARN]: Not found '${_username}' user in the system but found home directory '${_user_home_dir}'! Skipping..."
 				continue
 			fi
 
-			local _uid
-			_uid=$(getent passwd "${_username}" | cut -d: -f3)
-			if [ "${_uid}" -lt 1000 ]; then
-				echo "[WARN]: '${_username}' user has UID '${_uid}' which is likely a system user! Skipping..."
+			if [ "$(id -u "${_username}")" -lt 1000 ]; then
+				echo "[WARN]: '${_username}' user is a system user (UID < 1000)! Skipping..."
 				continue
 			fi
 
-			USERS="${USERS} ${_username}"
+			USERS="${USERS},${_username}"
 		done
 	fi
 
-	USERS=$(echo "${USERS}" | xargs -n1 | grep -v "^root$" | xargs || echo "")
+	USERS=$(echo "${USERS}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
 	local _user
 	for _user in ${USERS}; do
+		if ! id "${_user}" >/dev/null 2>&1; then
+			echo "[WARN]: User '${_user}' does not exist! Skipping..."
+			continue
+		fi
+
 		if [ "$(id -g "${_user}")" -eq "${NEW_GID}" ]; then
 			echo "[INFO]: '${_user}' user's primary group is already set to '${NEW_GID}'. Skipping..."
 			continue

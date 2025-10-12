@@ -98,7 +98,7 @@ main()
 			exit 1
 		fi
 
-		if getent passwd "${NEW_UID}" >/dev/null 2>&1; then
+		if id "${NEW_UID}" >/dev/null 2>&1; then
 			echo "[ERROR]: User with '${NEW_UID}' UID already exists!"
 			exit 1
 		fi
@@ -106,7 +106,7 @@ main()
 		_arg_uid="-u ${NEW_UID}"
 	fi
 
-	if getent passwd "${NEW_USER}" >/dev/null 2>&1; then
+	if id "${NEW_USER}" >/dev/null 2>&1; then
 		echo "[ERROR]: User '${NEW_USER}' already exists!"
 		exit 1
 	fi

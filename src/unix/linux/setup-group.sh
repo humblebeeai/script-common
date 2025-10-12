@@ -16,15 +16,18 @@ fi
 
 
 _OS="$(uname)"
-_IS_ROOT_USER=false
 _SUDO="sudo"
 if [ "${_OS}" = "Linux" ]; then
 	if [ "$(id -u)" -eq 0 ]; then
-		_IS_ROOT_USER=true
 		_SUDO=""
 	fi
 else
 	echo "[ERROR]: Unsupported OS '${_OS}'!"
+	exit 1
+fi
+
+if ! command -v getent >/dev/null 2>&1; then
+	echo "[ERROR]: 'getent' command not found or not installed!"
 	exit 1
 fi
 
@@ -43,7 +46,7 @@ fi
 ## --- Variables --- ##
 NEW_GID=${NEW_GID:-11000}
 NEW_GROUP=${NEW_GROUP:-devs}
-TARGET_USERS=${TARGET_USERS:-"${id -un}"}
+TARGET_USERS=${TARGET_USERS:-"$(id -un)"}
 ALL_USERS=${ALL_USERS:-true}
 ## --- Variables --- ##
 
@@ -66,23 +69,33 @@ main()
 		for _user_home_dir in /home/*; do
 			local _username
 			_username=$(basename "${_user_home_dir}")
-			if getent passwd "${_username}" >/dev/null; then
-				TARGET_USERS="${TARGET_USERS} ${_username}"
-			else
-				echo "[WARN]: Not found '${_username}' user in the system but found home directory '${_user_home_dir}'!"
+			if ! getent passwd "${_username}" >/dev/null; then
+				echo "[WARN]: Not found '${_username}' user in the system but found home directory '${_user_home_dir}'! Skipping..."
+				continue
 			fi
+
+			local _uid
+			_uid=$(getent passwd "${_username}" | cut -d: -f3)
+			if [ "${_uid}" -lt 1000 ]; then
+				echo "[WARN]: '${_username}' user has UID '${_uid}' which is likely a system user! Skipping..."
+				continue
+			fi
+
+			TARGET_USERS="${TARGET_USERS} ${_username}"
 		done
 	fi
 
+	TARGET_USERS=$(echo "${TARGET_USERS}" | xargs -n1 | grep -v "^root$" | xargs || echo "")
 	local _user
 	for _user in ${TARGET_USERS}; do
 		if [ "$(id -g "${_user}")" -eq "${NEW_GID}" ]; then
 			echo "[INFO]: '${_user}' user's primary group is already set to '${NEW_GID}'. Skipping..."
-		else
-			echo "[INFO]: Changing primary group of user '${_user}' to '${NEW_GID}'..."
-			${_SUDO} usermod -g "${NEW_GID}" "${_user}" || exit 2
-			echo -e "[OK]: Done.\n"
+			continue
 		fi
+
+		echo "[INFO]: Changing primary group of user '${_user}' to '${NEW_GID}'..."
+		${_SUDO} usermod -g "${NEW_GID}" "${_user}" || exit 2
+		echo -e "[OK]: Done.\n"
 	done
 	echo -e "[OK]: Done.\n"
 }

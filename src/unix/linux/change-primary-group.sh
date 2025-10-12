@@ -46,7 +46,7 @@ fi
 ## --- Variables --- ##
 NEW_GID=${NEW_GID:-11000}
 NEW_GROUP=${NEW_GROUP:-devs}
-TARGET_USERS=${TARGET_USERS:-"$(id -un)"}
+USERS=${USERS:-"$(id -un)"}
 ALL_USERS=${ALL_USERS:-true}
 ## --- Variables --- ##
 
@@ -64,7 +64,7 @@ main()
 	fi
 
 	if [ "${ALL_USERS}" = true ]; then
-		TARGET_USERS=""
+		USERS=""
 		local _user_home_dir
 		for _user_home_dir in /home/*; do
 			local _username
@@ -81,13 +81,13 @@ main()
 				continue
 			fi
 
-			TARGET_USERS="${TARGET_USERS} ${_username}"
+			USERS="${USERS} ${_username}"
 		done
 	fi
 
-	TARGET_USERS=$(echo "${TARGET_USERS}" | xargs -n1 | grep -v "^root$" | xargs || echo "")
+	USERS=$(echo "${USERS}" | xargs -n1 | grep -v "^root$" | xargs || echo "")
 	local _user
-	for _user in ${TARGET_USERS}; do
+	for _user in ${USERS}; do
 		if [ "$(id -g "${_user}")" -eq "${NEW_GID}" ]; then
 			echo "[INFO]: '${_user}' user's primary group is already set to '${NEW_GID}'. Skipping..."
 			continue

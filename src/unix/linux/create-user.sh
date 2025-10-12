@@ -112,14 +112,14 @@ main()
 	fi
 
 
-	local _arg_sudo=""
+	local _sudo_group=""
 	if [ "${SUDO_USER}" = true ]; then
-		_arg_sudo="-G sudo"
+		_sudo_group=",sudo"
 	fi
 
 	echo "[INFO]: Creating new user..."
 	#shellcheck disable=SC2086
-	${_SUDO} useradd -s /bin/bash -m -d "/home/${NEW_USER}" -N -g "${PRIMARY_GID}" ${_arg_sudo} ${_arg_uid} "${NEW_USER}"
+	${_SUDO} useradd -s /bin/bash -m -d "/home/${NEW_USER}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_sudo_group}" ${_arg_uid} "${NEW_USER}"
 	echo -e "[OK]: Done.\n"
 }
 

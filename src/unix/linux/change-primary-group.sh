@@ -54,7 +54,7 @@ ALL_USERS=${ALL_USERS:-true}
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Setting up group..."
+	echo "[INFO]: Changing primary group..."
 	if getent group "${NEW_GID}" >/dev/null 2>&1; then
 		echo "[INFO]: Group with '${NEW_GID}' GID already exists. Skipping..."
 	else
@@ -94,7 +94,7 @@ main()
 		fi
 
 		echo "[INFO]: Changing primary group of user '${_user}' to '${NEW_GID}'..."
-		${_SUDO} usermod -g "${NEW_GID}" "${_user}" || exit 2
+		${_SUDO} usermod -g "${NEW_GID}" -aG "${NEW_GID}" "${_user}" || exit 2
 		echo -e "[OK]: Done.\n"
 	done
 	echo -e "[OK]: Done.\n"

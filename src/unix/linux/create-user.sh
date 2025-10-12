@@ -42,6 +42,7 @@ fi
 PRIMARY_GID=${PRIMARY_GID:-11000}
 NEW_UID=${NEW_UID:-}
 NEW_USER=${NEW_USER:-user}
+SUDO_USER=${SUDO_USER:-false}
 ## --- Variables --- ##
 
 
@@ -62,9 +63,12 @@ main()
 				-u=* | --uid=*)
 					NEW_UID="${_input#*=}"
 					shift;;
+				-s | --sudo)
+					SUDO_USER=true
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -g=*, --primary-gid=* | -n=*, --username=* | -u=*, --uid=*"
+					echo "[INFO]: USAGE: ${0}  -g=*, --primary-gid=* | -n=*, --username=* | -u=*, --uid=* | -s, --sudo"
 					exit 1;;
 			esac
 		done
@@ -108,9 +112,14 @@ main()
 	fi
 
 
+	local _arg_sudo=""
+	if [ "${SUDO_USER}" = true ]; then
+		_arg_sudo="-G sudo"
+	fi
+
 	echo "[INFO]: Creating new user..."
 	#shellcheck disable=SC2086
-	${_SUDO} useradd -s /bin/bash -m -d "/home/${NEW_USER}" -N -g "${PRIMARY_GID}" ${_arg_uid} "${NEW_USER}"
+	${_SUDO} useradd -s /bin/bash -m -d "/home/${NEW_USER}" -N -g "${PRIMARY_GID}" ${_arg_sudo} ${_arg_uid} "${NEW_USER}"
 	echo -e "[OK]: Done.\n"
 }
 

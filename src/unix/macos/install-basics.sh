@@ -15,8 +15,14 @@ if [ -f ".env" ]; then
 fi
 
 
+_OS="$(uname)"
+if [ ! "${_OS}" = "Darwin" ]; then
+	echo "[ERROR]: Unsupported OS '${_OS}'!"
+	exit 1
+fi
+
 if ! command -v brew >/dev/null 2>&1; then
-	echo "[WARN]: Homebrew could not be found, installing it first..."
+	echo "[WARN]: Not found 'brew' command, installing Homebrew..."
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
 	echo -e "[OK]: Done.\n"
 fi
@@ -26,9 +32,12 @@ fi
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Installing basic packages..."
+	echo "[INFO]: Updating Homebrew and upgrading existing packages..."
 	brew update || exit 2
 	brew upgrade || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing basic packages..."
 	brew install \
 		coreutils \
 		make \
@@ -42,13 +51,17 @@ main()
 		zip \
 		vim \
 		nano \
+		tmux \
 		jq \
 		yq \
 		htop \
 		ncdu \
+		tree \
 		bash \
 		duf || exit 2
+	echo -e "[OK]: Done.\n"
 
+	echo "[INFO]: Cleaning up..."
 	brew cleanup --prune=all || exit 2
 	echo -e "[OK]: Done.\n"
 }

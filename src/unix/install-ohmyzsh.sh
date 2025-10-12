@@ -15,19 +15,10 @@ if [ -f ".env" ]; then
 fi
 
 
-if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' not found or not installed!"
-	exit 1
-fi
-
-if ! command -v git >/dev/null 2>&1; then
-	echo "[ERROR]: 'git' not found or not installed!"
-	exit 1
-fi
-
 _OS="$(uname)"
 _OS_DISTRO=""
 _IS_ROOT_USER=false
+_SUDO="sudo"
 if [ "${_OS}" = "Linux" ]; then
 	_OS_DISTRO=""
 	if [ -r /etc/os-release ]; then
@@ -46,11 +37,22 @@ if [ "${_OS}" = "Linux" ]; then
 
 	if [ "$(id -u)" -eq 0 ]; then
 		_IS_ROOT_USER=true
+		_SUDO=""
 	fi
 elif [ "${_OS}" = "Darwin" ]; then
 	_OS_DISTRO="macos"
 else
 	echo "[ERROR]: Unsupported OS '${_OS}'!"
+	exit 1
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+	echo "[ERROR]: 'curl' not found or not installed!"
+	exit 1
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+	echo "[ERROR]: 'git' not found or not installed!"
 	exit 1
 fi
 ## --- Base --- ##
@@ -86,8 +88,8 @@ main()
 	if [ "${_OS}" = "Linux" ]; then
 		if ! command -v zsh >/dev/null 2>&1; then
 			echo "[INFO]: Installing 'zsh'..."
-			sudo apt-get update || exit 2
-			sudo apt-get install -y zsh || exit 2
+			${_SUDO} apt-get update || exit 2
+			${_SUDO} apt-get install -y zsh || exit 2
 			echo -e "[OK]: Done.\n"
 		fi
 	fi

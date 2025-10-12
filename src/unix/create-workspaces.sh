@@ -40,7 +40,7 @@ main()
 		fi
 
 		if [ "${_subdir}" = "services" ]; then
-			echo "[INFO]: Creating service subdirectories in '${_full_path}'..."
+			echo "[INFO]: Creating services subdirectories in '${_full_path}'..."
 			local _service_subdir
 			for _service_subdir in ${SERVICES_SUBDIRS}; do
 				local _service_full_path="${_full_path}/${_service_subdir}"
@@ -50,7 +50,7 @@ main()
 			done
 			echo -e "[OK]: Done.\n"
 		elif [ "${_subdir}" = "projects" ]; then
-			echo "[INFO]: Creating project subdirectories in '${_full_path}'..."
+			echo "[INFO]: Creating projects subdirectories in '${_full_path}'..."
 			local _project_subdir
 			for _project_subdir in ${PROJECTS_SUBDIRS}; do
 				local _project_full_path="${_full_path}/${_project_subdir}"

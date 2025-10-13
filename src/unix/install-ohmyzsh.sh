@@ -8,7 +8,7 @@ _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 &
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
-# Loading .env file:
+# Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
 	source .env
@@ -55,6 +55,11 @@ if ! command -v git >/dev/null 2>&1; then
 	echo "[ERROR]: 'git' not found or not installed!"
 	exit 1
 fi
+
+if ! command -v zsh >/dev/null 2>&1; then
+	echo "[ERROR]: 'zsh' not found or not installed!"
+	exit 1
+fi
 ## --- Base --- ##
 
 
@@ -83,17 +88,6 @@ update_zshrc()
 main()
 {
 	echo "[INFO]: Settting up 'Oh My Zsh'..."
-
-	## Installing 'zsh':
-	if [ "${_OS}" = "Linux" ]; then
-		if ! command -v zsh >/dev/null 2>&1; then
-			echo "[INFO]: Installing 'zsh'..."
-			${_SUDO} apt-get update || exit 2
-			${_SUDO} apt-get install -y zsh || exit 2
-			echo -e "[OK]: Done.\n"
-		fi
-	fi
-
 
 	## Backup existing .zshrc file:
 	if [ -f "${HOME}/.zshrc" ] && [ ! -f "${HOME}/.zshrc.bak" ]; then

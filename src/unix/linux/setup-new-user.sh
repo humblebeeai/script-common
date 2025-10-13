@@ -8,7 +8,7 @@ _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 &
 cd "${_SCRIPT_DIR}" || exit 2
 
 
-# Loading .env file:
+# Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
 	source .env
@@ -127,6 +127,7 @@ main()
 				exit 1
 			}
 	fi
+
 
 	${_SUDO} su - "${USERNAME}" -c "curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/create-workspaces.sh | bash" || {
 		echo "[ERROR]: Failed to create workspaces for user '${USERNAME}'!"

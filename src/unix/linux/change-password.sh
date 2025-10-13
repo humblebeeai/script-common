@@ -26,6 +26,12 @@ else
 	exit 1
 fi
 
+
+if ! command -v openssl >/dev/null 2>&1; then
+	echo "[ERROR]: 'openssl' command not found or not installed!"
+	exit 1
+fi
+
 if ! command -v chpasswd >/dev/null 2>&1; then
 	echo "[ERROR]: 'chpasswd' command not found or not installed!"
 	exit 1
@@ -35,6 +41,9 @@ fi
 
 ## --- Variables --- ##
 USERNAME=${USERNAME:-}
+PASSWORD=${PASSWORD:-}
+PASSWORD_PATH=${PASSWORD_PATH:-}
+IS_HASHED=${IS_HASHED:-true}
 ## --- Variables --- ##
 
 
@@ -49,9 +58,18 @@ main()
 				-u=* | --username=*)
 					USERNAME="${_input#*=}"
 					shift;;
+				-p=* | --password=*)
+					PASSWORD="${_input#*=}"
+					shift;;
+				-f=* | --password-file=*)
+					PASSWORD_PATH="${_input#*=}"
+					shift;;
+				-i | --is-plain)
+					IS_HASHED=false
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -u=*, --username=*"
+					echo "[INFO]: USAGE: ${0}  -u=*, --username=* | -p=*, --password=* | -f=*, --password-file=* | -i, --is-plain"
 					exit 1;;
 			esac
 		done
@@ -63,6 +81,38 @@ main()
 		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and can include underscores or hyphens!"
 		exit 1
 	fi
+
+	if ! id "${USERNAME}" >/dev/null 2>&1; then
+		echo "[ERROR]: User '${USERNAME}' does not exist!"
+		exit 1
+	fi
+
+	if [ -n "${PASSWORD_PATH}" ]; then
+		if [ ! -f "${PASSWORD_PATH}" ]; then
+			echo "[ERROR]: Password file '${PASSWORD_PATH}' does not exist!"
+			exit 1
+		fi
+
+		echo "[INFO]: Reading password from file '${PASSWORD_PATH}'..."
+		PASSWORD=$(< "${PASSWORD_PATH}")
+		echo -e "[OK]: Done.\n"
+	fi
+
+	if [ -z "${PASSWORD}" ]; then
+		echo "[ERROR]: Password is empty!"
+		exit 1
+	fi
+
+
+	if [ "${IS_HASHED}" = false ]; then
+		echo "[INFO]: Hashing password..."
+		PASSWORD=$(echo "${PASSWORD}" | openssl passwd -6 -stdin)
+		echo -e "[OK]: Done.\n"
+	fi
+
+	echo "[INFO]: Changing password for user '${USERNAME}'..."
+	echo -e "${USERNAME}:${PASSWORD}" | ${_SUDO} chpasswd -e
+	echo -e "[OK]: Done.\n"
 }
 
 main "${@:-}"

@@ -60,12 +60,15 @@ main()
 				-u=* | --user=* | --username=*)
 					USERNAME="${_input#*=}"
 					shift;;
+				-p=* | --pass=* | --password=*)
+					PASSWORD="${_input#*=}"
+					shift;;
 				-s | --sudo | --with-sudo)
 					WITH_SUDO=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -u=*, --user=*, --username=* | -s, --sudo, --with-sudo"
+					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -s, --sudo, --with-sudo"
 					exit 1;;
 			esac
 		done

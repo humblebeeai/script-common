@@ -98,11 +98,11 @@ main()
 
 	if ! id "${USERNAME}" >/dev/null 2>&1; then
 		if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-			curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-group.sh \
-				| bash -s -- -g="${PRIMARY_GID}" || {
-				echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!"
-				exit 1
-			}
+			curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-group.sh | \
+				bash -s -- -g="${PRIMARY_GID}" || {
+					echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!"
+					exit 1
+				}
 		fi
 
 		_arg_sudo=""
@@ -110,23 +110,33 @@ main()
 			_arg_sudo="-s"
 		fi
 
-		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-user.sh \
-			| bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" ${_arg_sudo} || {
-			echo "[ERROR]: Failed to create user '${USERNAME}'!"
-			exit 1
-		}
+		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-user.sh | \
+			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" ${_arg_sudo} || {
+				echo "[ERROR]: Failed to create user '${USERNAME}'!"
+				exit 1
+			}
 
 		_arg_is_plain="-i"
 		if [ -z "${PASSWORD}" ]; then
 			PASSWORD="\$6\$u2FNPRPID32cWjCo\$TrEzf1ox9iRK9cqGEYCICnlZ04Z0S0AsFE2SYfvcifJDzMHM5TE0LHverClhN0ZbBHPW5LJZGsplGnPzlYwMg0"
 			_arg_is_plain=""
 		fi
-		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-password.sh \
-			| bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_is_plain} || {
-			echo "[ERROR]: Failed to set password for user '${USERNAME}'!"
-			exit 1
-		}
+		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-password.sh | \
+			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_is_plain} || {
+				echo "[ERROR]: Failed to set password for user '${USERNAME}'!"
+				exit 1
+			}
 	fi
+
+	${_SUDO} su - "${USERNAME}" -c "curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/create-workspaces.sh | bash" || {
+		echo "[ERROR]: Failed to create workspaces for user '${USERNAME}'!"
+		exit 1
+	}
+
+	${_SUDO} su - "${USERNAME}" -c "curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/install-ohmyzsh.sh | bash" || {
+		echo "[ERROR]: Failed to install oh-my-zsh for user '${USERNAME}'!"
+		exit 1
+	}
 }
 
 main "${@:-}"

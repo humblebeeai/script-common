@@ -40,9 +40,9 @@ fi
 
 ## --- Variables --- ##
 PRIMARY_GID=${PRIMARY_GID:-11000}
-NEW_UID=${NEW_UID:-}
-NEW_USER=${NEW_USER:-user}
-SUDO_USER=${SUDO_USER:-false}
+USER_ID=${USER_ID:-}
+USERNAME=${USERNAME:-user}
+WITH_SUDO=${WITH_SUDO:-false}
 ## --- Variables --- ##
 
 
@@ -54,21 +54,21 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
-				-g=* | --primary-gid=*)
+				-g=* | --gid=* | --primary-gid=*)
 					PRIMARY_GID="${_input#*=}"
 					shift;;
-				-n=* | --username=*)
-					NEW_USER="${_input#*=}"
+				-u=* | --user=* | --username=*)
+					USERNAME="${_input#*=}"
 					shift;;
-				-u=* | --uid=*)
-					NEW_UID="${_input#*=}"
+				-i=* | --uid=* | --user-id=*)
+					USER_ID="${_input#*=}"
 					shift;;
-				-s | --sudo)
-					SUDO_USER=true
+				-s | --sudo | --with-sudo)
+					WITH_SUDO=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -g=*, --primary-gid=* | -n=*, --username=* | -u=*, --uid=* | -s, --sudo"
+					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -i=*, --uid=*, --user-id=* | -s, --sudo, --with-sudo"
 					exit 1;;
 			esac
 		done
@@ -81,8 +81,8 @@ main()
 		exit 1
 	fi
 
-	if [ -z "${NEW_USER}" ] || ! [[ "${NEW_USER}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
-		echo "[ERROR]: Username '${NEW_USER}' is invalid, must be alphanumeric and can include underscores or hyphens!"
+	if [ -z "${USERNAME}" ] || ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
+		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and can include underscores or hyphens!"
 		exit 1
 	fi
 
@@ -92,34 +92,34 @@ main()
 	fi
 
 	local _arg_uid=""
-	if [ -n "${NEW_UID}" ]; then
-		if ! [[ "${NEW_UID}" =~ ^[0-9]+$ ]] || [ "${NEW_UID}" -lt 1000 ]; then
-			echo "[ERROR]: UID '${NEW_UID}' is invalid, must be a number and >= 1000!"
+	if [ -n "${USER_ID}" ]; then
+		if ! [[ "${USER_ID}" =~ ^[0-9]+$ ]] || [ "${USER_ID}" -lt 1000 ]; then
+			echo "[ERROR]: UID '${USER_ID}' is invalid, must be a number and >= 1000!"
 			exit 1
 		fi
 
-		if id "${NEW_UID}" >/dev/null 2>&1; then
-			echo "[ERROR]: User with '${NEW_UID}' UID already exists!"
+		if id "${USER_ID}" >/dev/null 2>&1; then
+			echo "[ERROR]: User with '${USER_ID}' UID already exists!"
 			exit 1
 		fi
 
-		_arg_uid="-u ${NEW_UID}"
+		_arg_uid="-u ${USER_ID}"
 	fi
 
-	if id "${NEW_USER}" >/dev/null 2>&1; then
-		echo "[ERROR]: User '${NEW_USER}' already exists!"
+	if id "${USERNAME}" >/dev/null 2>&1; then
+		echo "[ERROR]: User '${USERNAME}' already exists!"
 		exit 1
 	fi
 
 
 	local _sudo_group=""
-	if [ "${SUDO_USER}" = true ]; then
+	if [ "${WITH_SUDO}" = true ]; then
 		_sudo_group=",sudo"
 	fi
 
 	echo "[INFO]: Creating new user..."
 	#shellcheck disable=SC2086
-	${_SUDO} useradd -s /bin/bash -m -d "/home/${NEW_USER}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_sudo_group}" ${_arg_uid} "${NEW_USER}"
+	${_SUDO} useradd -s /bin/bash -m -d "/home/${USERNAME}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_sudo_group}" ${_arg_uid} "${USERNAME}"
 	echo -e "[OK]: Done.\n"
 }
 

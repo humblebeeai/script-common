@@ -16,9 +16,11 @@ fi
 
 
 _OS="$(uname)"
+_IS_ROOT_USER=false
 _SUDO="sudo"
 if [ "${_OS}" = "Linux" ]; then
 	if [ "$(id -u)" -eq 0 ]; then
+		_IS_ROOT_USER=true
 		_SUDO=""
 	fi
 else
@@ -41,6 +43,9 @@ fi
 
 ## --- Variables --- ##
 USERNAME=${USERNAME:-}
+if [ -z "${USERNAME}" ] && [ "${_IS_ROOT_USER}" = false ]; then
+	USERNAME=$(id -un)
+fi
 PASSWORD=${PASSWORD:-}
 PASSWORD_PATH=${PASSWORD_PATH:-}
 IS_HASHED=${IS_HASHED:-true}
@@ -55,21 +60,21 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
-				-u=* | --username=*)
+				-u=* | --user=* | --username=*)
 					USERNAME="${_input#*=}"
 					shift;;
-				-p=* | --password=*)
+				-p=* | --pass=* | --password=*)
 					PASSWORD="${_input#*=}"
 					shift;;
-				-f=* | --password-file=*)
+				-f=* | --password-file | --password-path=*)
 					PASSWORD_PATH="${_input#*=}"
 					shift;;
-				-i | --is-plain)
+				-i | --is-plain | --is-plain-password)
 					IS_HASHED=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -u=*, --username=* | -p=*, --password=* | -f=*, --password-file=* | -i, --is-plain"
+					echo "[INFO]: USAGE: ${0}  -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -f=*, --password-file=*, --password-path=* | -i, --is-plain, --is-plain-password"
 					exit 1;;
 			esac
 		done
@@ -77,8 +82,8 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${USERNAME}" ] || ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
-		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and can include underscores or hyphens!"
+	if [ -z "${USERNAME}" ] || ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]] || [ "${USERNAME}" = "root" ]; then
+		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and not 'root'!"
 		exit 1
 	fi
 

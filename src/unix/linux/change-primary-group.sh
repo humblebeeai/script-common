@@ -44,9 +44,9 @@ fi
 
 
 ## --- Variables --- ##
-NEW_GID=${NEW_GID:-11000}
-NEW_GROUP=${NEW_GROUP:-devs}
-USERS=${USERS:-"$(id -un)"}
+PRIMARY_GID=${PRIMARY_GID:-11000}
+PRIMARY_GROUP=${PRIMARY_GROUP:-devs}
+USERNAMES=${USERNAMES:-"$(id -un)"}
 ALL_USERS=${ALL_USERS:-true}
 ## --- Variables --- ##
 
@@ -59,22 +59,22 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
-				-g=* | --gid=*)
-					NEW_GID="${_input#*=}"
+				-g=* | --gid=* | --primary-gid=*)
+					PRIMARY_GID="${_input#*=}"
 					shift;;
-				-n=* | --group-name=*)
-					NEW_GROUP="${_input#*=}"
+				-p=* | --group=* | --primary-group=*)
+					PRIMARY_GROUP="${_input#*=}"
 					shift;;
-				-u=* | --users=*)
-					USERS="${_input#*=}"
+				-u=* | --users=* | --usernames=*)
+					USERNAMES="${_input#*=}"
 					ALL_USERS=false
 					shift;;
-				-a | --all-users)
+				-a | --all | --all-users)
 					ALL_USERS=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -g=*, --gid=* | -n=*, --group-name=* | -u=*, --users=* | -a, --all-users"
+					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -p=*, --group=*, --primary-group=* | -u=*, --users=*, --usernames=* | -a, --all, --all-users"
 					exit 1;;
 			esac
 		done
@@ -82,30 +82,30 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${NEW_GID}" ] || ! [[ "${NEW_GID}" =~ ^[0-9]+$ ]] || [ "${NEW_GID}" -lt 1000 ]; then
-		echo "[ERROR]: GID '${NEW_GID}' is invalid, must be a number and >= 1000!"
+	if [ -z "${PRIMARY_GID}" ] || ! [[ "${PRIMARY_GID}" =~ ^[0-9]+$ ]] || [ "${PRIMARY_GID}" -lt 1000 ]; then
+		echo "[ERROR]: GID '${PRIMARY_GID}' is invalid, must be a number and >= 1000!"
 		exit 1
 	fi
 
-	if [ -z "${NEW_GROUP}" ] || ! [[ "${NEW_GROUP}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]; then
-		echo "[ERROR]: Group name '${NEW_GROUP}' is invalid, must be alphanumeric and can include underscores or hyphens!"
+	if [ -z "${PRIMARY_GROUP}" ] || ! [[ "${PRIMARY_GROUP}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]; then
+		echo "[ERROR]: Group name '${PRIMARY_GROUP}' is invalid, must be alphanumeric and can include underscores or hyphens!"
 		exit 1
 	fi
 
 
-	if getent group "${NEW_GID}" >/dev/null 2>&1; then
-		echo "[INFO]: Group with '${NEW_GID}' GID already exists. Skipping group creation..."
+	if getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
+		echo "[INFO]: Group with '${PRIMARY_GID}' GID already exists. Skipping group creation..."
 	else
-		echo "[INFO]: Creating new group '${NEW_GROUP}' with GID '${NEW_GID}'..."
-		${_SUDO} groupadd -f -g "${NEW_GID}" "${NEW_GROUP}" || exit 2
+		echo "[INFO]: Creating new group '${PRIMARY_GROUP}' with GID '${PRIMARY_GID}'..."
+		${_SUDO} groupadd -f -g "${PRIMARY_GID}" "${PRIMARY_GROUP}" || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 
+	local _username
 	if [ "${ALL_USERS}" = true ]; then
-		USERS=""
+		USERNAMES=""
 		local _user_home_dir
 		for _user_home_dir in /home/*; do
-			local _username
 			_username=$(basename "${_user_home_dir}")
 			if ! id "${_username}" >/dev/null 2>&1; then
 				echo "[WARN]: Not found '${_username}' user in the system but found home directory '${_user_home_dir}'! Skipping..."
@@ -117,25 +117,24 @@ main()
 				continue
 			fi
 
-			USERS="${USERS},${_username}"
+			USERNAMES="${USERNAMES},${_username}"
 		done
 	fi
 
-	USERS=$(echo "${USERS}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
-	local _user
-	for _user in ${USERS}; do
-		if ! id "${_user}" >/dev/null 2>&1; then
-			echo "[WARN]: User '${_user}' does not exist! Skipping..."
+	USERNAMES=$(echo "${USERNAMES}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
+	for _username in ${USERNAMES}; do
+		if ! id "${_username}" >/dev/null 2>&1; then
+			echo "[WARN]: User '${_username}' does not exist! Skipping..."
 			continue
 		fi
 
-		if [ "$(id -g "${_user}")" -eq "${NEW_GID}" ]; then
-			echo "[INFO]: '${_user}' user's primary group is already set to '${NEW_GID}'. Skipping..."
+		if [ "$(id -g "${_username}")" -eq "${PRIMARY_GID}" ]; then
+			echo "[INFO]: '${_username}' user's primary group is already set to '${PRIMARY_GID}'. Skipping..."
 			continue
 		fi
 
-		echo "[INFO]: Changing primary group of user '${_user}' to '${NEW_GID}'..."
-		${_SUDO} usermod -g "${NEW_GID}" -aG "${NEW_GID}" "${_user}" || exit 2
+		echo "[INFO]: Changing primary group of user '${_username}' to '${PRIMARY_GID}'..."
+		${_SUDO} usermod -g "${PRIMARY_GID}" -aG "${PRIMARY_GID}" "${_username}" || exit 2
 		echo -e "[OK]: Done.\n"
 	done
 }

@@ -34,7 +34,7 @@ fi
 
 
 ## --- Variables --- ##
-USERS=${USERS:-}
+USERNAMES=${USERNAMES:-}
 ## --- Variables --- ##
 
 
@@ -46,12 +46,12 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
-				-u=* | --users=*)
-					USERS="${_input#*=}"
+				-u=* | --users=* | --usernames=*)
+					USERNAMES="${_input#*=}"
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -u=*, --users=*"
+					echo "[INFO]: USAGE: ${0}  -u=*, --users=*, --usernames=*"
 					exit 1;;
 			esac
 		done
@@ -59,26 +59,26 @@ main()
 	## --- Menu arguments --- ##
 
 
-	USERS=$(echo "${USERS}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
-	if [ -z "${USERS}" ]; then
+	USERNAMES=$(echo "${USERNAMES}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
+	if [ -z "${USERNAMES}" ]; then
 		echo "[ERROR]: No users specified or only 'root' user provided!"
 		exit 1
 	fi
 
-	local _user
-	for _user in ${USERS}; do
-		if ! id "${_user}" >/dev/null 2>&1; then
-			echo "[WARN]: User '${_user}' does not exist! Skipping..."
+	local _username
+	for _username in ${USERNAMES}; do
+		if ! id "${_username}" >/dev/null 2>&1; then
+			echo "[WARN]: User '${_username}' does not exist! Skipping..."
 			continue
 		fi
 
-		if id -nG "${_user}" | grep -qw "sudo"; then
-			echo "[WARN]: User '${_user}' is already in 'sudo' group! Skipping..."
+		if id -nG "${_username}" | grep -qw "sudo"; then
+			echo "[WARN]: User '${_username}' is already in 'sudo' group! Skipping..."
 			continue
 		fi
 
-		echo "[INFO]: Adding user '${_user}' to 'sudo' group..."
-		${_SUDO} usermod -aG sudo "${_user}" || exit 2
+		echo "[INFO]: Adding user '${_username}' to 'sudo' group..."
+		${_SUDO} usermod -aG sudo "${_username}" || exit 2
 		echo -e "[OK]: Done.\n"
 	done
 }

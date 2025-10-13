@@ -68,12 +68,22 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${GROUP_ID}" ] || ! [[ "${GROUP_ID}" =~ ^[0-9]+$ ]] || [ "${GROUP_ID}" -lt 1000 ]; then
+	if [ -z "${GROUP_ID}" ]; then
+		echo "[ERROR]: Group ID is empty!"
+		exit 1
+	fi
+
+	if ! [[ "${GROUP_ID}" =~ ^[0-9]+$ ]] || [ "${GROUP_ID}" -lt 1000 ]; then
 		echo "[ERROR]: Group GID '${GROUP_ID}' is invalid, must be a number and >= 1000!"
 		exit 1
 	fi
 
-	if [ -z "${GROUP_NAME}" ] || ! [[ "${GROUP_NAME}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]; then
+	if [ -z "${GROUP_NAME}" ]; then
+		echo "[ERROR]: Group name is empty!"
+		exit 1
+	fi
+
+	if ! [[ "${GROUP_NAME}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]; then
 		echo "[ERROR]: Group name '${GROUP_NAME}' is invalid, must be alphanumeric and can include underscores or hyphens!"
 		exit 1
 	fi

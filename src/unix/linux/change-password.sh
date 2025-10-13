@@ -81,8 +81,12 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+	if [ -z "${USERNAME}" ]; then
+		echo "[ERROR]: Username is empty!"
+		exit 1
+	fi
 
-	if [ -z "${USERNAME}" ] || ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]] || [ "${USERNAME}" = "root" ]; then
+	if ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]] || [ "${USERNAME}" = "root" ]; then
 		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and not 'root'!"
 		exit 1
 	fi

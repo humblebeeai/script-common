@@ -81,13 +81,22 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+	if [ -z "${PRIMARY_GID}" ]; then
+		echo "[ERROR]: Primary GID is empty!"
+		exit 1
+	fi
 
-	if [ -z "${PRIMARY_GID}" ] || ! [[ "${PRIMARY_GID}" =~ ^[0-9]+$ ]] || [ "${PRIMARY_GID}" -lt 1000 ]; then
+	if ! [[ "${PRIMARY_GID}" =~ ^[0-9]+$ ]] || [ "${PRIMARY_GID}" -lt 1000 ]; then
 		echo "[ERROR]: GID '${PRIMARY_GID}' is invalid, must be a number and >= 1000!"
 		exit 1
 	fi
 
-	if [ -z "${PRIMARY_GROUP}" ] || ! [[ "${PRIMARY_GROUP}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]; then
+	if [ -z "${PRIMARY_GROUP}" ]; then
+		echo "[ERROR]: Primary group name is empty!"
+		exit 1
+	fi
+
+	if ! [[ "${PRIMARY_GROUP}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]; then
 		echo "[ERROR]: Group name '${PRIMARY_GROUP}' is invalid, must be alphanumeric and can include underscores or hyphens!"
 		exit 1
 	fi

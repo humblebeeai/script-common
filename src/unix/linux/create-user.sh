@@ -41,7 +41,7 @@ fi
 ## --- Variables --- ##
 PRIMARY_GID=${PRIMARY_GID:-11000}
 USER_ID=${USER_ID:-}
-USERNAME=${USERNAME:-user}
+USERNAME=${USERNAME:-}
 WITH_SUDO=${WITH_SUDO:-false}
 ## --- Variables --- ##
 
@@ -76,13 +76,23 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${PRIMARY_GID}" ] || ! [[ "${PRIMARY_GID}" =~ ^[0-9]+$ ]] || [ "${PRIMARY_GID}" -lt 1000 ]; then
+	if [ -z "${PRIMARY_GID}" ]; then
+		echo "[ERROR]: Primary GID is empty!"
+		exit 1
+	fi
+
+	if ! [[ "${PRIMARY_GID}" =~ ^[0-9]+$ ]] || [ "${PRIMARY_GID}" -lt 1000 ]; then
 		echo "[ERROR]: Primary GID '${PRIMARY_GID}' is invalid, must be a number and >= 1000!"
 		exit 1
 	fi
 
-	if [ -z "${USERNAME}" ] || ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
-		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and can include underscores or hyphens!"
+	if [ -z "${USERNAME}" ]; then
+		echo "[ERROR]: Username is empty!"
+		exit 1
+	fi
+
+	if ! [[ "${USERNAME}" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]] || [ "${USERNAME}" = "root" ]; then
+		echo "[ERROR]: Username '${USERNAME}' is invalid, must be alphanumeric and not 'root'!"
 		exit 1
 	fi
 

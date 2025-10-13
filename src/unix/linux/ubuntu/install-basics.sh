@@ -48,6 +48,7 @@ fi
 main()
 {
 	echo "[INFO]: Updating package lists and upgrading existing packages..."
+	${_SUDO} apt clean || exit 2
 	${_SUDO} apt update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
 	${_SUDO} apt upgrade -y || exit 2
 	echo -e "[OK]: Done.\n"

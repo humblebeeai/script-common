@@ -16,15 +16,8 @@ fi
 
 
 _OS="$(uname)"
-_IS_ROOT_USER=false
-_SUDO="sudo"
-if [ "${_OS}" = "Linux" ]; then
-	if [ "$(id -u)" -eq 0 ]; then
-		_IS_ROOT_USER=true
-		_SUDO=""
-	fi
-else
-	echo "[ERROR]: Unsupported OS '${_OS}'!"
+if [ "${_OS}" != "Linux" ]; then
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' is supported!"
 	exit 1
 fi
 
@@ -37,6 +30,14 @@ fi
 if ! command -v chpasswd >/dev/null 2>&1; then
 	echo "[ERROR]: 'chpasswd' command not found or not installed!"
 	exit 1
+fi
+
+
+_IS_ROOT_USER=false
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_IS_ROOT_USER=true
+	_SUDO=""
 fi
 ## --- Base --- ##
 

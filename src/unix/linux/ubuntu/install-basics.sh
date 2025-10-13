@@ -17,7 +17,6 @@ fi
 
 _OS="$(uname)"
 _OS_DISTRO=""
-_SUDO="sudo"
 if [ "${_OS}" = "Linux" ]; then
 	_OS_DISTRO=""
 	if [ -r /etc/os-release ]; then
@@ -33,13 +32,15 @@ if [ "${_OS}" = "Linux" ]; then
 		echo "[ERROR]: Unable to determine Linux distro!"
 		exit 1
 	fi
-
-	if [ "$(id -u)" -eq 0 ]; then
-		_SUDO=""
-	fi
 else
-	echo "[ERROR]: Unsupported OS '${_OS}'!"
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' is supported!"
 	exit 1
+fi
+
+
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 ## --- Base --- ##
 
@@ -112,6 +113,8 @@ main()
 		ncdu \
 		pydf \
 		tree \
+		less \
+		watch \
 		bash \
 		zsh || exit 2
 	echo -e "[OK]: Done.\n"

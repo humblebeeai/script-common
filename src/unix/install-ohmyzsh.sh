@@ -17,8 +17,6 @@ fi
 
 _OS="$(uname)"
 _OS_DISTRO=""
-_IS_ROOT_USER=false
-_SUDO="sudo"
 if [ "${_OS}" = "Linux" ]; then
 	_OS_DISTRO=""
 	if [ -r /etc/os-release ]; then
@@ -34,15 +32,10 @@ if [ "${_OS}" = "Linux" ]; then
 		echo "[ERROR]: Unable to determine Linux distro!"
 		exit 1
 	fi
-
-	if [ "$(id -u)" -eq 0 ]; then
-		_IS_ROOT_USER=true
-		_SUDO=""
-	fi
 elif [ "${_OS}" = "Darwin" ]; then
 	_OS_DISTRO="macos"
 else
-	echo "[ERROR]: Unsupported OS '${_OS}'!"
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
 	exit 1
 fi
 
@@ -59,6 +52,12 @@ fi
 if ! command -v zsh >/dev/null 2>&1; then
 	echo "[ERROR]: 'zsh' not found or not installed!"
 	exit 1
+fi
+
+
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 ## --- Base --- ##
 
@@ -171,7 +170,7 @@ main()
 	fi
 
 	local _p10k_theme="p10k-rainbow.zsh"
-	if [ "${_IS_ROOT_USER}" = true ]; then
+	if [ -z "${_SUDO}" ]; then
 		_p10k_theme="p10k-classic.zsh"
 	fi
 

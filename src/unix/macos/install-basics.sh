@@ -16,8 +16,8 @@ fi
 
 
 _OS="$(uname)"
-if [ ! "${_OS}" = "Darwin" ]; then
-	echo "[ERROR]: Unsupported OS '${_OS}'!"
+if [ "${_OS}" != "Darwin" ]; then
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'macOS' is supported!"
 	exit 1
 fi
 
@@ -57,6 +57,8 @@ main()
 		htop \
 		ncdu \
 		tree \
+		less \
+		watch \
 		bash \
 		duf || exit 2
 	echo -e "[OK]: Done.\n"

@@ -13,6 +13,13 @@ if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
 	source .env
 fi
+
+
+_OS="$(uname)"
+if [ "${_OS}" != "Darwin" ]; then
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'macOS' is supported!"
+	exit 1
+fi
 ## --- Base --- ##
 
 

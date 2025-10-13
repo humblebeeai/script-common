@@ -16,19 +16,20 @@ fi
 
 
 _OS="$(uname)"
-_SUDO="sudo"
-if [ "${_OS}" = "Linux" ]; then
-	if [ "$(id -u)" -eq 0 ]; then
-		_SUDO=""
-	fi
-else
-	echo "[ERROR]: Unsupported OS '${_OS}'!"
+if [ "${_OS}" != "Linux" ]; then
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' is supported!"
 	exit 1
 fi
 
 if ! command -v usermod >/dev/null 2>&1; then
 	echo "[ERROR]: 'usermod' command not found or not installed!"
 	exit 1
+fi
+
+
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 ## --- Base --- ##
 

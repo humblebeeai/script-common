@@ -41,6 +41,7 @@ fi
 ## --- Variables --- ##
 PRIMARY_GID=${PRIMARY_GID:-11000}
 USERNAME=${USERNAME:-}
+PASSWORD=${PASSWORD:-}
 WITH_SUDO=${WITH_SUDO:-false}
 ## --- Variables --- ##
 
@@ -109,6 +110,17 @@ main()
 		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-user.sh \
 			| bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" ${_arg_sudo} || {
 			echo "[ERROR]: Failed to create user '${USERNAME}'!"
+			exit 1
+		}
+
+		_arg_is_plain="-i"
+		if [ -z "${PASSWORD}" ]; then
+			PASSWORD="\$6\$upx9lCL.abJp8gRq\$88fuFXOAF/9DhFH1JeD8G7dDB4O0upIHeynhhl8bxmUtIAnJrzSqHsBEu2OGHe0YgtLW9YpgiIEtqME86OZe1/"
+			_arg_is_plain=""
+		fi
+		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-password.sh \
+			| bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_is_plain} || {
+			echo "[ERROR]: Failed to set password for user '${USERNAME}'!"
 			exit 1
 		}
 	fi

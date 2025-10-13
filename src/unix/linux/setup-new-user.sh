@@ -25,10 +25,21 @@ else
 	echo "[ERROR]: Unsupported OS '${_OS}'!"
 	exit 1
 fi
+
+if ! command -v getent >/dev/null 2>&1; then
+	echo "[ERROR]: 'getent' command not found or not installed!"
+	exit 1
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+	echo "[ERROR]: 'curl' command not found or not installed!"
+	exit 1
+fi
 ## --- Base --- ##
 
 
 ## --- Variables --- ##
+PRIMARY_GID=${PRIMARY_GID:-11000}
 USERNAME=${USERNAME:-}
 WITH_SUDO=${WITH_SUDO:-false}
 ## --- Variables --- ##
@@ -42,6 +53,9 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
+				-g=* | --gid=* | --primary-gid=*)
+					PRIMARY_GID="${_input#*=}"
+					shift;;
 				-u=* | --user=* | --username=*)
 					USERNAME="${_input#*=}"
 					shift;;
@@ -57,6 +71,17 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+
+	if [ -z "${PRIMARY_GID}" ]; then
+		echo "[ERROR]: Primary GID is empty!"
+		exit 1
+	fi
+
+	if ! [[ "${PRIMARY_GID}" =~ ^[0-9]+$ ]] || [ "${PRIMARY_GID}" -lt 1000 ]; then
+		echo "[ERROR]: Primary GID '${PRIMARY_GID}' is invalid, must be a number and >= 1000!"
+		exit 1
+	fi
+
 	if [ -z "${USERNAME}" ]; then
 		echo "[ERROR]: Username is empty!"
 		exit 1
@@ -68,12 +93,21 @@ main()
 	fi
 
 	if ! id "${USERNAME}" >/dev/null 2>&1; then
+		if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
+			curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-group.sh \
+				| bash -s -- -g="${PRIMARY_GID}" || {
+				echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!"
+				exit 1
+			}
+		fi
+
 		_arg_sudo=""
 		if [ "${WITH_SUDO}" = true ]; then
 			_arg_sudo="-s"
 		fi
 
-		./create-user.sh -u="${USERNAME}" ${_arg_sudo} || {
+		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-user.sh \
+			| bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" ${_arg_sudo} || {
 			echo "[ERROR]: Failed to create user '${USERNAME}'!"
 			exit 1
 		}

@@ -115,7 +115,7 @@ main()
 
 		_arg_is_plain="-i"
 		if [ -z "${PASSWORD}" ]; then
-			PASSWORD="\$6\$upx9lCL.abJp8gRq\$88fuFXOAF/9DhFH1JeD8G7dDB4O0upIHeynhhl8bxmUtIAnJrzSqHsBEu2OGHe0YgtLW9YpgiIEtqME86OZe1/"
+			PASSWORD="\$6\$u2FNPRPID32cWjCo\$TrEzf1ox9iRK9cqGEYCICnlZ04Z0S0AsFE2SYfvcifJDzMHM5TE0LHverClhN0ZbBHPW5LJZGsplGnPzlYwMg0"
 			_arg_is_plain=""
 		fi
 		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-password.sh \

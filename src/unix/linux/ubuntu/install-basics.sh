@@ -44,15 +44,46 @@ fi
 ## --- Base --- ##
 
 
+## --- Variables --- ##
+APT_UPGRADE=${APT_UPGRADE:-true}
+## --- Variables --- ##
+
+
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Updating package lists and upgrading existing packages..."
+	## --- Menu arguments --- ##
+	if [ -n "${1:-}" ]; then
+		local _input
+		for _input in "${@:-}"; do
+			case ${_input} in
+				-u | --disable-upgrade)
+					APT_UPGRADE=false
+					shift;;
+				*)
+					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[INFO]: USAGE: ${0}  -u | --disable-upgrade"
+					exit 1;;
+			esac
+		done
+	fi
+	## --- Menu arguments --- ##
+
+
+	echo "[INFO]: Removing and cleaning up apt cache..."
 	${_SUDO} apt clean || exit 2
 	${_SUDO} rm -vrf /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* || exit 2
-	${_SUDO} apt update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
-	${_SUDO} apt upgrade -y || exit 2
 	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Updating package lists..."
+	${_SUDO} apt update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
+	echo -e "[OK]: Done.\n"
+
+	if [ "${APT_UPGRADE}" = true ]; then
+		echo "[INFO]: Upgrading packages..."
+		${_SUDO} apt upgrade -y || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 
 	echo "[INFO]: Installing basic packages..."
 	${_SUDO} apt install -y \
@@ -85,9 +116,8 @@ main()
 		zsh || exit 2
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Cleaning up..."
+	echo "[INFO]: Autoremoving unused packages..."
 	${_SUDO} apt autoremove -y || exit 2
-	${_SUDO} apt clean || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

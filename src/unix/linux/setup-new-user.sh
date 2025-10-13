@@ -35,6 +35,11 @@ if ! command -v curl >/dev/null 2>&1; then
 	echo "[ERROR]: 'curl' command not found or not installed!"
 	exit 1
 fi
+
+if ! command -v openssl >/dev/null 2>&1; then
+	echo "[ERROR]: 'openssl' command not found or not installed!"
+	exit 1
+fi
 ## --- Base --- ##
 
 
@@ -42,6 +47,7 @@ fi
 PRIMARY_GID=${PRIMARY_GID:-11000}
 USERNAME=${USERNAME:-}
 PASSWORD=${PASSWORD:-}
+IS_HASHED=${IS_HASHED:-false}
 WITH_SUDO=${WITH_SUDO:-false}
 ## --- Variables --- ##
 
@@ -63,12 +69,15 @@ main()
 				-p=* | --pass=* | --password=*)
 					PASSWORD="${_input#*=}"
 					shift;;
+				-h | --hashed | --hashed-password)
+					IS_HASHED=true
+					shift;;
 				-s | --sudo | --with-sudo)
 					WITH_SUDO=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -s, --sudo, --with-sudo"
+					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -h, --hashed, --hashed-password | -s, --sudo, --with-sudo"
 					exit 1;;
 			esac
 		done
@@ -116,13 +125,19 @@ main()
 				exit 1
 			}
 
-		_arg_is_plain="-i"
 		if [ -z "${PASSWORD}" ]; then
-			PASSWORD="\$6\$u2FNPRPID32cWjCo\$TrEzf1ox9iRK9cqGEYCICnlZ04Z0S0AsFE2SYfvcifJDzMHM5TE0LHverClhN0ZbBHPW5LJZGsplGnPzlYwMg0"
-			_arg_is_plain=""
+			PASSWORD="${USERNAME}_PASSWORD123"
+			IS_HASHED=false
 		fi
+
+		if [ "${IS_HASHED}" = false ]; then
+			echo "[INFO]: Hashing password..."
+			PASSWORD=$(echo "${PASSWORD}" | openssl passwd -6 -stdin)
+			echo -e "[OK]: Done.\n"
+		fi
+
 		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-password.sh | \
-			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_is_plain} || {
+			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" || {
 				echo "[ERROR]: Failed to set password for user '${USERNAME}'!"
 				exit 1
 			}

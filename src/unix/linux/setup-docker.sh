@@ -147,7 +147,7 @@ main()
 
 		echo "[INFO]: Removing backup files..."
 		${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
-		${_SUDO} rm -vf "${_old_docker_data_dir}.bak" || exit 2
+		${_SUDO} rm -rf "${_old_docker_data_dir}.bak" || exit 2
 		echo -e "[OK]: Done.\n"
 
 		echo -e "[OK]: Done.\n"

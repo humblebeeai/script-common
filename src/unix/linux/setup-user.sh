@@ -42,6 +42,9 @@ fi
 ## --- Variables --- ##
 PRIMARY_GID=${PRIMARY_GID:-11000}
 USERNAME=${USERNAME:-}
+if [ -z "${USERNAME}" ] && [ -n "${_SUDO}" ]; then
+	USERNAME=$(id -un)
+fi
 PASSWORD=${PASSWORD:-}
 IS_HASHED=${IS_HASHED:-false}
 WITH_SUDO=${WITH_SUDO:-false}
@@ -110,7 +113,7 @@ main()
 				}
 		fi
 
-		_arg_sudo=""
+		local _arg_sudo=""
 		if [ "${WITH_SUDO}" = true ]; then
 			_arg_sudo="-s"
 		fi

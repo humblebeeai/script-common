@@ -89,6 +89,12 @@ main()
 			exit 2
 		}
 
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/setup-user.sh | \
+		bash || {
+			echo "[ERROR]: Failed to setup current user!"
+			exit 2
+		}
+
 	echo -e "[OK]: Done.\n"
 }
 

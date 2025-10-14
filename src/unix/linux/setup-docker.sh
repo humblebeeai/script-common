@@ -112,13 +112,13 @@ main()
 	else
 		echo "${_log_opts_json}" | jq '.' | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 	fi
-	${_SUDO} systemctl restart docker.service || exit 2
+	${_SUDO} systemctl restart docker || exit 2
 	echo -e "[OK]: Done.\n"
 
 	if [ -n "${DOCKER_DATA_DIR}" ]; then
 		echo "[INFO]: Changing docker data directory to '${DOCKER_DATA_DIR}'..."
 		echo "[INFO]: Stopping docker service..."
-		${_SUDO} systemctl stop docker.service || exit 2
+		${_SUDO} systemctl stop docker || exit 2
 		echo -e "[OK]: Done.\n"
 
 		${_SUDO} mkdir -vp "${DOCKER_DATA_DIR}" || exit 2
@@ -135,6 +135,7 @@ main()
 			echo -e "[OK]: Done.\n"
 
 			echo "[INFO]: Backing up old docker data directory from '${_old_docker_data_dir}' to '${_old_docker_data_dir}.bak'..."
+			${_SUDO} rm -rf "${_old_docker_data_dir}.bak" || exit 2
 			${_SUDO} mv -f "${_old_docker_data_dir}" "${_old_docker_data_dir}.bak" || exit 2
 			echo -e "[OK]: Done.\n"
 
@@ -148,7 +149,7 @@ main()
 		fi
 
 		echo "[INFO]: Starting docker service..."
-		${_SUDO} systemctl start docker.service || exit 2
+		${_SUDO} systemctl start docker || exit 2
 		echo -e "[OK]: Done.\n"
 
 		echo "[INFO]: Removing backup files..."

@@ -78,11 +78,13 @@ main()
 
 	echo "[INFO]: Setting up docker..."
 
-	echo "[INFO]: Installing docker..."
-	curl -fsSL https://get.docker.com -o get-docker.sh || exit 2
-	DRY_RUN=1 ${_SUDO} sh get-docker.sh || exit 2
-	rm -vrf get-docker.sh || exit 2
-	echo -e "[OK]: Done.\n"
+	if ! command -v docker >/dev/null 2>&1; then
+		echo "[INFO]: Installing docker..."
+		curl -fsSL https://get.docker.com -o get-docker.sh || exit 2
+		DRY_RUN=1 ${_SUDO} sh get-docker.sh || exit 2
+		rm -vrf get-docker.sh || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 
 	echo "[INFO]: Creating 'docker' group and adding user to it..."
 	${_SUDO} groupadd docker || true
@@ -100,12 +102,12 @@ main()
 	local _docker_config_path="/etc/docker/daemon.json"
 	local _log_opts_json='{ "log-opts": { "max-size": "10m", "max-file": "10" } }'
 	if [ -f "${_docker_config_path}" ]; then
-		if grep -q '"log-opts"' "${_docker_config_path}"; then
-			echo "[WARN]: 'log-opts' already exists in '${_docker_config_path}', skipping...!"
-		else
+		if ! grep -q '"log-opts"' "${_docker_config_path}"; then
 			${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 			${_SUDO} jq ". + ${_log_opts_json}" "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
+		else
+			echo "[WARN]: 'log-opts' already exists in '${_docker_config_path}', skipping...!"
 		fi
 	else
 		echo "${_log_opts_json}" | jq '.' | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
@@ -113,19 +115,23 @@ main()
 	${_SUDO} systemctl restart docker.service || exit 2
 	echo -e "[OK]: Done.\n"
 
-	# if [ -n "${DOCKER_DATA_DIR}" ]; then
-	# 	echo "[INFO]: Changing docker data directory to '${DOCKER_DATA_DIR}'..."
-	# 	${_SUDO} systemctl stop docker.service || exit 2
-	# 	if [ ! -d "${DOCKER_DATA_DIR}" ]; then
-	# 		${_SUDO} mkdir -vp "${DOCKER_DATA_DIR}" || exit 2
-	# 	fi
-	# 	${_SUDO} rsync -a /var/lib/docker/ "${DOCKER_DATA_DIR}" || exit 2
-	# 	${_SUDO} mv /var/lib/docker /var/lib/docker.bak || exit 2
+	if [ -n "${DOCKER_DATA_DIR}" ]; then
+		echo "[INFO]: Changing docker data directory to '${DOCKER_DATA_DIR}'..."
+		${_SUDO} systemctl stop docker.service || exit 2
+		${_SUDO} mkdir -vp "${DOCKER_DATA_DIR}" || exit 2
+		${_SUDO} rsync -a /var/lib/docker/ "${DOCKER_DATA_DIR}" || exit 2
+		${_SUDO} mv /var/lib/docker /var/lib/docker.bak || exit 2
 
-	# 	${_SUDO} jq '. + { "data-root": "'"${DOCKER_DATA_DIR}"'" }' /etc/docker/daemon.json | ${_SUDO} tee /etc/docker/daemon.json.tmp > /dev/null || exit 2
-	# 	${_SUDO} systemctl start docker.service || exit 2
-	# 	echo -e "[OK]: Done.\n"
-	# fi
+		if ! grep -q '"data-root"' "${_docker_config_path}"; then
+			${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
+			${_SUDO} jq '. + { "data-root": "'"${DOCKER_DATA_DIR}"'" }' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
+			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
+		else
+			echo "[WARN]: 'data-root' already exists in '${_docker_config_path}', skipping...!"
+		fi
+		${_SUDO} systemctl start docker.service || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 
 	echo -e "[OK]: Done.\n"
 }

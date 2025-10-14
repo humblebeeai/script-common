@@ -83,7 +83,7 @@ main()
 	fi
 	curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${_nvim_arch}.tar.gz"
 	${_SUDO} rm -rf "/opt/nvim-linux-${_nvim_arch}"
-	${_SUDO} tar -C "/opt -xzf nvim-linux-${_nvim_arch}.tar.gz"
+	${_SUDO} tar -C /opt -xzf "nvim-linux-${_nvim_arch}.tar.gz"
 	${_SUDO} ln -sf "/opt/nvim-linux-${_nvim_arch}/bin/nvim" /usr/local/bin/nvim
 	rm -vf "nvim-linux-${_nvim_arch}.tar.gz"
 	echo -e "[OK]: Done.\n"

@@ -29,9 +29,6 @@ if [ "${_OS}" = "Linux" ]; then
 				_INSTALL_NVIDIA_CONTAINER=true
 			fi
 		fi
-	else
-		echo "[ERROR]: Unable to determine Linux distro!"
-		exit 1
 	fi
 else
 	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' is supported!"

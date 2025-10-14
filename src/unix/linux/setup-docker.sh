@@ -126,7 +126,7 @@ main()
 			_old_docker_data_dir="$(jq -r '.["data-root"]' "${_docker_config_path}")"
 		fi
 		echo "[INFO]: Copying old docker data from '${_old_docker_data_dir}' to '${DOCKER_DATA_DIR}'..."
-		${_SUDO} rsync -a "${_old_docker_data_dir}" "${DOCKER_DATA_DIR}" || exit 2
+		${_SUDO} rsync -a "${_old_docker_data_dir}/" "${DOCKER_DATA_DIR}" || exit 2
 		echo -e "[OK]: Done.\n"
 
 		echo "[INFO]: Backing up old docker data directory..."

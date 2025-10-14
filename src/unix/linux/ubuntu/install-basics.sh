@@ -18,7 +18,6 @@ fi
 _OS="$(uname)"
 _OS_DISTRO=""
 if [ "${_OS}" = "Linux" ]; then
-	_OS_DISTRO=""
 	if [ -r /etc/os-release ]; then
 		# shellcheck disable=SC1091
 		_OS_DISTRO="$(source /etc/os-release && echo "${ID}")"

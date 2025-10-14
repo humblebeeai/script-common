@@ -46,6 +46,7 @@ fi
 
 
 ## --- Variables --- ##
+CLEAN_CACHE=${CLEAN_CACHE:-true}
 APT_UPGRADE=${APT_UPGRADE:-true}
 ## --- Variables --- ##
 
@@ -58,12 +59,15 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
+				-c | --disable-clean-cache)
+					CLEAN_CACHE=false
+					shift;;
 				-u | --disable-upgrade)
 					APT_UPGRADE=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -u | --disable-upgrade"
+					echo "[INFO]: USAGE: ${0}  -c, --disable-clean-cache | -u, --disable-upgrade"
 					exit 1;;
 			esac
 		done
@@ -71,23 +75,25 @@ main()
 	## --- Menu arguments --- ##
 
 
-	echo "[INFO]: Removing and cleaning up apt cache..."
-	${_SUDO} apt clean || exit 2
-	${_SUDO} rm -vrf /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* || exit 2
-	echo -e "[OK]: Done.\n"
+	if [ "${CLEAN_CACHE}" = true ]; then
+		echo "[INFO]: Removing and cleaning up apt cache..."
+		${_SUDO} apt-get clean || exit 2
+		${_SUDO} rm -vrf /var/lib/apt/lists/* /var/cache/apt/archives/* /tmp/* || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 
 	echo "[INFO]: Updating package lists..."
-	${_SUDO} apt update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
+	${_SUDO} apt-get update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
 	echo -e "[OK]: Done.\n"
 
 	if [ "${APT_UPGRADE}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		${_SUDO} apt upgrade -y || exit 2
+		${_SUDO} apt-get upgrade -y || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 
 	echo "[INFO]: Installing basic packages..."
-	${_SUDO} apt install -y \
+	${_SUDO} apt-get install -y \
 		sudo \
 		adduser \
 		ca-certificates \
@@ -121,7 +127,7 @@ main()
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Autoremoving unused packages..."
-	${_SUDO} apt autoremove -y || exit 2
+	${_SUDO} apt-get autoremove -y || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

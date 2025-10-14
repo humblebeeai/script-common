@@ -126,8 +126,8 @@ main()
 		${_SUDO} mkdir -p -m 755 /etc/apt/sources.list.d && \
 		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
 			${_SUDO} tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
-		${_SUDO} apt update && \
-		${_SUDO} apt install gh -y
+		${_SUDO} apt-get update && \
+		${_SUDO} apt-get install gh -y
 	echo -e "[OK]: Done.\n"
 
 	echo -e "[OK]: Done.\n"

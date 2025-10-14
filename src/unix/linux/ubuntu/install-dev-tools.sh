@@ -76,6 +76,14 @@ main()
 	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
+	echo "[INFO]: Installing 'duf'..."
+	local _duf_version
+	_duf_version=$(curl -s https://api.github.com/repos/muesli/duf/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	wget "https://github.com/muesli/duf/releases/download/v${_duf_version}/duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} dpkg -i "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	rm -vf "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	echo -e "[OK]: Done.\n"
+
 	echo "[INFO]: Installing 'neovim'..."
 	local _nvim_arch="x86_64"
 	if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then

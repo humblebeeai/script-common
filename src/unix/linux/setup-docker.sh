@@ -108,7 +108,7 @@ main()
 			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
 		fi
 	else
-		echo "${_log_opts_json}" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
+		echo "${_log_opts_json}" | jq '.' | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 	fi
 	${_SUDO} systemctl restart docker.service || exit 2
 	echo -e "[OK]: Done.\n"

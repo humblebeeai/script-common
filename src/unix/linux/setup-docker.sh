@@ -119,25 +119,41 @@ main()
 		echo "[INFO]: Changing docker data directory to '${DOCKER_DATA_DIR}'..."
 		${_SUDO} systemctl stop docker.service docker.socket containerd.service || exit 2
 		${_SUDO} mkdir -vp "${DOCKER_DATA_DIR}" || exit 2
-		${_SUDO} rsync -a /var/lib/docker/ "${DOCKER_DATA_DIR}" || exit 2
-		${_SUDO} mv /var/lib/docker /var/lib/docker.bak || exit 2
-
 		${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
-		if ! grep -q '"data-root"' "${_docker_config_path}"; then
-			${_SUDO} jq '. + { "data-root": "'"${DOCKER_DATA_DIR}"'" }' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
-		else
-			${_SUDO} jq '.["data-root"] = "'"${DOCKER_DATA_DIR}"'"' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
-		fi
-		${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
 
+		local _old_docker_data_dir="/var/lib/docker"
+		if grep -q '"data-root"' "${_docker_config_path}"; then
+			_old_docker_data_dir="$(jq -r '.["data-root"]' "${_docker_config_path}")"
+		fi
+		echo "[INFO]: Copying old docker data from '${_old_docker_data_dir}' to '${DOCKER_DATA_DIR}'..."
+		${_SUDO} rsync -a "${_old_docker_data_dir}" "${DOCKER_DATA_DIR}" || exit 2
+		echo -e "[OK]: Done.\n"
+
+		echo "[INFO]: Backing up old docker data directory..."
+		${_SUDO} mv "${_old_docker_data_dir}" "${_old_docker_data_dir}.bak" || exit 2
+		echo -e "[OK]: Done.\n"
+
+		echo "[INFO]: Updating docker config file '${_docker_config_path}'..."
+		if grep -q '"data-root"' "${_docker_config_path}"; then
+			${_SUDO} jq '.["data-root"] = "'"${DOCKER_DATA_DIR}"'"' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
+		else
+			${_SUDO} jq '. + { "data-root": "'"${DOCKER_DATA_DIR}"'" }' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
+		fi
+		echo -e "[OK]: Done.\n"
+
+		echo "[INFO]: Restarting docker services..."
 		${_SUDO} systemctl start containerd.service docker.socket docker.service || exit 2
-		${_SUDO} rm -rf /var/lib/docker.bak || exit 2
+		echo -e "[OK]: Done.\n"
+
+		echo "[INFO]: Removing backup files..."
+		${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
+		${_SUDO} rm -vf "${_old_docker_data_dir}.bak" || exit 2
+		echo -e "[OK]: Done.\n"
 
 		echo -e "[OK]: Done.\n"
 	fi
 
 	${_SUDO} docker info || exit 2
-	${_SUDO} docker version || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

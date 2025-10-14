@@ -98,7 +98,7 @@ main()
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Installing 'yq'..."
-	${_SUDO} rm -vf /usr/local/bin/yq || true
+	${_SUDO} rm -vf /usr/local/bin/yq || exit 2
 	${_SUDO} wget "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_$(dpkg --print-architecture)" -O /usr/local/bin/yq || exit 2
 	${_SUDO} chmod +x /usr/local/bin/yq || exit 2
 	echo -e "[OK]: Done.\n"
@@ -109,7 +109,7 @@ main()
 		_nvim_arch="arm64"
 	fi
 	wget "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${_nvim_arch}.tar.gz" || exit 2
-	${_SUDO} rm -rf "/opt/nvim-linux-${_nvim_arch}" || true
+	${_SUDO} rm -rf "/opt/nvim-linux-${_nvim_arch}" || exit 2
 	${_SUDO} tar -C /opt -xzf "nvim-linux-${_nvim_arch}.tar.gz" || exit 2
 	${_SUDO} ln -sf "/opt/nvim-linux-${_nvim_arch}/bin/nvim" /usr/local/bin/nvim || exit 2
 	rm -vf "nvim-linux-${_nvim_arch}.tar.gz"

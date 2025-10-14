@@ -117,22 +117,27 @@ main()
 
 	if [ -n "${DOCKER_DATA_DIR}" ]; then
 		echo "[INFO]: Changing docker data directory to '${DOCKER_DATA_DIR}'..."
-		${_SUDO} systemctl stop docker.service || exit 2
+		${_SUDO} systemctl stop docker.service docker.socket containerd.service || exit 2
 		${_SUDO} mkdir -vp "${DOCKER_DATA_DIR}" || exit 2
 		${_SUDO} rsync -a /var/lib/docker/ "${DOCKER_DATA_DIR}" || exit 2
 		${_SUDO} mv /var/lib/docker /var/lib/docker.bak || exit 2
 
+		${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 		if ! grep -q '"data-root"' "${_docker_config_path}"; then
-			${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 			${_SUDO} jq '. + { "data-root": "'"${DOCKER_DATA_DIR}"'" }' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
-			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
 		else
-			echo "[WARN]: 'data-root' already exists in '${_docker_config_path}', skipping...!"
+			${_SUDO} jq '.["data-root"] = "'"${DOCKER_DATA_DIR}"'"' "${_docker_config_path}.bak" | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 		fi
-		${_SUDO} systemctl start docker.service || exit 2
+		${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
+
+		${_SUDO} systemctl start containerd.service docker.socket docker.service || exit 2
+		${_SUDO} rm -rf /var/lib/docker.bak || exit 2
+
 		echo -e "[OK]: Done.\n"
 	fi
 
+	${_SUDO} docker info || exit 2
+	${_SUDO} docker version || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

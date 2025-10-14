@@ -60,7 +60,7 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
-				-f | --disable-bad-proxy-fix)
+				-b | --disable-bad-proxy-fix)
 					ADD_BAD_PROXY_FIX=false
 					shift;;
 				-c | --disable-clean-cache)
@@ -71,7 +71,7 @@ main()
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -f, --disable-bad-proxy-fix | -c, --disable-clean-cache | -u, --disable-upgrade"
+					echo "[INFO]: USAGE: ${0}  -b, --disable-bad-proxy-fix | -c, --disable-clean-cache | -u, --disable-upgrade"
 					exit 1;;
 			esac
 		done

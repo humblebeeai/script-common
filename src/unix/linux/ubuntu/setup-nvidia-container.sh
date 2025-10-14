@@ -88,7 +88,6 @@ main()
 		libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION} || exit 2
 
 	${_SUDO} nvidia-ctk runtime configure --runtime=docker || exit 2
-	${_SUDO} systemctl restart docker || exit 2
 
 	local _docker_config_path="/etc/docker/daemon.json"
 	local _runtime_json='{"default-runtime": "nvidia"}'
@@ -96,11 +95,13 @@ main()
 		${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 		${_SUDO} jq ". + ${_runtime_json}" "${_docker_config_path}.bak" | \
 			${_SUDO} tee "${_docker_config_path}" >/dev/null || exit 2
-		${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
+	else
+		echo "[WARN]: 'default-runtime' already set in '${_docker_config_path}', skipping...!"
 	fi
 
 	${_SUDO} systemctl daemon-reload || exit 2
 	${_SUDO} systemctl restart docker || exit 2
+	${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

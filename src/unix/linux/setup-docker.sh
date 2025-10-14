@@ -116,23 +116,30 @@ main()
 			}
 	fi
 
-	echo "[INFO]: Updating docker log rotation settings..."
 	local _docker_config_path="/etc/docker/daemon.json"
 	local _log_opts_json='{"log-opts": {"max-size": "10m", "max-file": "10"}}'
-	if [ -f "${_docker_config_path}" ]; then
+	local _is_config_updated=false
+	if [ ! -f "${_docker_config_path}" ]; then
+		echo "[INFO]: Adding docker log rotation settings..."
+		echo "${_log_opts_json}" | jq '.' | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
+		_is_config_updated=true
+	else
 		if ! grep -q '"log-opts"' "${_docker_config_path}"; then
+			echo "[INFO]: Adding docker log rotation settings..."
 			${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 			${_SUDO} jq ". + ${_log_opts_json}" "${_docker_config_path}.bak" | \
 				${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
+			_is_config_updated=true
 		else
 			echo "[WARN]: 'log-opts' already exists in '${_docker_config_path}', skipping...!"
 		fi
-	else
-		echo "${_log_opts_json}" | jq '.' | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 	fi
-	${_SUDO} systemctl restart docker || exit 2
-	echo -e "[OK]: Done.\n"
+
+	if [ "${_is_config_updated}" = true ]; then
+		${_SUDO} systemctl restart docker || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 
 	if [ -n "${DOCKER_DATA_DIR}" ]; then
 		local _old_docker_data_dir="/var/lib/docker"

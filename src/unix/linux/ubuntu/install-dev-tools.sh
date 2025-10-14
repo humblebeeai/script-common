@@ -62,7 +62,7 @@ main()
 
 	echo "[INFO]: Installing 'lsd'..."
 	local _lsd_version
-	_lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4)
+	_lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/lsd-rs/lsd/releases/download/v${_lsd_version}/lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} dpkg -i "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
@@ -70,7 +70,7 @@ main()
 
 	echo "[INFO]: Installing 'bat'..."
 	local _bat_version
-	_bat_version=$(curl -s https://api.github.com/sharkdp/bat/lsd/releases/latest | grep "tag_name" | cut -d\" -f4)
+	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} dpkg -i "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2

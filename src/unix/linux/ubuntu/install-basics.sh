@@ -116,6 +116,7 @@ main()
 		wget \
 		curl \
 		ssh \
+		git \
 		git-lfs \
 		rsync \
 		unzip \

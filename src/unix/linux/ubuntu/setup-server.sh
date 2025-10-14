@@ -46,18 +46,12 @@ if ! command -v curl >/dev/null 2>&1; then
 	exit 1
 fi
 
-if ! command -v wget >/dev/null 2>&1; then
-	echo "[ERROR]: 'wget' not found or not installed!"
-	exit 1
-fi
-
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
 	_SUDO=""
 fi
 ## --- Base --- ##
-
 
 
 ## --- Main --- ##
@@ -86,12 +80,6 @@ main()
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/setup-docker.sh | \
 		bash || {
 			echo "[ERROR]: Failed to setup Docker!"
-			exit 2
-		}
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-group.sh | \
-		bash || {
-			echo "[ERROR]: Failed to create group!"
 			exit 2
 		}
 

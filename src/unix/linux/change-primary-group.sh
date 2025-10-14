@@ -104,7 +104,7 @@ main()
 
 
 	if getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		echo "[INFO]: Group with '${PRIMARY_GID}' GID already exists. Skipping group creation..."
+		echo "[INFO]: Group with '${PRIMARY_GID}' GID already exists, skipping group creation..."
 	else
 		echo "[INFO]: Creating new group '${PRIMARY_GROUP}' with GID '${PRIMARY_GID}'..."
 		${_SUDO} groupadd -f -g "${PRIMARY_GID}" "${PRIMARY_GROUP}" || exit 2
@@ -118,12 +118,12 @@ main()
 		for _user_home_dir in /home/*; do
 			_username=$(basename "${_user_home_dir}")
 			if ! id "${_username}" >/dev/null 2>&1; then
-				echo "[WARN]: Not found '${_username}' user in the system but found home directory '${_user_home_dir}'! Skipping..."
+				echo "[WARN]: Not found '${_username}' user in the system but found home directory '${_user_home_dir}', skipping...!"
 				continue
 			fi
 
 			if [ "$(id -u "${_username}")" -lt 1000 ]; then
-				echo "[WARN]: '${_username}' user is a system user (UID < 1000)! Skipping..."
+				echo "[WARN]: '${_username}' user is a system user (UID < 1000), skipping...!"
 				continue
 			fi
 
@@ -134,12 +134,12 @@ main()
 	USERNAMES=$(echo "${USERNAMES}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
 	for _username in ${USERNAMES}; do
 		if ! id "${_username}" >/dev/null 2>&1; then
-			echo "[WARN]: User '${_username}' does not exist! Skipping..."
+			echo "[WARN]: User '${_username}' does not exist, skipping...!"
 			continue
 		fi
 
 		if [ "$(id -g "${_username}")" -eq "${PRIMARY_GID}" ]; then
-			echo "[INFO]: '${_username}' user's primary group is already set to '${PRIMARY_GID}'. Skipping..."
+			echo "[INFO]: '${_username}' user's primary group is already set to '${PRIMARY_GID}', skipping..."
 			continue
 		fi
 

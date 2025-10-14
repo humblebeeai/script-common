@@ -69,12 +69,12 @@ main()
 	local _username
 	for _username in ${USERNAMES}; do
 		if ! id "${_username}" >/dev/null 2>&1; then
-			echo "[WARN]: User '${_username}' does not exist! Skipping..."
+			echo "[WARN]: User '${_username}' does not exist, skipping...!"
 			continue
 		fi
 
 		if id -nG "${_username}" | grep -qw "sudo"; then
-			echo "[WARN]: User '${_username}' is already in 'sudo' group! Skipping..."
+			echo "[WARN]: User '${_username}' is already in 'sudo' group, skipping...!"
 			continue
 		fi
 

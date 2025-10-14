@@ -41,16 +41,6 @@ if ! command -v dpkg-reconfigure >/dev/null 2>&1; then
 	exit 1
 fi
 
-if ! command -v update-locale >/dev/null 2>&1; then
-	echo "[ERROR]: Not found 'update-locale' command, please install 'locales' package!"
-	exit 1
-fi
-
-if ! command -v timedatectl >/dev/null 2>&1; then
-	echo "[ERROR]: Not found 'timedatectl' command, please install 'tzdata' package!"
-	exit 1
-fi
-
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -84,8 +74,18 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+	if ! command -v update-locale >/dev/null 2>&1; then
+		${_SUDO} apt-get update || exit 2
+		${_SUDO} apt-get install -y locales || exit 2
+	fi
+
+	if ! command -v timedatectl >/dev/null 2>&1; then
+		${_SUDO} apt-get update || exit 2
+		${_SUDO} apt-get install -y tzdata || exit 2
+	fi
+
 	if [ -z "${TZ_NAME}" ]; then
-		echo "[ERROR]: Timezone name is empty!"
+		echo "[ERROR]: Timezone is empty!"
 		exit 1
 	fi
 

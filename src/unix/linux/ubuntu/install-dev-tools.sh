@@ -74,7 +74,7 @@ main()
 	if ! command -v yq >/dev/null 2>&1; then
 		echo "[INFO]: Installing 'yq'..."
 		${_SUDO} wget "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_$(dpkg --print-architecture)" -O /usr/local/bin/yq || exit 2
-		chmod +x /usr/local/bin/yq || exit 2
+		${_SUDO} chmod +x /usr/local/bin/yq || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 

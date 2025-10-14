@@ -106,6 +106,7 @@ main()
 		adduser \
 		ca-certificates \
 		build-essential \
+		apt-utils \
 		cmake \
 		tzdata \
 		locales \

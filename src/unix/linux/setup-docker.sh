@@ -88,6 +88,7 @@ main()
 
 
 	echo "[INFO]: Setting up docker..."
+
 	if ! command -v docker >/dev/null 2>&1; then
 		echo "[INFO]: Installing docker..."
 		curl -fsSL https://get.docker.com -o get-docker.sh || exit 2
@@ -120,12 +121,12 @@ main()
 	local _log_opts_json='{"log-opts": {"max-size": "10m", "max-file": "10"}}'
 	local _is_config_updated=false
 	if [ ! -f "${_docker_config_path}" ]; then
-		echo "[INFO]: Adding docker log rotation settings..."
+		echo "[INFO]: Creating docker config file with log rotation settings..."
 		echo "${_log_opts_json}" | jq '.' | ${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 		_is_config_updated=true
 	else
 		if ! grep -q '"log-opts"' "${_docker_config_path}"; then
-			echo "[INFO]: Adding docker log rotation settings..."
+			echo "[INFO]: Adding log rotation settings to docker config..."
 			${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 			${_SUDO} jq ". + ${_log_opts_json}" "${_docker_config_path}.bak" | \
 				${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
@@ -164,7 +165,7 @@ main()
 			${_SUDO} mv -f "${_old_docker_data_dir}" "${_old_docker_data_dir}.bak" || exit 2
 			echo -e "[OK]: Done.\n"
 
-			echo "[INFO]: Updating docker config file '${_docker_config_path}'..."
+			echo "[INFO]: Updating 'data-root' in docker config..."
 			${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 			if grep -q '"data-root"' "${_docker_config_path}"; then
 				${_SUDO} jq '.["data-root"] = "'"${DOCKER_DATA_DIR}"'"' "${_docker_config_path}.bak" | \
@@ -173,6 +174,7 @@ main()
 				${_SUDO} jq '. + { "data-root": "'"${DOCKER_DATA_DIR}"'" }' "${_docker_config_path}.bak" | \
 					${_SUDO} tee "${_docker_config_path}" > /dev/null || exit 2
 			fi
+			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
 			echo -e "[OK]: Done.\n"
 
 			echo "[INFO]: Starting docker service..."
@@ -180,7 +182,6 @@ main()
 			echo -e "[OK]: Done.\n"
 
 			echo "[INFO]: Removing backup files..."
-			${_SUDO} rm -vf "${_docker_config_path}.bak" || exit 2
 			${_SUDO} rm -rf "${_old_docker_data_dir}.bak" || exit 2
 			echo -e "[OK]: Done.\n"
 

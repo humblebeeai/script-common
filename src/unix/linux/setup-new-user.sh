@@ -144,7 +144,7 @@ main()
 		exit 1
 	}
 
-	${_SUDO} su - "${USERNAME}" -c "curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/install-ohmyzsh.sh | bash" || {
+	${_SUDO} su - "${USERNAME}" -c "curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-ohmyzsh.sh | bash" || {
 		echo "[ERROR]: Failed to install oh-my-zsh for user '${USERNAME}'!"
 		exit 1
 	}

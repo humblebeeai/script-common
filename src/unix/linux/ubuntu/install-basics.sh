@@ -46,6 +46,7 @@ fi
 
 
 ## --- Variables --- ##
+ADD_BAD_PROXY_FIX=${ADD_BAD_PROXY_FIX:-true}
 CLEAN_CACHE=${CLEAN_CACHE:-true}
 APT_UPGRADE=${APT_UPGRADE:-true}
 ## --- Variables --- ##
@@ -59,6 +60,9 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
+				-f | --disable-bad-proxy-fix)
+					ADD_BAD_PROXY_FIX=false
+					shift;;
 				-c | --disable-clean-cache)
 					CLEAN_CACHE=false
 					shift;;
@@ -67,13 +71,18 @@ main()
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -c, --disable-clean-cache | -u, --disable-upgrade"
+					echo "[INFO]: USAGE: ${0}  -f, --disable-bad-proxy-fix | -c, --disable-clean-cache | -u, --disable-upgrade"
 					exit 1;;
 			esac
 		done
 	fi
 	## --- Menu arguments --- ##
 
+	if [ "${ADD_BAD_PROXY_FIX}" = true ]; then
+		echo "Acquire::http::Pipeline-Depth 0;" | ${_SUDO} tee /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
+		echo "Acquire::http::No-Cache true;" | ${_SUDO} tee -a /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
+		echo "Acquire::BrokenProxy    true;" | ${_SUDO} tee -a /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
+	fi
 
 	if [ "${CLEAN_CACHE}" = true ]; then
 		echo "[INFO]: Removing and cleaning up apt cache..."

@@ -116,7 +116,7 @@ main()
 		less \
 		watch \
 		watchman \
-		bash \
+		fzf \
 		zsh || exit 2
 	echo -e "[OK]: Done.\n"
 

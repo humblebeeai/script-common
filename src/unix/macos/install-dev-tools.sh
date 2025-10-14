@@ -37,14 +37,6 @@ main()
 	brew update || exit 2
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Installing 'lsd'..."
-	brew install lsd || exit 2
-	echo -e "[OK]: Done.\n"
-
-	echo "[INFO]: Installing 'bat'..."
-	brew install bat || exit 2
-	echo -e "[OK]: Done.\n"
-
 	echo "[INFO]: Installing 'neovim'..."
 	brew install neovim || exit 2
 	echo -e "[OK]: Done.\n"

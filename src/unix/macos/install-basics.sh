@@ -53,15 +53,19 @@ main()
 		nano \
 		tmux \
 		jq \
-		yq \
 		htop \
 		ncdu \
 		tree \
 		less \
 		watch \
 		watchman \
-		bash \
-		duf || exit 2
+		fzf \
+		yq \
+		fd \
+		lsd \
+		bat \
+		duf \
+		bash || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Cleaning up..."

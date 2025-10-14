@@ -130,7 +130,7 @@ main()
 		echo -e "[OK]: Done.\n"
 
 		echo "[INFO]: Backing up old docker data directory..."
-		${_SUDO} mv "${_old_docker_data_dir}" "${_old_docker_data_dir}.bak" || exit 2
+		${_SUDO} mv -f "${_old_docker_data_dir}" "${_old_docker_data_dir}.bak" || exit 2
 		echo -e "[OK]: Done.\n"
 
 		echo "[INFO]: Updating docker config file '${_docker_config_path}'..."

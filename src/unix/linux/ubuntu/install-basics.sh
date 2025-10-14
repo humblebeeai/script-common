@@ -115,6 +115,7 @@ main()
 		tree \
 		less \
 		watch \
+		watchman \
 		bash \
 		zsh || exit 2
 	echo -e "[OK]: Done.\n"

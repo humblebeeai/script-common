@@ -22,9 +22,8 @@ if [ "${_OS}" != "Darwin" ]; then
 fi
 
 if ! command -v brew >/dev/null 2>&1; then
-	echo "[WARN]: Not found 'brew' command, installing Homebrew..."
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
-	echo -e "[OK]: Done.\n"
+	echo "[ERROR]: Not found 'brew' command, install Homebrew first!"
+	exit 1
 fi
 ## --- Base --- ##
 
@@ -32,40 +31,32 @@ fi
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Updating Homebrew and upgrading existing packages..."
+	echo "[INFO]: Installing development tools..."
+
+	echo "[INFO]: Updating Homebrew package lists..."
 	brew update || exit 2
-	brew upgrade || exit 2
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Installing basic packages..."
-	brew install \
-		coreutils \
-		make \
-		cmake \
-		wget \
-		curl \
-		git \
-		git-lfs \
-		rsync \
-		unzip \
-		zip \
-		vim \
-		nano \
-		tmux \
-		jq \
-		yq \
-		htop \
-		ncdu \
-		tree \
-		less \
-		watch \
-		watchman \
-		bash \
-		duf || exit 2
+	echo "[INFO]: Installing 'lsd'..."
+	brew install lsd || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing 'bat'..."
+	brew install bat || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing 'neovim'..."
+	brew install neovim || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing 'gh' (GitHub CLI)..."
+	brew install gh || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Cleaning up..."
 	brew cleanup --prune=all || exit 2
+	echo -e "[OK]: Done.\n"
+
 	echo -e "[OK]: Done.\n"
 }
 

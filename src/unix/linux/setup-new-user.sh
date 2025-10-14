@@ -31,11 +31,6 @@ if ! command -v curl >/dev/null 2>&1; then
 	exit 1
 fi
 
-if ! command -v openssl >/dev/null 2>&1; then
-	echo "[ERROR]: 'openssl' command not found or not installed!"
-	exit 1
-fi
-
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -131,14 +126,13 @@ main()
 			IS_HASHED=false
 		fi
 
-		if [ "${IS_HASHED}" = false ]; then
-			echo "[INFO]: Hashing password..."
-			PASSWORD=$(echo "${PASSWORD}" | openssl passwd -6 -stdin)
-			echo -e "[OK]: Done.\n"
+		local _arg_is_plain="-i"
+		if [ "${IS_HASHED}" = true ]; then
+			_arg_is_plain=""
 		fi
 
 		curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-password.sh | \
-			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" || {
+			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_is_plain} || {
 				echo "[ERROR]: Failed to set password for user '${USERNAME}'!"
 				exit 1
 			}

@@ -117,7 +117,10 @@ main()
 
 	if [ -n "${DOCKER_DATA_DIR}" ]; then
 		echo "[INFO]: Changing docker data directory to '${DOCKER_DATA_DIR}'..."
-		${_SUDO} systemctl stop docker.service docker.socket containerd.service || exit 2
+		echo "[INFO]: Stopping docker service..."
+		${_SUDO} systemctl stop docker.service || exit 2
+		echo -e "[OK]: Done.\n"
+
 		${_SUDO} mkdir -vp "${DOCKER_DATA_DIR}" || exit 2
 		${_SUDO} cp -v "${_docker_config_path}" "${_docker_config_path}.bak" || exit 2
 
@@ -131,7 +134,7 @@ main()
 			${_SUDO} rsync -a "${_old_docker_data_dir}/" "${DOCKER_DATA_DIR}" || exit 2
 			echo -e "[OK]: Done.\n"
 
-			echo "[INFO]: Backing up old docker data directory..."
+			echo "[INFO]: Backing up old docker data directory from '${_old_docker_data_dir}' to '${_old_docker_data_dir}.bak'..."
 			${_SUDO} mv -f "${_old_docker_data_dir}" "${_old_docker_data_dir}.bak" || exit 2
 			echo -e "[OK]: Done.\n"
 
@@ -144,8 +147,8 @@ main()
 			echo -e "[OK]: Done.\n"
 		fi
 
-		echo "[INFO]: Restarting docker services..."
-		${_SUDO} systemctl start containerd.service docker.socket docker.service || exit 2
+		echo "[INFO]: Starting docker service..."
+		${_SUDO} systemctl start docker.service || exit 2
 		echo -e "[OK]: Done.\n"
 
 		echo "[INFO]: Removing backup files..."

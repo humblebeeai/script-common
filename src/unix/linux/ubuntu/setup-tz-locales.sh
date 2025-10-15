@@ -95,7 +95,6 @@ main()
 	${_SUDO} dpkg-reconfigure -f noninteractive tzdata || exit 2
 
 	timedatectl || exit 2
-	date || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Setting up locales..."

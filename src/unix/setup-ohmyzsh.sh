@@ -185,7 +185,7 @@ main()
 		echo -e "[OK]: Done.\n"
 	fi
 
-	echo -e "[OK]: 'Oh My Zsh' setup completed successfully!\n"
+	echo -e "[OK]: Done.\n"
 }
 
 main "${@:-}"

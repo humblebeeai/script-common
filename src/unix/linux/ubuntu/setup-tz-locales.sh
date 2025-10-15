@@ -36,8 +36,8 @@ else
 	exit 1
 fi
 
-if ! command -v dpkg-reconfigure >/dev/null 2>&1; then
-	echo "[ERROR]: Not found 'dpkg-reconfigure' command, please install 'dpkg' package!"
+if ! command -v apt >/dev/null 2>&1; then
+	echo "[ERROR]: Not found 'apt' command, please check your .bashrc, system configs or 'PATH' environment variable!"
 	exit 1
 fi
 
@@ -74,6 +74,12 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+
+	if ! command -v dpkg-reconfigure >/dev/null 2>&1; then
+		${_SUDO} apt-get update || exit 2
+		${_SUDO} apt-get install -y debconf || exit 2
+	fi
+
 	if ! command -v update-locale >/dev/null 2>&1; then
 		${_SUDO} apt-get update || exit 2
 		${_SUDO} apt-get install -y locales || exit 2
@@ -81,7 +87,7 @@ main()
 
 	if ! command -v timedatectl >/dev/null 2>&1; then
 		${_SUDO} apt-get update || exit 2
-		${_SUDO} apt-get install -y tzdata || exit 2
+		${_SUDO} apt-get install -y tzdata systemd || exit 2
 	fi
 
 	if [ -z "${TZ_NAME}" ]; then

@@ -104,14 +104,16 @@ main()
 		exit 1
 	fi
 
+
+	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-group.sh | \
+			bash -s -- -g="${PRIMARY_GID}" || {
+				echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!"
+				exit 2
+			}
+	fi
+
 	if ! id "${USERNAME}" >/dev/null 2>&1; then
-		if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-			curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/create-group.sh | \
-				bash -s -- -g="${PRIMARY_GID}" || {
-					echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!"
-					exit 2
-				}
-		fi
 
 		local _arg_sudo=""
 		if [ "${WITH_SUDO}" = true ]; then

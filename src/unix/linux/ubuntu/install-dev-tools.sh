@@ -41,6 +41,11 @@ if [ "$(uname -m)" != "x86_64" ] && [ "$(uname -m)" != "aarch64" ] && [ "$(uname
 	exit 1
 fi
 
+if ! command -v dpkg >/dev/null 2>&1; then
+	echo "[ERROR]: Not found 'dpkg' command, please check your .bashrc, system configs or 'PATH' environment variable!"
+	exit 1
+fi
+
 if ! command -v curl >/dev/null 2>&1; then
 	echo "[ERROR]: 'curl' not found or not installed!"
 	exit 1

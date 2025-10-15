@@ -36,6 +36,11 @@ else
 	exit 1
 fi
 
+if ! command -v apt >/dev/null 2>&1; then
+	echo "[ERROR]: Not found 'apt' command, please install 'apt' package manager!"
+	exit 1
+fi
+
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -103,10 +108,10 @@ main()
 	echo "[INFO]: Installing basic packages..."
 	${_SUDO} apt-get install -y \
 		sudo \
-		adduser \
 		ca-certificates \
-		build-essential \
+		systemd \
 		apt-utils \
+		build-essential \
 		cmake \
 		tzdata \
 		locales \

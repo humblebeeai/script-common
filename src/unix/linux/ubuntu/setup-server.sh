@@ -54,13 +54,36 @@ fi
 ## --- Base --- ##
 
 
+## --- Variables --- ##
+TZ_NAME=${TZ_NAME:-Asia/Seoul}
+## --- Variables --- ##
+
+
 ## --- Main --- ##
 main()
 {
+	## --- Menu arguments --- ##
+	if [ -n "${1:-}" ]; then
+		local _input
+		for _input in "${@:-}"; do
+			case ${_input} in
+				-t=* | --tz=* | --timezone=*)
+					TZ_NAME="${_input#*=}"
+					shift;;
+				*)
+					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=*"
+					exit 1;;
+			esac
+		done
+	fi
+	## --- Menu arguments --- ##
+
+
 	echo "[INFO]: Setting up server..."
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/setup-tz-locales.sh | \
-		bash || {
+		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"
 			exit 2
 		}

@@ -89,7 +89,7 @@ main()
 		}
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/install-basics.sh | \
-		bash || {
+		bash -s -- -u || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}

@@ -94,6 +94,7 @@ _LSD_ALIAS=$(cat <<'EOF'
 alias ls='lsd -aF --group-dirs first'
 alias l='ls'
 alias ll='lsd -alhF --group-dirs first'
+
 alias tree4='lsd -aF --group-dirs first --tree --depth 4'
 alias tree2='lsd -aF --group-dirs first --tree --depth 2'
 alias tree='lsd -aF --group-dirs first --tree'
@@ -128,11 +129,12 @@ main()
 	if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.bashrc"; then
 		echo "[INFO]: Updating '.bashrc' file..."
 		echo "" >> "${HOME}/.bashrc" || exit 2
-		echo -e "${_BASE_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
+		echo "${_BASE_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
 		echo "" >> "${HOME}/.bashrc" || exit 2
 
 		if [ "${_OS}" = "Linux" ]; then
 			echo "${_LINUX_LS_ALIAS}" >> "${HOME}/.bashrc" || exit 2
+			echo "" >> "${HOME}/.bashrc" || exit 2
 			if command -v tree >/dev/null 2>&1; then
 				echo "${_LINUX_TREE_ALIAS}" >> "${HOME}/.bashrc" || exit 2
 			fi
@@ -142,6 +144,7 @@ main()
 			else
 				echo "${_MACOS_LS_ALIAS}" >> "${HOME}/.bashrc" || exit 2
 			fi
+			echo "" >> "${HOME}/.bashrc" || exit 2
 
 			if command -v tree >/dev/null 2>&1; then
 				echo "${_MACOS_TREE_ALIAS}" >> "${HOME}/.bashrc" || exit 2
@@ -155,6 +158,7 @@ main()
 		if command -v nvim >/dev/null 2>&1; then
 			echo "${_NEOVIM_ALIAS}" >> "${HOME}/.bashrc" || exit 2
 		fi
+		echo "" >> "${HOME}/.bashrc" || exit 2
 		echo -e "[OK]: Done.\n"
 	else
 		echo "[WARN]: Already setup '.bashrc' file, skipping...!"
@@ -184,9 +188,11 @@ main()
 
 			if command -v lsd >/dev/null 2>&1; then
 				echo "${_LSD_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+				echo "" >> "${HOME}/.zshrc" || exit 2
 			else
 				if [ "${_OS}" = "Linux" ]; then
 					echo "${_LINUX_LS_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+					echo "" >> "${HOME}/.zshrc" || exit 2
 					if command -v tree >/dev/null 2>&1; then
 						echo "${_LINUX_TREE_ALIAS}" >> "${HOME}/.zshrc" || exit 2
 					fi
@@ -196,6 +202,7 @@ main()
 					else
 						echo "${_MACOS_LS_ALIAS}" >> "${HOME}/.zshrc" || exit 2
 					fi
+					echo "" >> "${HOME}/.zshrc" || exit 2
 
 					if command -v tree >/dev/null 2>&1; then
 						echo "${_MACOS_TREE_ALIAS}" >> "${HOME}/.zshrc" || exit 2
@@ -210,6 +217,7 @@ main()
 			if command -v nvim >/dev/null 2>&1; then
 				echo "${_NEOVIM_ALIAS}" >> "${HOME}/.zshrc" || exit 2
 			fi
+			echo "" >> "${HOME}/.zshrc" || exit 2
 			echo -e "[OK]: Done.\n"
 		else
 			echo "[WARN]: Already setup '.zshrc' file, skipping...!"

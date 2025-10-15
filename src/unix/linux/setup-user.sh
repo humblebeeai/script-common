@@ -158,12 +158,17 @@ main()
 	}
 
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-ohmyzsh.sh | bash" || {
-		echo "[ERROR]: Failed to install oh-my-zsh for user '${USERNAME}'!"
+		echo "[ERROR]: Failed to install 'oh-my-zsh' for user '${USERNAME}'!"
 		exit 2
 	}
 
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-shells.sh | bash" || {
 		echo "[ERROR]: Failed to setup shells for user '${USERNAME}'!"
+		exit 2
+	}
+
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-nvchad.sh | bash" || {
+		echo "[ERROR]: Failed to setup 'NvChad' for user '${USERNAME}'!"
 		exit 2
 	}
 }

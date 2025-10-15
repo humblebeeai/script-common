@@ -57,6 +57,7 @@ main()
 		ncdu \
 		tree \
 		less \
+		ripgrep \
 		watch \
 		watchman \
 		fzf \
@@ -65,6 +66,8 @@ main()
 		lsd \
 		bat \
 		duf \
+		neovim \
+		gh \
 		bash || exit 2
 	echo -e "[OK]: Done.\n"
 

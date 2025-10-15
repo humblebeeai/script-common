@@ -20,6 +20,11 @@ if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
 	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
 	exit 1
 fi
+
+if [ -z "${HOME:-}" ]; then
+	echo "[ERROR]: HOME environment variable is not set!"
+	exit 2
+fi
 ## --- Base --- ##
 
 

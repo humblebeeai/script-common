@@ -30,16 +30,17 @@ else
 	exit 1
 fi
 
-
-_SUDO="sudo"
-if [ "$(id -u)" -eq 0 ]; then
-	_SUDO=""
+if [ -z "${HOME:-}" ]; then
+	echo "[ERROR]: HOME environment variable is not set!"
+	exit 2
 fi
 ## --- Base --- ##
 
 
 ## --- Variables --- ##
 _BASE_CONFIGS=$(cat <<'EOF'
+
+
 ### CUSTOM CONFIGS ###
 
 export LESS_TERMCAP_mb=$'\e[1;32m'
@@ -51,6 +52,7 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 umask 0002
+
 EOF
 )
 
@@ -58,6 +60,7 @@ _LINUX_LS_ALIAS=$(cat <<'EOF'
 alias ls='ls -aF --group-directories-first --color=auto'
 alias l='ls'
 alias ll='ls -alhF --group-directories-first --color=auto'
+
 EOF
 )
 
@@ -65,6 +68,7 @@ _LINUX_TREE_ALIAS=$(cat <<'EOF'
 alias tree4='tree -alFC --dirsfirst -L 4'
 alias tree2='tree -alFC --dirsfirst -L 2'
 alias tree='tree -alFC --dirsfirst'
+
 EOF
 )
 
@@ -72,6 +76,7 @@ _MACOS_LS_ALIAS=$(cat <<'EOF'
 alias ls='ls -aFG'
 alias l='ls'
 alias ll='ls -alhFG'
+
 EOF
 )
 
@@ -79,6 +84,7 @@ _MACOS_GLS_ALIAS=$(cat <<'EOF'
 alias ls='gls -aF --group-directories-first --color=auto'
 alias l='ls'
 alias ll='gls -alhF --group-directories-first --color=auto'
+
 EOF
 )
 
@@ -86,6 +92,7 @@ _MACOS_TREE_ALIAS=$(cat <<'EOF'
 alias tree4='tree -alFC --dirsfirst -L 4'
 alias tree2='tree -alFC --dirsfirst -L 2'
 alias tree='tree -alFC --dirsfirst'
+
 EOF
 )
 
@@ -96,6 +103,7 @@ alias ll='lsd -alhF --group-dirs first'
 alias tree4='lsd -aF --group-dirs first --tree --depth 4'
 alias tree2='lsd -aF --group-dirs first --tree --depth 2'
 alias tree='lsd -aF --group-dirs first --tree'
+
 EOF
 )
 
@@ -104,6 +112,7 @@ _BAT_ALIAS="\nalias bat='bat --theme=ansi'\n"
 _NEOVIM_ALIAS=$(cat <<'EOF'
 alias vi='nvim'
 alias vim='nvim'
+
 EOF
 )
 ## --- Variables --- ##

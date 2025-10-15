@@ -135,6 +135,7 @@ main()
 		pydf \
 		tree \
 		less \
+		ripgrep \
 		watch \
 		watchman \
 		fzf \

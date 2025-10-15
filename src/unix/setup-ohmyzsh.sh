@@ -36,6 +36,11 @@ if ! command -v zsh >/dev/null 2>&1; then
 	exit 1
 fi
 
+if [ -z "${HOME:-}" ]; then
+	echo "[ERROR]: HOME environment variable is not set!"
+	exit 2
+fi
+
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then

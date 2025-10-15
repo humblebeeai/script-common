@@ -134,9 +134,9 @@ main()
 		${_SUDO} apt-get install gh -y
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Installing 'Tailscale'..."
-	curl -fsSL https://tailscale.com/install.sh | sh || exit 2
-	echo -e "[OK]: Done.\n"
+	# echo "[INFO]: Installing 'Tailscale'..."
+	# curl -fsSL https://tailscale.com/install.sh | sh || exit 2
+	# echo -e "[OK]: Done.\n"
 
 	# echo "[INFO]: Installing 'ZeroTier One'..."
 	# curl -s https://install.zerotier.com | ${_SUDO} bash || exit 2

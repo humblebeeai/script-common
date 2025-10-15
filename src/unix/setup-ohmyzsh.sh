@@ -16,24 +16,7 @@ fi
 
 
 _OS="$(uname)"
-_OS_DISTRO=""
-if [ "${_OS}" = "Linux" ]; then
-	if [ -r /etc/os-release ]; then
-		# shellcheck disable=SC1091
-		_OS_DISTRO="$(source /etc/os-release && echo "${ID}")"
-		_OS_DISTRO="$(echo "${_OS_DISTRO}" | tr '[:upper:]' '[:lower:]')"
-
-		if [ "${_OS_DISTRO}" != "ubuntu" ] && [ "${_OS_DISTRO}" != "debian" ]; then
-			echo "[ERROR]: Unsupported Linux distro '${_OS_DISTRO}', only 'Ubuntu' and 'Debian' are supported!"
-			exit 1
-		fi
-	else
-		echo "[ERROR]: Unable to determine Linux distro!"
-		exit 1
-	fi
-elif [ "${_OS}" = "Darwin" ]; then
-	_OS_DISTRO="macos"
-else
+if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
 	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
 	exit 1
 fi

@@ -167,6 +167,16 @@ main()
 		exit 2
 	}
 
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/runtimes/install-miniconda.sh | bash" || {
+		echo "[ERROR]: Failed to install 'Miniconda' for user '${USERNAME}'!"
+		exit 2
+	}
+
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/runtimes/install-nvm.sh | bash" || {
+		echo "[ERROR]: Failed to install 'NVM' for user '${USERNAME}'!"
+		exit 2
+	}
+
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-nvchad.sh | bash" || {
 		echo "[ERROR]: Failed to setup 'NvChad' for user '${USERNAME}'!"
 		exit 2

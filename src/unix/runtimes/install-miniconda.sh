@@ -1,0 +1,103 @@
+#!/bin/bash
+set -euo pipefail
+
+
+## --- Base --- ##
+# Getting path of this script file:
+_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
+# cd "${_SCRIPT_DIR}" || exit 2
+
+
+# Loading .env file (if exists):
+if [ -f ".env" ]; then
+	# shellcheck disable=SC1091
+	source .env
+fi
+
+
+_OS="$(uname)"
+if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
+	exit 1
+fi
+
+if ! command -v wget >/dev/null 2>&1; then
+	echo "[ERROR]: 'wget' not found or not installed!"
+	exit 1
+fi
+
+if [ -z "${HOME:-}" ]; then
+	echo "[ERROR]: HOME environment variable is not set!"
+	exit 2
+fi
+## --- Base --- ##
+
+
+## --- Variables --- ##
+MINICONDA_INSTALL_DIR=${MINICONDA_INSTALL_DIR:-"${HOME}/workspaces/runtimes/miniconda3"}
+## --- Variables --- ##
+
+
+## --- Main --- ##
+main()
+{
+	if [ -d "${MINICONDA_INSTALL_DIR}" ]; then
+		echo "[INFO]: Miniconda is already installed in '${MINICONDA_INSTALL_DIR}', skipping..."
+		exit 0
+	fi
+
+	echo "[INFO]: Downloading Miniconda installer..."
+	mkdir -pv "${MINICONDA_INSTALL_DIR}" || exit 2
+	local _miniconda_filename
+	_miniconda_filename="Miniconda3-latest-Linux-$(uname -m).sh"
+	if [ "${_OS}" = "Darwin" ]; then
+		_miniconda_filename="Miniconda3-latest-MacOSX-$(uname -m).sh"
+	fi
+	wget https://repo.anaconda.com/miniconda/"${_miniconda_filename}" -O miniconda.sh || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing Miniconda to '${MINICONDA_INSTALL_DIR}'..."
+	bash miniconda.sh -bu -p "${MINICONDA_INSTALL_DIR}" || exit 2
+	rm -vrf miniconda.sh || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Setting up Miniconda..."
+	#shellcheck disable=SC1091
+	source "${MINICONDA_INSTALL_DIR}/bin/activate" || exit 2
+	conda init bash || exit 2
+
+	if command -v zsh >/dev/null 2>&1; then
+		conda init zsh || exit 2
+	fi
+
+	conda tos accept --override-channels \
+		-c https://repo.anaconda.com/pkgs/main \
+		-c https://repo.anaconda.com/pkgs/r || exit 2
+
+	conda config --append channels conda-forge || exit 2
+	echo -e "\nplugins:\n  anaconda_telemetry: false" >> ~/.condarc || exit 2
+	conda config --set always_yes true || exit 2
+	conda update -n base conda || exit 2
+	conda -V || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Creating python environment..."
+	conda create -n py310 python=3.10 pip uv || exit 2
+	conda clean -av || exit 2
+	conda activate py310 || exit 2
+
+	echo "conda activate py310" >> ~/.bashrc || exit 2
+	echo "conda activate py310" >> ~/.zshrc || exit 2
+
+	pip install -U pip || exit 2
+	pip cache purge || exit 2
+
+	python -V || exit 2
+	pip -V || exit 2
+	uv -V || exit 2
+	echo -e "[OK]: Done.\n"
+}
+
+
+main "${@:-}"
+## --- Main --- ##

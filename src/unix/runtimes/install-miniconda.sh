@@ -35,14 +35,27 @@ fi
 
 ## --- Variables --- ##
 MINICONDA_INSTALL_DIR=${MINICONDA_INSTALL_DIR:-"${HOME}/workspaces/runtimes/miniconda3"}
+PYTHON_VERSION=${PYTHON_VERSION:-3.10}
 ## --- Variables --- ##
 
 
 ## --- Main --- ##
 main()
 {
-	if [ -d "${MINICONDA_INSTALL_DIR}" ]; then
-		echo "[INFO]: Miniconda is already installed in '${MINICONDA_INSTALL_DIR}', skipping..."
+	if [ -d "${MINICONDA_INSTALL_DIR}" ] && [ -f "${MINICONDA_INSTALL_DIR}/bin/conda" ]; then
+		echo "[INFO]: Miniconda is already installed in '${MINICONDA_INSTALL_DIR}'."
+
+		if ! grep -q ">>> conda initialize >>>" "${HOME}/.bashrc"; then
+			#shellcheck disable=SC1091
+			source "${MINICONDA_INSTALL_DIR}/bin/activate" || exit 2
+			conda init bash || exit 2
+		fi
+
+		if ! grep -q ">>> conda initialize >>>" "${HOME}/.zshrc"; then
+			#shellcheck disable=SC1091
+			source "${MINICONDA_INSTALL_DIR}/bin/activate" || exit 2
+			conda init zsh || exit 2
+		fi
 		exit 0
 	fi
 
@@ -76,18 +89,20 @@ main()
 
 	conda config --append channels conda-forge || exit 2
 	echo -e "\nplugins:\n  anaconda_telemetry: false" >> ~/.condarc || exit 2
-	conda config --set always_yes true || exit 2
-	conda update -n base conda || exit 2
+	# conda config --set always_yes true || exit 2
+	conda update -y -n base conda || exit 2
 	conda -V || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Creating python environment..."
-	conda create -n py310 python=3.10 pip uv || exit 2
+	local _conda_env
+	_conda_env="py${PYTHON_VERSION//./}"
+	conda create -y -n "${_conda_env}" python="${PYTHON_VERSION}" pip uv || exit 2
 	conda clean -av || exit 2
-	conda activate py310 || exit 2
+	conda activate "${_conda_env}" || exit 2
 
-	echo "conda activate py310" >> ~/.bashrc || exit 2
-	echo "conda activate py310" >> ~/.zshrc || exit 2
+	echo "conda activate ${_conda_env}" >> ~/.bashrc || exit 2
+	echo "conda activate ${_conda_env}" >> ~/.zshrc || exit 2
 
 	pip install -U pip || exit 2
 	pip cache purge || exit 2

@@ -60,7 +60,7 @@ APT_UPGRADE=${APT_UPGRADE:-true}
 _install_packages()
 {
 	echo "[INFO]: Updating package lists..."
-	if ! ${_SUDO} apt-get update --fix-missing -o Acquire::CompressionTypes::Order::=gz; then
+	if ! ${_SUDO} apt-get update --fix-missing -o Acquire::Retries=3 -o Acquire::CompressionTypes::Order::=gz; then
 		echo "[WARN]: 'apt-get update' command failed!"
 		return 2
 	fi
@@ -68,7 +68,7 @@ _install_packages()
 
 	if [ "${APT_UPGRADE}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		if ! ${_SUDO} apt-get upgrade -y; then
+		if ! ${_SUDO} apt-get upgrade -y -o Acquire::Retries=3; then
 			echo "[WARN]: 'apt-get upgrade' command failed!"
 			return 2
 		fi
@@ -76,7 +76,7 @@ _install_packages()
 	fi
 
 	echo "[INFO]: Installing packages..."
-	if ! ${_SUDO} apt-get install -y \
+	if ! ${_SUDO} apt-get install -y -o Acquire::Retries=3 \
 		sudo \
 		ca-certificates \
 		systemd \
@@ -147,7 +147,6 @@ main()
 		echo "Acquire::http::Pipeline-Depth 0;" | ${_SUDO} tee /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
 		echo "Acquire::http::No-Cache true;" | ${_SUDO} tee -a /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
 		echo "Acquire::BrokenProxy    true;" | ${_SUDO} tee -a /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
-		echo "Acquire::Retries        3;" | ${_SUDO} tee -a /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
 	fi
 
 	if [ "${CLEAN_CACHE}" = true ]; then

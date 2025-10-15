@@ -66,9 +66,14 @@ main()
 		lsd \
 		bat \
 		duf \
+		xh \
+		httpie \
 		neovim \
 		gh \
 		bash || exit 2
+
+	brew tap natesales/repo https://github.com/natesales/repo || exit 2
+	brew install q || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Cleaning up..."

@@ -93,6 +93,14 @@ main()
 	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
+	echo "[INFO]: Installing 'q'..."
+	local _q_version
+	_q_version=$(curl -s https://api.github.com/repos/natesales/q/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	wget "https://github.com/natesales/q/releases/download/v${_q_version}/q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} dpkg -i "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	rm -vf "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	echo -e "[OK]: Done.\n"
+
 	echo "[INFO]: Installing 'fd'..."
 	local _fd_version
 	_fd_version=$(curl -s https://api.github.com/repos/sharkdp/fd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')

@@ -109,6 +109,7 @@ _install_packages()
 		watch \
 		watchman \
 		fzf \
+		httpie \
 		zsh; then
 		echo "[WARN]: 'apt-get install' command failed!"
 		return 2

@@ -162,7 +162,7 @@ main()
 		exit 2
 	}
 
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-shells.sh | bash" || {
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/setup-shell.sh | bash" || {
 		echo "[ERROR]: Failed to setup shells for user '${USERNAME}'!"
 		exit 2
 	}

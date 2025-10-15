@@ -54,7 +54,7 @@ _setup_shellrc()
 export NVM_DIR=\"${NVM_DIR}\"
 " "${HOME}/.zshrc" || exit 2
 			else
-				sed -i "/^plugins=(git/i export NVM_DIR=\"${NVM_DIR}\"\n" "${HOME}/.zshrc" || exit 2
+				sed -i "/^plugins=(git/i export NVM_DIR=\"${NVM_DIR}\"" "${HOME}/.zshrc" || exit 2
 			fi
 		else
 			echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.zshrc" || exit 2

@@ -40,7 +40,6 @@ fi
 ## --- Variables --- ##
 _BASE_CONFIGS=$(cat <<'EOF'
 
-
 ### CUSTOM CONFIGS ###
 
 export LESS_TERMCAP_mb=$'\e[1;32m'
@@ -52,8 +51,6 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 umask 0002
-
-
 EOF
 )
 
@@ -69,7 +66,6 @@ _LINUX_TREE_ALIAS=$(cat <<'EOF'
 alias tree4='tree -alFC --dirsfirst -L 4'
 alias tree2='tree -alFC --dirsfirst -L 2'
 alias tree='tree -alFC --dirsfirst'
-
 EOF
 )
 
@@ -77,7 +73,6 @@ _MACOS_LS_ALIAS=$(cat <<'EOF'
 alias ls='ls -aFG'
 alias l='ls'
 alias ll='ls -alhFG'
-
 EOF
 )
 
@@ -85,7 +80,6 @@ _MACOS_GLS_ALIAS=$(cat <<'EOF'
 alias ls='gls -aF --group-directories-first --color=auto'
 alias l='ls'
 alias ll='gls -alhF --group-directories-first --color=auto'
-
 EOF
 )
 
@@ -93,7 +87,6 @@ _MACOS_TREE_ALIAS=$(cat <<'EOF'
 alias tree4='tree -alFC --dirsfirst -L 4'
 alias tree2='tree -alFC --dirsfirst -L 2'
 alias tree='tree -alFC --dirsfirst'
-
 EOF
 )
 
@@ -104,7 +97,6 @@ alias ll='lsd -alhF --group-dirs first'
 alias tree4='lsd -aF --group-dirs first --tree --depth 4'
 alias tree2='lsd -aF --group-dirs first --tree --depth 2'
 alias tree='lsd -aF --group-dirs first --tree'
-
 EOF
 )
 
@@ -113,7 +105,6 @@ _BAT_ALIAS="\nalias bat='bat --theme=ansi'\n"
 _NEOVIM_ALIAS=$(cat <<'EOF'
 alias vi='nvim'
 alias vim='nvim'
-
 EOF
 )
 ## --- Variables --- ##
@@ -136,7 +127,9 @@ main()
 
 	if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.bashrc"; then
 		echo "[INFO]: Updating '.bashrc' file..."
-		echo "${_BASE_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
+		echo "" >> "${HOME}/.bashrc" || exit 2
+		echo -e "${_BASE_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
+		echo "" >> "${HOME}/.bashrc" || exit 2
 
 		if [ "${_OS}" = "Linux" ]; then
 			echo "${_LINUX_LS_ALIAS}" >> "${HOME}/.bashrc" || exit 2
@@ -187,6 +180,7 @@ main()
 		if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.zshrc"; then
 			echo "[INFO]: Updating '.zshrc' file..."
 			echo "${_BASE_CONFIGS}" >> "${HOME}/.zshrc" || exit
+			echo "" >> "${HOME}/.zshrc" || exit 2
 
 			if command -v lsd >/dev/null 2>&1; then
 				echo "${_LSD_ALIAS}" >> "${HOME}/.zshrc" || exit 2

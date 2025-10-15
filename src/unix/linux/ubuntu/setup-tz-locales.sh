@@ -74,21 +74,8 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
-
-	if ! command -v dpkg-reconfigure >/dev/null 2>&1; then
-		${_SUDO} apt-get update || exit 2
-		${_SUDO} apt-get install -y debconf || exit 2
-	fi
-
-	if ! command -v update-locale >/dev/null 2>&1; then
-		${_SUDO} apt-get update || exit 2
-		${_SUDO} apt-get install -y locales || exit 2
-	fi
-
-	if ! command -v timedatectl >/dev/null 2>&1; then
-		${_SUDO} apt-get update || exit 2
-		${_SUDO} apt-get install -y tzdata systemd || exit 2
-	fi
+	${_SUDO} apt-get update || exit 2
+	${_SUDO} apt-get install -y debconf systemd locales tzdata || exit 2
 
 	if [ -z "${TZ_NAME}" ]; then
 		echo "[ERROR]: Timezone is empty!"

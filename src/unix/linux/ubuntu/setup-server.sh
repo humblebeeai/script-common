@@ -89,7 +89,7 @@ main()
 		}
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/install-basics.sh | \
-		bash -s -- -c || {
+		bash || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}
@@ -117,6 +117,13 @@ main()
 			echo "[ERROR]: Failed to setup current user!"
 			exit 2
 		}
+
+	echo "[INFO]: Restarting server after 3 seconds..."
+	sleep 3
+	${_SUDO} shutdown -r now || {
+		echo "[ERROR]: Failed to restart server!"
+		exit 2
+	}
 
 	echo -e "[OK]: Done.\n"
 }

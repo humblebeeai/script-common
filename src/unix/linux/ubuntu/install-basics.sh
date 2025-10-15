@@ -57,6 +57,58 @@ APT_UPGRADE=${APT_UPGRADE:-true}
 
 
 ## --- Main --- ##
+_install_packages()
+{
+	echo "[INFO]: Updating package lists..."
+	${_SUDO} apt-get update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
+	echo -e "[OK]: Done.\n"
+
+	if [ "${APT_UPGRADE}" = true ]; then
+		echo "[INFO]: Upgrading packages..."
+		${_SUDO} apt-get upgrade -y || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
+
+	echo "[INFO]: Installing packages..."
+	${_SUDO} apt-get install -y \
+		sudo \
+		ca-certificates \
+		systemd \
+		apt-utils \
+		build-essential \
+		cmake \
+		tzdata \
+		locales \
+		iputils-ping \
+		net-tools \
+		iproute2 \
+		wget \
+		curl \
+		ssh \
+		git \
+		git-lfs \
+		rsync \
+		unzip \
+		zip \
+		tmux \
+		vim \
+		nano \
+		jq \
+		htop \
+		ncdu \
+		pydf \
+		tree \
+		less \
+		ripgrep \
+		watch \
+		watchman \
+		fzf \
+		zsh || exit 2
+
+	echo -e "[OK]: Done.\n"
+}
+
+
 main()
 {
 	## --- Menu arguments --- ##
@@ -95,52 +147,19 @@ main()
 		echo -e "[OK]: Done.\n"
 	fi
 
-	echo "[INFO]: Updating package lists..."
-	${_SUDO} apt-get update --fix-missing -o Acquire::CompressionTypes::Order::=gz || exit 2
-	echo -e "[OK]: Done.\n"
+	local _retry_count=3
+	local _retry_delay=3
+	local _i=1
+	while ! _install_packages; do
+		if [ "${_i}" -eq "${_retry_count}" ]; then
+			echo "[ERROR]: Package installation failed after ${_retry_count} attempts!"
+			exit 2
+		fi
 
-	if [ "${APT_UPGRADE}" = true ]; then
-		echo "[INFO]: Upgrading packages..."
-		${_SUDO} apt-get upgrade -y || exit 2
-		echo -e "[OK]: Done.\n"
-	fi
-
-	echo "[INFO]: Installing basic packages..."
-	${_SUDO} apt-get install -y \
-		sudo \
-		ca-certificates \
-		systemd \
-		apt-utils \
-		build-essential \
-		cmake \
-		tzdata \
-		locales \
-		iputils-ping \
-		net-tools \
-		iproute2 \
-		wget \
-		curl \
-		ssh \
-		git \
-		git-lfs \
-		rsync \
-		unzip \
-		zip \
-		tmux \
-		vim \
-		nano \
-		jq \
-		htop \
-		ncdu \
-		pydf \
-		tree \
-		less \
-		ripgrep \
-		watch \
-		watchman \
-		fzf \
-		zsh || exit 2
-	echo -e "[OK]: Done.\n"
+		echo "[WARN]: Package installation failed, retrying ${_i}/${_retry_count} after ${_retry_delay} seconds..."
+		sleep ${_retry_delay}
+		_i=$((_i + 1))
+	done
 
 	echo "[INFO]: Autoremoving unused packages..."
 	${_SUDO} apt-get autoremove -y || exit 2

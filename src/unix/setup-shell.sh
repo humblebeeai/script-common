@@ -188,7 +188,6 @@ main()
 
 			if command -v lsd >/dev/null 2>&1; then
 				echo "${_LSD_ALIAS}" >> "${HOME}/.zshrc" || exit 2
-				echo "" >> "${HOME}/.zshrc" || exit 2
 			else
 				if [ "${_OS}" = "Linux" ]; then
 					echo "${_LINUX_LS_ALIAS}" >> "${HOME}/.zshrc" || exit 2

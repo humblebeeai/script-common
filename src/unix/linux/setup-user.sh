@@ -141,6 +141,14 @@ main()
 			}
 	fi
 
+	if [ "$(id -g "${USERNAME}")" != "${PRIMARY_GID}" ]; then
+		echo "[INFO]: Changing primary group for user '${USERNAME}' to GID '${PRIMARY_GID}'..."
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-primary-group.sh | \
+			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" || {
+				echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!"
+				exit 2
+			}
+	fi
 
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/create-workspaces.sh | bash" || {
 		echo "[ERROR]: Failed to create workspaces for user '${USERNAME}'!"

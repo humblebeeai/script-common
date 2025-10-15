@@ -18,7 +18,6 @@ fi
 _OS="$(uname)"
 _OS_DISTRO=""
 if [ "${_OS}" = "Linux" ]; then
-	_OS_DISTRO=""
 	if [ -r /etc/os-release ]; then
 		# shellcheck disable=SC1091
 		_OS_DISTRO="$(source /etc/os-release && echo "${ID}")"
@@ -147,13 +146,13 @@ main()
 	## Adding other recommended plugins:
 	local _plugins="docker docker-compose python pip nvm node npm"
 	local _plugin
+	echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
 	for _plugin in ${_plugins}; do
 		if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
-			echo "[INFO]: Adding '${_plugin}' plugin to .zshrc..."
 			update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
-			echo -e "[OK]: Done.\n"
 		fi
 	done
+	echo -e "[OK]: Done.\n"
 
 
 	## Setting up 'powerlevel10k' theme:

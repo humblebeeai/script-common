@@ -82,8 +82,8 @@ main()
 		exit 1
 	fi
 
-	if ! timedatectl list-timezones | grep -qx "${TZ_NAME}"; then
-		echo "[ERROR] Not found timezone '${TZ_NAME}' in the tzdata!"
+	if [[ ! -e "/usr/share/zoneinfo/${TZ_NAME}" ]]; then
+		echo "[ERROR] Timezone '${TZ_NAME}' not found in /usr/share/zoneinfo!"
 		exit 1
 	fi
 

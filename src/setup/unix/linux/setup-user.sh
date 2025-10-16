@@ -184,13 +184,13 @@ main()
 		exit 2
 	}
 
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-extra.sh | bash" || {
-		echo "[ERROR]: Failed to setup extra configs for user '${USERNAME}'!"
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-nvchad.sh | bash" || {
+		echo "[ERROR]: Failed to setup 'NvChad' for user '${USERNAME}'!"
 		exit 2
 	}
 
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-nvchad.sh | bash" || {
-		echo "[ERROR]: Failed to setup 'NvChad' for user '${USERNAME}'!"
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-extra-configs.sh | bash" || {
+		echo "[ERROR]: Failed to setup extra configs for user '${USERNAME}'!"
 		exit 2
 	}
 }

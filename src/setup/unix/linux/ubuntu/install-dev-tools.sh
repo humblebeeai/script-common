@@ -85,20 +85,28 @@ main()
 	rm -vf "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Installing 'bat'..."
-	local _bat_version
-	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
-	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
-	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
-	echo -e "[OK]: Done.\n"
-
 	echo "[INFO]: Installing 'q'..."
 	local _q_version
 	_q_version=$(curl -s https://api.github.com/repos/natesales/q/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/natesales/q/releases/download/v${_q_version}/q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} dpkg -i "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing 'fastfetch'..."
+	local _fastfetch_version
+	_fastfetch_version=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	wget "https://github.com/fastfetch-cli/fastfetch/releases/download/v${_fastfetch_version}/fastfetch-linux-$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} dpkg -i "fastfetch-linux-$(dpkg --print-architecture).deb" || exit 2
+	rm -vf "fastfetch-linux-$(dpkg --print-architecture).deb" || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing 'bat'..."
+	local _bat_version
+	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} dpkg -i "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
+	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Installing 'fd'..."

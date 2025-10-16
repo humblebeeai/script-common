@@ -115,6 +115,7 @@ _install_packages()
 		return 2
 	fi
 
+	${_SUDO} apt-get install -y btop || true
 	echo -e "[OK]: Done.\n"
 }
 

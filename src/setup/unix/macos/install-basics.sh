@@ -69,6 +69,8 @@ main()
 		xh \
 		httpie \
 		neovim \
+		fastfetch \
+		btop \
 		gh \
 		bash || exit 2
 

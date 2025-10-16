@@ -90,6 +90,11 @@ main()
 
 	echo "[INFO]: Setting up server..."
 
+	echo "[INFO]: Disabling automatic updates and upgrades..."
+	echo 'APT::Periodic::Update-Package-Lists "0";' | ${_SUDO} tee /etc/apt/apt.conf.d/20auto-upgrades
+	echo 'APT::Periodic::Unattended-Upgrade "0";' | ${_SUDO} tee -a /etc/apt/apt.conf.d/20auto-upgrades
+	echo -e "[OK]: Done.\n"
+
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/setup-tz-locales.sh | \
 		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"

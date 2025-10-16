@@ -46,7 +46,6 @@ _setup_shellrc()
 		echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.bashrc" || exit 2
 		echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.bashrc" || exit 2
 		echo "[ -s \"\$NVM_DIR/bash_completion\" ] && \\. \"\$NVM_DIR/bash_completion\"" >> "${HOME}/.bashrc" || exit 2
-		echo -e "\n" >> "${HOME}/.bashrc" || exit 2
 	fi
 
 	if [ -f "${HOME}/.zshrc" ] && ! grep -q "export NVM_DIR=" "${HOME}/.zshrc"; then
@@ -58,12 +57,15 @@ export NVM_DIR=\"${NVM_DIR}\"
 			else
 				sed -i "/^plugins=(git/i export NVM_DIR=\"${NVM_DIR}\"" "${HOME}/.zshrc" || exit 2
 			fi
+			echo "" >> "${HOME}/.zshrc" || exit 2
 		else
 			echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.zshrc" || exit 2
 			echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.zshrc" || exit 2
 			echo -e "\n" >> "${HOME}/.zshrc" || exit 2
 		fi
 	fi
+
+	echo -e "\n" >> "${HOME}/.bashrc" || exit 2
 }
 
 main()
@@ -109,7 +111,6 @@ main()
 	curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || exit 2
 
 	_setup_shellrc || exit 2
-	echo -e "\n" >> "${HOME}/.bashrc" || exit 2
 
 	# shellcheck disable=SC1091
 	source "${NVM_DIR}/nvm.sh" || exit 2

@@ -110,8 +110,8 @@ main()
 		}
 
 	local _arg_upgrade=""
-	if [ "${DO_APT_UPGRADE}" = false ]; then
-		_arg_upgrade="-s -- -d"
+	if [ "${DO_APT_UPGRADE}" = true ]; then
+		_arg_upgrade="-s -- -u"
 	fi
 	#shellcheck disable=SC2086
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-essentials.sh | \
@@ -141,7 +141,7 @@ main()
 	if [ "${DO_USER_SETUP}" = true ]; then
 		local _arg_all_runtimes=""
 		if [ "${ALL_RUNTIMES}" = true ]; then
-			_arg_all_runtimes="-s -- -r"
+			_arg_all_runtimes="-s -- -a"
 		fi
 		#shellcheck disable=SC2086
 		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-user.sh | \

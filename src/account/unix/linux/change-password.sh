@@ -21,7 +21,6 @@ if [ "${_OS}" != "Linux" ]; then
 	exit 1
 fi
 
-
 if ! command -v openssl >/dev/null 2>&1; then
 	echo "[ERROR]: 'openssl' command not found or not installed!"
 	exit 1
@@ -33,10 +32,8 @@ if ! command -v chpasswd >/dev/null 2>&1; then
 fi
 
 
-_IS_ROOT_USER=false
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
-	_IS_ROOT_USER=true
 	_SUDO=""
 fi
 ## --- Base --- ##
@@ -44,7 +41,7 @@ fi
 
 ## --- Variables --- ##
 USERNAME=${USERNAME:-}
-if [ -z "${USERNAME}" ] && [ "${_IS_ROOT_USER}" = false ]; then
+if [ -z "${USERNAME}" ] && [ -n "${_SUDO}" ]; then
 	USERNAME=$(id -un)
 fi
 PASSWORD=${PASSWORD:-}

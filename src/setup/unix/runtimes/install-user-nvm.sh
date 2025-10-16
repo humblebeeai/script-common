@@ -40,7 +40,7 @@ NODE_VERSION=${NODE_VERSION:-}
 
 
 ## --- Main --- ##
-_setup_shellrc()
+_setup_shell()
 {
 	if ! grep -q "NVM_DIR/nvm.sh" "${HOME}/.bashrc"; then
 		echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.bashrc" || exit 2
@@ -98,7 +98,7 @@ main()
 
 	if [ -d "${NVM_DIR}" ] && [ -r "${NVM_DIR}/nvm.sh" ]; then
 		echo "[INFO]: NVM is already installed in '${NVM_DIR}'."
-		_setup_shellrc || exit 2
+		_setup_shell || exit 2
 		exit 0
 	fi
 
@@ -110,7 +110,7 @@ main()
 	export NVM_VERSION="${_nvm_version}" || exit 2
 	curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || exit 2
 
-	_setup_shellrc || exit 2
+	_setup_shell || exit 2
 
 	# shellcheck disable=SC1091
 	source "${NVM_DIR}/nvm.sh" || exit 2

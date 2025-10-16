@@ -41,7 +41,7 @@ RUSTUP_HOME="${RUST_DIR}/.rustup"
 
 
 ## --- Main --- ##
-_setup_shellrc()
+_setup_shell()
 {
 	if ! grep -q "export CARGO_HOME=" "${HOME}/.bashrc"; then
 		echo "export CARGO_HOME=\"${CARGO_HOME}\"" >> "${HOME}/.bashrc" || exit 2
@@ -87,7 +87,7 @@ main()
 	RUSTUP_HOME="${RUST_DIR}/.rustup"
 	if [ -d "${CARGO_HOME}" ] && [ -x "${CARGO_HOME}/bin/rustup" ]; then
 		echo "[INFO]: Rust is already installed in '${RUST_DIR}'."
-		_setup_shellrc || exit 2
+		_setup_shell || exit 2
 		exit 0
 	fi
 
@@ -100,7 +100,7 @@ main()
 		--no-modify-path \
 		-y || exit 2
 
-	_setup_shellrc || exit 2
+	_setup_shell || exit 2
 	#shellcheck disable=SC1091
 	source "${CARGO_HOME}/env" || exit 2
 

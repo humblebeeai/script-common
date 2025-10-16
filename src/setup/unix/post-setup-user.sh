@@ -49,7 +49,7 @@ EOF
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Setting up user extra configs..."
+	echo "[INFO]: Post-setup user..."
 
 	if command -v tmux >/dev/null 2>&1 && [ ! -f "${HOME}/.tmux.conf" ]; then
 		echo "${_TMUX_CONFIGS}" > "${HOME}/.tmux.conf" || exit 2

@@ -26,7 +26,7 @@ fi
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Installing homebrew..."
+	echo "[INFO]: Installing Homebrew..."
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
 	echo -e "[OK]: Done.\n"
 }

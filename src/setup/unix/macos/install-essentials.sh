@@ -37,7 +37,7 @@ main()
 	brew upgrade || exit 2
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Installing basic packages..."
+	echo "[INFO]: Installing essential packages..."
 	brew install \
 		coreutils \
 		make \

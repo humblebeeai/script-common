@@ -60,6 +60,8 @@ main()
 	## --- Menu arguments --- ##
 
 
+	echo "[INFO]: Setting up development environment on macOS..."
+
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/macos/install-essentials.sh | bash || {
 		echo "[ERROR]: Failed to install essential packages!"
 		exit 2
@@ -103,6 +105,8 @@ main()
 		echo "[ERROR]: Failed to setup extra configs!"
 		exit 2
 	}
+
+	echo -e "[OK]: Done.\n"
 }
 
 main "${@:-}"

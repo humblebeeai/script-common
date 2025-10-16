@@ -69,7 +69,7 @@ _install_packages()
 		echo -e "[OK]: Done.\n"
 	fi
 
-	echo "[INFO]: Installing packages..."
+	echo "[INFO]: Installing essential packages..."
 	if ! ${_SUDO} apt-get install -y -o Acquire::Retries=5 \
 		sudo \
 		ca-certificates \

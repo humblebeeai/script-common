@@ -79,13 +79,13 @@ main()
 		rm -rf "${HOME}/.config/nvim/.git" || exit 2
 		nvim --headless "+Lazy! sync" "+MasonUpdate" "+TSUpdateSync" +qa || exit 2
 
-		if [ -f "${HOME}/.config/nvim/lua/chadrc.lua" ]; then
-			if [ "${_OS}" = "Linux" ]; then
-				sed -i 's/theme = "onedark"/theme = "oceanic-next"/g' "${HOME}/.config/nvim/lua/chadrc.lua"
-			else
-				sed -i '' 's/theme = "onedark"/theme = "oceanic-next"/g' "${HOME}/.config/nvim/lua/chadrc.lua"
-			fi
-		fi
+		# if [ -f "${HOME}/.config/nvim/lua/chadrc.lua" ]; then
+		# 	if [ "${_OS}" = "Linux" ]; then
+		# 		sed -i 's/theme = "onedark"/theme = "oceanic-next"/g' "${HOME}/.config/nvim/lua/chadrc.lua"
+		# 	else
+		# 		sed -i '' 's/theme = "onedark"/theme = "oceanic-next"/g' "${HOME}/.config/nvim/lua/chadrc.lua"
+		# 	fi
+		# fi
 
 		echo -e "[OK]: Done.\n"
 	else

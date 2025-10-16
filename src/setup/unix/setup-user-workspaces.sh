@@ -33,15 +33,44 @@ WORKSPACES_DIR=${WORKSPACES_DIR:-"${HOME}/workspaces"}
 WORKSPACES_SUBDIRS=${WORKSPACES_SUBDIRS:-"runtimes projects services datasets models storage archives education"}
 SERVICES_SUBDIRS=${SERVICES_SUBDIRS:-"prod staging test qa docs"}
 PROJECTS_SUBDIRS=${PROJECTS_SUBDIRS:-"shared my tmp"}
+SYMLINK_WORKSPACES_DIR=${SYMLINK_WORKSPACES_DIR:-}
 ## --- Variables --- ##
 
 
 ## --- Main --- ##
 main()
 {
+	## --- Menu arguments --- ##
+	if [ -n "${1:-}" ]; then
+		local _input
+		for _input in "${@:-}"; do
+			case ${_input} in
+				-w=* | --workspaces-dir=*)
+					WORKSPACES_DIR="${_input#*=}"
+					shift;;
+				-l=* | --symlink-workspaces-dir=*)
+					SYMLINK_WORKSPACES_DIR="${_input#*=}"
+					shift;;
+				*)
+					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[INFO]: USAGE: ${0}  -w=*, --workspaces-dir=* | -l=*, --symlink-workspaces-dir=*"
+					exit 1;;
+			esac
+		done
+	fi
+	## --- Menu arguments --- ##
+
 	echo "[INFO]: Creating workspaces '${WORKSPACES_DIR}' directory structure..."
+	if [ -n "${SYMLINK_WORKSPACES_DIR}" ]; then
+		mkdir -vp "${SYMLINK_WORKSPACES_DIR}" || exit 2
+	fi
+
 	if [ ! -d "${WORKSPACES_DIR}" ]; then
-		mkdir -vp "${WORKSPACES_DIR}" || exit 2
+		if [ -n "${SYMLINK_WORKSPACES_DIR}" ]; then
+			ln -sv "${SYMLINK_WORKSPACES_DIR}" "${WORKSPACES_DIR}" || exit 2
+		else
+			mkdir -vp "${WORKSPACES_DIR}" || exit 2
+		fi
 	fi
 
 	local _subdir

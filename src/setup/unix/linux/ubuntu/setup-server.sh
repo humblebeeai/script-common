@@ -59,7 +59,7 @@ TZ_NAME=${TZ_NAME:-Asia/Seoul}
 DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
 DO_USER_SETUP=${DO_USER_SETUP:-true}
 ALL_RUNTIMES=${ALL_RUNTIMES:-false}
-DO_RESTART=${DO_RESTART:-true}
+DO_REBOOT=${DO_REBOOT:-true}
 ## --- Variables --- ##
 
 
@@ -83,12 +83,12 @@ main()
 				-a | --install-all-runtimes)
 					ALL_RUNTIMES=true
 					shift;;
-				-r | --disable-restart)
-					DO_RESTART=false
+				-r | --disable-reboot)
+					DO_REBOOT=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --install-all-runtimes | -r, --disable-restart"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --install-all-runtimes | -r, --disable-reboot"
 					exit 1;;
 			esac
 		done
@@ -151,11 +151,32 @@ main()
 			}
 	fi
 
-	if [ "${DO_RESTART}" = true ]; then
-		echo "[INFO]: Restarting server after 3 seconds..."
+	${_SUDO} curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-ohmyzsh.sh | bash || {
+		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!"
+		exit 2
+	}
+
+	${_SUDO} curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-shell.sh | bash || {
+		echo "[ERROR]: Failed to setup shells for root user!"
+		exit 2
+	}
+
+	${_SUDO} curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-nvchad.sh | bash || {
+		echo "[ERROR]: Failed to setup 'NvChad' for root user!"
+		exit 2
+	}
+
+	${_SUDO} curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-configs.sh | bash || {
+		echo "[ERROR]: Failed to setup extra configs for root user!"
+		exit 2
+	}
+
+
+	if [ "${DO_REBOOT}" = true ]; then
+		echo "[INFO]: Rebooting server after 3 seconds..."
 		sleep 3
 		${_SUDO} shutdown -r now || {
-			echo "[ERROR]: Failed to restart server!"
+			echo "[ERROR]: Failed to reboot server!"
 			exit 2
 		}
 	fi

@@ -197,7 +197,7 @@ main()
 		exit 2
 	}
 
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-configs.sh | bash" || {
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/post-setup-user.sh | bash" || {
 		echo "[ERROR]: Failed to setup extra configs for user '${USERNAME}'!"
 		exit 2
 	}

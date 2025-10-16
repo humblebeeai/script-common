@@ -103,7 +103,7 @@ main()
 	echo 'APT::Periodic::Unattended-Upgrade "0";' | ${_SUDO} tee -a /etc/apt/apt.conf.d/20auto-upgrades >/dev/null || exit 2
 	echo -e "[OK]: Done.\n"
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/setup-tz-locales.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/pre-setup.sh | \
 		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"
 			exit 2
@@ -166,7 +166,7 @@ main()
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-configs.sh | ${_SUDO} bash || {
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/post-setup-user.sh | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup extra configs for root user!"
 		exit 2
 	}

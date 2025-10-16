@@ -64,6 +64,7 @@ main()
 	fi
 
 	if command -v ssh-keygen >/dev/null 2>&1 && \
+		[ "$(id -u)" -ne 0 ] && \
 		[ ! -f "${HOME}/.ssh/id_rsa" ] && \
 		[ ! -f "${HOME}/.ssh/id_rsa.pub" ]; then
 		ssh-keygen -t rsa -b 4096 -f "${HOME}/.ssh/id_rsa" -N "" || exit 2

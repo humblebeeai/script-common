@@ -56,7 +56,8 @@ fi
 
 ## --- Variables --- ##
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
-APT_UPGRADE=${APT_UPGRADE:-false}
+DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
+DO_USER_SETUP=${DO_USER_SETUP:-true}
 ## --- Variables --- ##
 
 
@@ -72,11 +73,14 @@ main()
 					TZ_NAME="${_input#*=}"
 					shift;;
 				-u | --upgrade | --enable-apt-upgrade)
-					APT_UPGRADE=true
+					DO_APT_UPGRADE=true
+					shift;;
+				-d | --disable-user-setup)
+					DO_USER_SETUP=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup"
 					exit 1;;
 			esac
 		done
@@ -86,45 +90,47 @@ main()
 
 	echo "[INFO]: Setting up server..."
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/ubuntu/setup-tz-locales.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/setup-tz-locales.sh | \
 		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"
 			exit 2
 		}
 
 	local _arg_upgrade=""
-	if [ "${APT_UPGRADE}" = false ]; then
+	if [ "${DO_APT_UPGRADE}" = false ]; then
 		_arg_upgrade="-d"
 	fi
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/ubuntu/install-basics.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-basics.sh | \
 		bash -s -- ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/ubuntu/install-dev-tools.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-dev-tools.sh | \
 		bash || {
 			echo "[ERROR]: Failed to install development tools!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/setup-docker.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-docker.sh | \
 		bash || {
 			echo "[ERROR]: Failed to setup Docker!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/change-primary-group.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/change-user-pgroup.sh | \
 		bash -s -- -a || {
 			echo "[ERROR]: Failed to change primary group!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/setup-user.sh | \
-		bash || {
-			echo "[ERROR]: Failed to setup current user!"
-			exit 2
-		}
+	if [ "${DO_USER_SETUP}" = true ]; then
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-user.sh | \
+			bash || {
+				echo "[ERROR]: Failed to setup current user!"
+				exit 2
+			}
+	fi
 
 	echo "[INFO]: Restarting server after 3 seconds..."
 	sleep 3

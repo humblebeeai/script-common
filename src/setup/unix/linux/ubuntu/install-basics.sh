@@ -52,7 +52,7 @@ fi
 ## --- Variables --- ##
 ADD_BAD_PROXY_FIX=${ADD_BAD_PROXY_FIX:-true}
 CLEAN_CACHE=${CLEAN_CACHE:-true}
-APT_UPGRADE=${APT_UPGRADE:-true}
+DO_APT_UPGRADE=${DO_APT_UPGRADE:-true}
 ## --- Variables --- ##
 
 
@@ -66,7 +66,7 @@ _install_packages()
 	fi
 	echo -e "[OK]: Done.\n"
 
-	if [ "${APT_UPGRADE}" = true ]; then
+	if [ "${DO_APT_UPGRADE}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
 		if ! ${_SUDO} apt-get upgrade -y -o Acquire::Retries=3; then
 			echo "[WARN]: 'apt-get upgrade' command failed!"
@@ -133,7 +133,7 @@ main()
 					CLEAN_CACHE=false
 					shift;;
 				-d | --disable-upgrade)
-					APT_UPGRADE=false
+					DO_APT_UPGRADE=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"

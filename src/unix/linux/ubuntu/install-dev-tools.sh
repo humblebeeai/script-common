@@ -109,6 +109,16 @@ main()
 	rm -vf "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
+	if [ "$(dpkg --print-architecture)" = "amd64" ]; then
+		echo "[INFO]: Installing 'xh'..."
+		local _xh_version
+		_xh_version=$(curl -s https://api.github.com/repos/ducaale/xh/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+		wget "https://github.com/ducaale/xh/releases/download/v${_xh_version}/xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
+		${_SUDO} dpkg -i "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
+		rm -vf "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
+
 	echo "[INFO]: Installing 'yq'..."
 	${_SUDO} rm -vf /usr/local/bin/yq || exit 2
 	${_SUDO} wget "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_$(dpkg --print-architecture)" -O /usr/local/bin/yq || exit 2

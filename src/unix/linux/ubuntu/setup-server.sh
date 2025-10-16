@@ -86,7 +86,7 @@ main()
 
 	echo "[INFO]: Setting up server..."
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/setup-tz-locales.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/ubuntu/setup-tz-locales.sh | \
 		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"
 			exit 2
@@ -96,31 +96,31 @@ main()
 	if [ "${APT_UPGRADE}" = false ]; then
 		_arg_upgrade="-d"
 	fi
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/install-basics.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/ubuntu/install-basics.sh | \
 		bash -s -- ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/install-dev-tools.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/ubuntu/install-dev-tools.sh | \
 		bash || {
 			echo "[ERROR]: Failed to install development tools!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/setup-docker.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/setup-docker.sh | \
 		bash || {
 			echo "[ERROR]: Failed to setup Docker!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-primary-group.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/change-primary-group.sh | \
 		bash -s -- -a || {
 			echo "[ERROR]: Failed to change primary group!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/setup-user.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/unix/linux/setup-user.sh | \
 		bash || {
 			echo "[ERROR]: Failed to setup current user!"
 			exit 2

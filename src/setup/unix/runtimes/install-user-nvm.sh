@@ -61,8 +61,8 @@ export NVM_DIR=\"${NVM_DIR}\"
 		else
 			echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.zshrc" || exit 2
 			echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.zshrc" || exit 2
+			echo -e "\n" >> "${HOME}/.zshrc" || exit 2
 		fi
-		echo -e "\n" >> "${HOME}/.zshrc" || exit 2
 	fi
 }
 
@@ -110,9 +110,6 @@ main()
 
 	_setup_shellrc || exit 2
 	echo -e "\n" >> "${HOME}/.bashrc" || exit 2
-	if [ -f "${HOME}/.zshrc" ]; then
-		echo -e "\n" >> "${HOME}/.zshrc" || exit 2
-	fi
 
 	# shellcheck disable=SC1091
 	source "${NVM_DIR}/nvm.sh" || exit 2

@@ -52,7 +52,7 @@ fi
 ## --- Variables --- ##
 ADD_BAD_PROXY_FIX=${ADD_BAD_PROXY_FIX:-true}
 CLEAN_CACHE=${CLEAN_CACHE:-true}
-DO_APT_UPGRADE=${DO_APT_UPGRADE:-true}
+DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
 ## --- Variables --- ##
 
 
@@ -127,12 +127,12 @@ main()
 				-c | --disable-clean-cache)
 					CLEAN_CACHE=false
 					shift;;
-				-d | --disable-upgrade)
-					DO_APT_UPGRADE=false
+				-u | --upgrade | --enable-apt-upgrade)
+					DO_APT_UPGRADE=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -b, --disable-bad-proxy-fix | -c, --disable-clean-cache | -d, --disable-upgrade"
+					echo "[INFO]: USAGE: ${0}  -b, --disable-bad-proxy-fix | -c, --disable-clean-cache | -u, --upgrade, --enable-apt-upgrade"
 					exit 1;;
 			esac
 		done

@@ -50,7 +50,7 @@ fi
 
 
 ## --- Variables --- ##
-TZ_NAME=${TZ_NAME:-UTC}
+TZ_NAME=${TZ_NAME:-Asia/Seoul}
 ## --- Variables --- ##
 
 

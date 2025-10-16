@@ -75,12 +75,12 @@ main()
 				-s | --sudo | --with-sudo)
 					WITH_SUDO=true
 					shift;;
-				-r | --install-all-runtimes)
+				-a | --install-all-runtimes)
 					ALL_RUNTIMES=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -h, --hashed, --hashed-password | -s, --sudo, --with-sudo | -r, --install-all-runtimes"
+					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -h, --hashed, --hashed-password | -s, --sudo, --with-sudo | -a, --install-all-runtimes"
 					exit 1;;
 			esac
 		done

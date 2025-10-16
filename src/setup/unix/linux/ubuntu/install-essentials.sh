@@ -75,6 +75,7 @@ _install_packages()
 		ca-certificates \
 		systemd \
 		apt-utils \
+		man-db \
 		build-essential \
 		cmake \
 		tzdata \

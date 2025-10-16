@@ -95,7 +95,7 @@ main()
 	fi
 
 	if [ -d "${NVM_DIR}" ] && [ -r "${NVM_DIR}/nvm.sh" ]; then
-		echo "[INFO]: NVM is already installed in '${MINICONDA_INSTALL_DIR}'."
+		echo "[INFO]: NVM is already installed in '${NVM_DIR}'."
 		_setup_shellrc || exit 2
 		exit 0
 	fi

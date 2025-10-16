@@ -58,6 +58,7 @@ fi
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
 DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
 DO_USER_SETUP=${DO_USER_SETUP:-true}
+ALL_RUNTIMES=${ALL_RUNTIMES:-false}
 DO_RESTART=${DO_RESTART:-true}
 ## --- Variables --- ##
 
@@ -79,12 +80,15 @@ main()
 				-d | --disable-user-setup)
 					DO_USER_SETUP=false
 					shift;;
+				-a | --install-all-runtimes)
+					ALL_RUNTIMES=true
+					shift;;
 				-r | --disable-restart)
 					DO_RESTART=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -r, --disable-restart"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --install-all-runtimes | -r, --disable-restart"
 					exit 1;;
 			esac
 		done
@@ -107,10 +111,11 @@ main()
 
 	local _arg_upgrade=""
 	if [ "${DO_APT_UPGRADE}" = false ]; then
-		_arg_upgrade="-d"
+		_arg_upgrade="-s -- -d"
 	fi
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-basics.sh | \
-		bash -s -- ${_arg_upgrade} || {
+	#shellcheck disable=SC2086
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-essentials.sh | \
+		bash ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}
@@ -134,8 +139,13 @@ main()
 		}
 
 	if [ "${DO_USER_SETUP}" = true ]; then
+		local _arg_all_runtimes=""
+		if [ "${ALL_RUNTIMES}" = true ]; then
+			_arg_all_runtimes="-s -- -r"
+		fi
+		#shellcheck disable=SC2086
 		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-user.sh | \
-			bash || {
+			bash ${_arg_all_runtimes} || {
 				echo "[ERROR]: Failed to setup current user!"
 				exit 2
 			}

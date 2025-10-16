@@ -48,6 +48,7 @@ fi
 PASSWORD=${PASSWORD:-}
 IS_HASHED=${IS_HASHED:-false}
 WITH_SUDO=${WITH_SUDO:-false}
+ALL_RUNTIMES=${ALL_RUNTIMES:-false}
 ## --- Variables --- ##
 
 
@@ -74,9 +75,12 @@ main()
 				-s | --sudo | --with-sudo)
 					WITH_SUDO=true
 					shift;;
+				-r | --install-all-runtimes)
+					ALL_RUNTIMES=true
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -h, --hashed, --hashed-password | -s, --sudo, --with-sudo"
+					echo "[INFO]: USAGE: ${0}  -g=*, --gid=*, --primary-gid=* | -u=*, --user=*, --username=* | -p=*, --pass=*, --password=* | -h, --hashed, --hashed-password | -s, --sudo, --with-sudo | -r, --install-all-runtimes"
 					exit 1;;
 			esac
 		done
@@ -183,6 +187,13 @@ main()
 		echo "[ERROR]: Failed to install 'NVM' for user '${USERNAME}'!"
 		exit 2
 	}
+
+	if [ "${ALL_RUNTIMES}" = true ]; then
+		${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-rust.sh | bash" || {
+			echo "[ERROR]: Failed to install 'Rust' for user '${USERNAME}'!"
+			exit 2
+		}
+	fi
 
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-nvchad.sh | bash" || {
 		echo "[ERROR]: Failed to setup 'NvChad' for user '${USERNAME}'!"

@@ -34,7 +34,7 @@ fi
 
 
 ## --- Variables --- ##
-MINICONDA_INSTALL_DIR=${MINICONDA_INSTALL_DIR:-"${HOME}/workspaces/runtimes/miniconda3"}
+MINICONDA_DIR=${MINICONDA_DIR:-"${HOME}/workspaces/runtimes/miniconda3"}
 PYTHON_VERSION=${PYTHON_VERSION:-3.10}
 ## --- Variables --- ##
 
@@ -48,7 +48,7 @@ main()
 		for _input in "${@:-}"; do
 			case ${_input} in
 				-i=* | --install-dir=*)
-					MINICONDA_INSTALL_DIR="${_input#*=}"
+					MINICONDA_DIR="${_input#*=}"
 					shift;;
 				-p=* | --python-version=*)
 					PYTHON_VERSION="${_input#*=}"
@@ -63,8 +63,8 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${MINICONDA_INSTALL_DIR}" ]; then
-		echo "[ERROR]: MINICONDA_INSTALL_DIR variable is empty!"
+	if [ -z "${MINICONDA_DIR}" ]; then
+		echo "[ERROR]: MINICONDA_DIR variable is empty!"
 		exit 2
 	fi
 
@@ -73,25 +73,25 @@ main()
 		exit 2
 	fi
 
-	if [ -d "${MINICONDA_INSTALL_DIR}" ] && [ -f "${MINICONDA_INSTALL_DIR}/bin/conda" ]; then
-		echo "[INFO]: Miniconda is already installed in '${MINICONDA_INSTALL_DIR}'."
+	if [ -d "${MINICONDA_DIR}" ] && [ -f "${MINICONDA_DIR}/bin/conda" ]; then
+		echo "[INFO]: Miniconda is already installed in '${MINICONDA_DIR}'."
 
 		if ! grep -q ">>> conda initialize >>>" "${HOME}/.bashrc"; then
 			#shellcheck disable=SC1091
-			source "${MINICONDA_INSTALL_DIR}/bin/activate" || exit 2
+			source "${MINICONDA_DIR}/bin/activate" || exit 2
 			conda init bash || exit 2
 		fi
 
 		if ! grep -q ">>> conda initialize >>>" "${HOME}/.zshrc"; then
 			#shellcheck disable=SC1091
-			source "${MINICONDA_INSTALL_DIR}/bin/activate" || exit 2
+			source "${MINICONDA_DIR}/bin/activate" || exit 2
 			conda init zsh || exit 2
 		fi
 		exit 0
 	fi
 
 	echo "[INFO]: Downloading Miniconda installer..."
-	mkdir -pv "${MINICONDA_INSTALL_DIR}" || exit 2
+	mkdir -pv "${MINICONDA_DIR}" || exit 2
 	local _miniconda_filename
 	_miniconda_filename="Miniconda3-latest-Linux-$(uname -m).sh"
 	if [ "${_OS}" = "Darwin" ]; then
@@ -100,14 +100,14 @@ main()
 	wget https://repo.anaconda.com/miniconda/"${_miniconda_filename}" -O miniconda.sh || exit 2
 	echo -e "[OK]: Done.\n"
 
-	echo "[INFO]: Installing Miniconda to '${MINICONDA_INSTALL_DIR}'..."
-	bash miniconda.sh -bu -p "${MINICONDA_INSTALL_DIR}" || exit 2
+	echo "[INFO]: Installing Miniconda to '${MINICONDA_DIR}'..."
+	bash miniconda.sh -bu -p "${MINICONDA_DIR}" || exit 2
 	rm -vrf miniconda.sh || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Setting up Miniconda..."
 	#shellcheck disable=SC1091
-	source "${MINICONDA_INSTALL_DIR}/bin/activate" || exit 2
+	source "${MINICONDA_DIR}/bin/activate" || exit 2
 	conda init bash || exit 2
 
 	if command -v zsh >/dev/null 2>&1; then

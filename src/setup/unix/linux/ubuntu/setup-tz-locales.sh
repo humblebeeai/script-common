@@ -75,7 +75,20 @@ main()
 	## --- Menu arguments --- ##
 
 	${_SUDO} apt-get update || true
-	${_SUDO} apt-get install -y debconf systemd locales tzdata || exit 2
+
+	local _retry_count=3
+	local _retry_delay=3
+	local _i=1
+	while ! ${_SUDO} apt-get install -y debconf systemd locales tzdata; do
+		if [ "${_i}" -eq "${_retry_count}" ]; then
+			echo "[ERROR]: Package installation failed after ${_retry_count} attempts!"
+			exit 2
+		fi
+
+		echo "[WARN]: Package installation failed, retrying ${_i}/${_retry_count} after ${_retry_delay} seconds..."
+		sleep ${_retry_delay}
+		_i=$((_i + 1))
+	done
 
 	if [ -z "${TZ_NAME}" ]; then
 		echo "[ERROR]: Timezone is empty!"

@@ -35,10 +35,29 @@ fi
 
 ## --- Variables --- ##
 RUST_DIR=${RUST_DIR:-"${HOME}/workspaces/runtimes/rust"}
+CARGO_HOME="${RUST_DIR}/.cargo"
+RUSTUP_HOME="${RUST_DIR}/.rustup"
 ## --- Variables --- ##
 
 
 ## --- Main --- ##
+_setup_shellrc()
+{
+	if ! grep -q "export CARGO_HOME=" "${HOME}/.bashrc"; then
+		echo "export CARGO_HOME=\"${CARGO_HOME}\"" >> "${HOME}/.bashrc" || exit 2
+		echo "export RUSTUP_HOME=\"${RUSTUP_HOME}\"" >> "${HOME}/.bashrc" || exit 2
+		echo "source \"\${CARGO_HOME}/env\"" >> "${HOME}/.bashrc" || exit 2
+		echo -e "\n" >> "${HOME}/.bashrc" || exit 2
+	fi
+
+	if [ -f "${HOME}/.zshrc" ] && ! grep -q "export CARGO_HOME=" "${HOME}/.zshrc"; then
+		echo "export CARGO_HOME=\"${CARGO_HOME}\"" >> "${HOME}/.zshrc" || exit 2
+		echo "export RUSTUP_HOME=\"${RUSTUP_HOME}\"" >> "${HOME}/.zshrc" || exit 2
+		echo "source \"\${CARGO_HOME}/env\"" >> "${HOME}/.zshrc" || exit 2
+		echo -e "\n" >> "${HOME}/.zshrc" || exit 2
+	fi
+}
+
 main()
 {
 	## --- Menu arguments --- ##
@@ -66,20 +85,9 @@ main()
 
 	CARGO_HOME="${RUST_DIR}/.cargo"
 	RUSTUP_HOME="${RUST_DIR}/.rustup"
-
 	if [ -d "${CARGO_HOME}" ] && [ -x "${CARGO_HOME}/bin/rustup" ]; then
 		echo "[INFO]: Rust is already installed in '${RUST_DIR}'."
-
-		# if ! grep -q "${CARGO_HOME}/env" "${HOME}/.bashrc"; then
-		# 	echo ". \"${CARGO_HOME}/env\"" >> "${HOME}/.bashrc" || exit 2
-		# 	echo "" >> "${HOME}/.bashrc" || exit 2
-		# fi
-
-		# if [ -f "${HOME}/.zshenv" ] && ! grep -q "${CARGO_HOME}/env" "${HOME}/.zshenv"; then
-		# 	echo ". \"${CARGO_HOME}/env\"" >> "${HOME}/.zshenv" || exit 2
-		# 	echo "" >> "${HOME}/.zshenv" || exit 2
-		# fi
-
+		_setup_shellrc || exit 2
 		exit 0
 	fi
 
@@ -92,10 +100,13 @@ main()
 		--no-modify-path \
 		-y || exit 2
 
-	"${CARGO_HOME}/bin/rustup" -V || exit 2
-	"${CARGO_HOME}/bin/cargo" -V || exit 2
-	"${CARGO_HOME}/bin/rustc" -V || exit 2
+	_setup_shellrc || exit 2
+	#shellcheck disable=SC1091
+	source "${CARGO_HOME}/env" || exit 2
 
+	rustup -V || exit 2
+	cargo -V || exit 2
+	rustc -V || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

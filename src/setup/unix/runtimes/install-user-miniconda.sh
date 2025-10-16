@@ -132,8 +132,12 @@ main()
 	conda clean -av || exit 2
 	conda activate "${_conda_env}" || exit 2
 
-	echo "conda activate ${_conda_env}" >> ~/.bashrc || exit 2
-	echo "conda activate ${_conda_env}" >> ~/.zshrc || exit 2
+	echo "conda activate ${_conda_env}" >> "${HOME}/.bashrc" || exit 2
+	echo -e "\n" >> "${HOME}/.bashrc" || exit 2
+	if [ -f "${HOME}/.zshrc" ]; then
+		echo "conda activate ${_conda_env}" >> "${HOME}/.zshrc" || exit 2
+		echo -e "\n" >> "${HOME}/.zshrc" || exit 2
+	fi
 
 	pip install -U pip || exit 2
 	pip cache purge || exit 2

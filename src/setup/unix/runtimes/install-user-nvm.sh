@@ -46,7 +46,7 @@ _setup_shellrc()
 		echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.bashrc" || exit 2
 		echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.bashrc" || exit 2
 		echo "[ -s \"\$NVM_DIR/bash_completion\" ] && \\. \"\$NVM_DIR/bash_completion\"" >> "${HOME}/.bashrc" || exit 2
-		echo "" >> "${HOME}/.bashrc" || exit 2
+		echo -e "\n" >> "${HOME}/.bashrc" || exit 2
 	fi
 
 	if [ -f "${HOME}/.zshrc" ] && ! grep -q "export NVM_DIR=" "${HOME}/.zshrc"; then
@@ -62,7 +62,7 @@ export NVM_DIR=\"${NVM_DIR}\"
 			echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.zshrc" || exit 2
 			echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.zshrc" || exit 2
 		fi
-		echo "" >> "${HOME}/.zshrc" || exit 2
+		echo -e "\n" >> "${HOME}/.zshrc" || exit 2
 	fi
 }
 
@@ -109,9 +109,9 @@ main()
 	curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || exit 2
 
 	_setup_shellrc || exit 2
-	echo "" >> "${HOME}/.bashrc" || exit 2
+	echo -e "\n" >> "${HOME}/.bashrc" || exit 2
 	if [ -f "${HOME}/.zshrc" ]; then
-		echo "" >> "${HOME}/.zshrc" || exit 2
+		echo -e "\n" >> "${HOME}/.zshrc" || exit 2
 	fi
 
 	# shellcheck disable=SC1091
@@ -125,7 +125,21 @@ main()
 	if [ -z "${_arg_node_version}" ]; then
 		_arg_node_version="--lts"
 	fi
-	nvm install --latest-npm --alias=default "${_arg_node_version}" || exit 2
+
+	local _retry_count=3
+	local _retry_delay=1
+	local _i=1
+	while ! nvm install --latest-npm --alias=default "${_arg_node_version}"; do
+		if [ "${_i}" -eq "${_retry_count}" ]; then
+			echo "[ERROR]: Node.js installation failed after ${_retry_count} attempts!"
+			exit 2
+		fi
+
+		echo "[WARN]: Node.js installation failed, retrying ${_i}/${_retry_count} after ${_retry_delay} seconds..."
+		sleep ${_retry_delay}
+		_i=$((_i + 1))
+	done
+
 	nvm use default || exit 2
 	nvm cache clear || exit 2
 

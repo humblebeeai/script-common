@@ -109,6 +109,11 @@ main()
 	curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || exit 2
 
 	_setup_shellrc || exit 2
+	echo "" >> "${HOME}/.bashrc" || exit 2
+	if [ -f "${HOME}/.zshrc" ]; then
+		echo "" >> "${HOME}/.zshrc" || exit 2
+	fi
+
 	# shellcheck disable=SC1091
 	source "${NVM_DIR}/nvm.sh" || exit 2
 

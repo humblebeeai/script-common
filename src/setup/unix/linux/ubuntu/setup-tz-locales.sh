@@ -74,7 +74,7 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
-	${_SUDO} apt-get update || exit 2
+	${_SUDO} apt-get update || true
 	${_SUDO} apt-get install -y debconf systemd locales tzdata || exit 2
 
 	if [ -z "${TZ_NAME}" ]; then

@@ -60,23 +60,17 @@ DO_APT_UPGRADE=${DO_APT_UPGRADE:-true}
 _install_packages()
 {
 	echo "[INFO]: Updating package lists..."
-	if ! ${_SUDO} apt-get update --fix-missing -o Acquire::Retries=3 -o Acquire::CompressionTypes::Order::=gz; then
-		echo "[WARN]: 'apt-get update' command failed!"
-		return 2
-	fi
+	${_SUDO} apt-get update --fix-missing -o Acquire::Retries=3 -o Acquire::CompressionTypes::Order::=gz || true
 	echo -e "[OK]: Done.\n"
 
 	if [ "${DO_APT_UPGRADE}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		if ! ${_SUDO} apt-get upgrade -y -o Acquire::Retries=3; then
-			echo "[WARN]: 'apt-get upgrade' command failed!"
-			return 2
-		fi
+		${_SUDO} apt-get upgrade -y -o Acquire::Retries=3 || true
 		echo -e "[OK]: Done.\n"
 	fi
 
 	echo "[INFO]: Installing packages..."
-	if ! ${_SUDO} apt-get install -y -o Acquire::Retries=3 \
+	if ! ${_SUDO} apt-get install -y -o Acquire::Retries=5 \
 		sudo \
 		ca-certificates \
 		systemd \

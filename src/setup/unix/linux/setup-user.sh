@@ -180,18 +180,15 @@ main()
 
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-miniconda.sh | bash" || {
 		echo "[ERROR]: Failed to install 'Miniconda' for user '${USERNAME}'!"
-		exit 2
 	}
 
 	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-nvm.sh | bash" || {
 		echo "[ERROR]: Failed to install 'NVM' for user '${USERNAME}'!"
-		exit 2
 	}
 
 	if [ "${ALL_RUNTIMES}" = true ]; then
 		${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-rust.sh | bash" || {
 			echo "[ERROR]: Failed to install 'Rust' for user '${USERNAME}'!"
-			exit 2
 		}
 	fi
 

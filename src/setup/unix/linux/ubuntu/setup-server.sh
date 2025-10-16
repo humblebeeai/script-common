@@ -58,6 +58,7 @@ fi
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
 DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
 DO_USER_SETUP=${DO_USER_SETUP:-true}
+DO_RESTART=${DO_RESTART:-true}
 ## --- Variables --- ##
 
 
@@ -78,9 +79,12 @@ main()
 				-d | --disable-user-setup)
 					DO_USER_SETUP=false
 					shift;;
+				-r | --disable-restart)
+					DO_RESTART=false
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -r, --disable-restart"
 					exit 1;;
 			esac
 		done
@@ -137,13 +141,14 @@ main()
 			}
 	fi
 
-	echo "[INFO]: Restarting server after 3 seconds..."
-	sleep 3
-	${_SUDO} shutdown -r now || {
-		echo "[ERROR]: Failed to restart server!"
-		exit 2
-	}
-
+	if [ "${DO_RESTART}" = true ]; then
+		echo "[INFO]: Restarting server after 3 seconds..."
+		sleep 3
+		${_SUDO} shutdown -r now || {
+			echo "[ERROR]: Failed to restart server!"
+			exit 2
+		}
+	fi
 	echo -e "[OK]: Done.\n"
 }
 

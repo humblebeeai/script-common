@@ -127,7 +127,7 @@ main()
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/change-user-pgroup.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/account/unix/linux/change-user-pgroup.sh | \
 		bash -s -- -a || {
 			echo "[ERROR]: Failed to change primary group!"
 			exit 2

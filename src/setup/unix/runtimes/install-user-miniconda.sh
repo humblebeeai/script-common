@@ -144,7 +144,6 @@ main()
 
 	python -V || exit 2
 	pip -V || exit 2
-	uv -V || exit 2
 	echo -e "[OK]: Done.\n"
 }
 

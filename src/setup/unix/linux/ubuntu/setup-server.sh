@@ -120,7 +120,7 @@ main()
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-dev-tools.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/install-extra-tools.sh | \
 		bash || {
 			echo "[ERROR]: Failed to install development tools!"
 			exit 2

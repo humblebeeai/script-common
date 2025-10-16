@@ -94,11 +94,16 @@ main()
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Installing 'fastfetch'..."
+	local _cpu_arch
+	_cpu_arch="$(dpkg --print-architecture)"
+	if [ "${_cpu_arch}" = "arm64" ]; then
+		_cpu_arch="aarch64"
+	fi
 	local _fastfetch_version
 	_fastfetch_version=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
-	wget "https://github.com/fastfetch-cli/fastfetch/releases/download/v${_fastfetch_version}/fastfetch-linux-$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "fastfetch-linux-$(dpkg --print-architecture).deb" || exit 2
-	rm -vf "fastfetch-linux-$(dpkg --print-architecture).deb" || exit 2
+	wget "https://github.com/fastfetch-cli/fastfetch/releases/download/${_fastfetch_version}/fastfetch-linux-${_cpu_arch}.deb" || exit 2
+	${_SUDO} dpkg -i "fastfetch-linux-${_cpu_arch}.deb" || exit 2
+	rm -vf "fastfetch-linux-${_cpu_arch}.deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Installing 'bat'..."

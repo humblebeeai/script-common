@@ -128,7 +128,7 @@ main()
 	echo "[INFO]: Creating python environment..."
 	local _conda_env
 	_conda_env="py${PYTHON_VERSION//./}"
-	conda create -y -n "${_conda_env}" python="${PYTHON_VERSION}" pip uv || exit 2
+	conda create -y -n "${_conda_env}" python="${PYTHON_VERSION}" pip || exit 2
 	conda clean -av || exit 2
 	conda activate "${_conda_env}" || exit 2
 

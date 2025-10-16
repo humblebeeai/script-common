@@ -186,7 +186,7 @@ main()
 			echo "${_BASE_CONFIGS}" >> "${HOME}/.zshrc" || exit
 			echo "" >> "${HOME}/.zshrc" || exit 2
 
-			if command -v lsd >/dev/null 2>&1; then
+			if command -v lsd >/dev/null 2>&1 && [ "$(id -u)" -ne 0 ]; then
 				echo "${_LSD_ALIAS}" >> "${HOME}/.zshrc" || exit 2
 			else
 				if [ "${_OS}" = "Linux" ]; then

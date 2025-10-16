@@ -132,7 +132,7 @@ main()
 
 
 	## Adding other recommended plugins:
-	local _plugins="docker docker-compose python pip nvm node npm"
+	local _plugins="docker docker-compose"
 	local _plugin
 	echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
 	for _plugin in ${_plugins}; do
@@ -140,7 +140,18 @@ main()
 			update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
 		fi
 	done
-	echo -e "[OK]: Done.\n"
+
+	if [ "$(id -u)" -ne 0 ]; then
+		local _plugins="python pip nvm node npm"
+		local _plugin
+		echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
+		for _plugin in ${_plugins}; do
+			if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
+				update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
+			fi
+		done
+		echo -e "[OK]: Done.\n"
+	fi
 
 
 	## Setting up 'powerlevel10k' theme:

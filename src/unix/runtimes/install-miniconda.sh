@@ -42,6 +42,37 @@ PYTHON_VERSION=${PYTHON_VERSION:-3.10}
 ## --- Main --- ##
 main()
 {
+	## --- Menu arguments --- ##
+	if [ -n "${1:-}" ]; then
+		local _input
+		for _input in "${@:-}"; do
+			case ${_input} in
+				-i=* | --install-dir=*)
+					MINICONDA_INSTALL_DIR="${_input#*=}"
+					shift;;
+				-p=* | --python-version=*)
+					PYTHON_VERSION="${_input#*=}"
+					shift;;
+				*)
+					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[INFO]: USAGE: ${0}  -i=*, --install-dir=* | -p=*, --python-version=*"
+					exit 1;;
+			esac
+		done
+	fi
+	## --- Menu arguments --- ##
+
+
+	if [ -z "${MINICONDA_INSTALL_DIR}" ]; then
+		echo "[ERROR]: MINICONDA_INSTALL_DIR variable is empty!"
+		exit 2
+	fi
+
+	if [ -z "${PYTHON_VERSION}" ]; then
+		echo "[ERROR]: PYTHON_VERSION variable is empty!"
+		exit 2
+	fi
+
 	if [ -d "${MINICONDA_INSTALL_DIR}" ] && [ -f "${MINICONDA_INSTALL_DIR}/bin/conda" ]; then
 		echo "[INFO]: Miniconda is already installed in '${MINICONDA_INSTALL_DIR}'."
 

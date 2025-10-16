@@ -35,6 +35,7 @@ fi
 
 ## --- Variables --- ##
 NVM_DIR=${NVM_DIR:-"${HOME}/workspaces/runtimes/.nvm"}
+NODE_VERSION=${NODE_VERSION:-}
 ## --- Variables --- ##
 
 
@@ -65,6 +66,32 @@ export NVM_DIR=\"${NVM_DIR}\"
 
 main()
 {
+	## --- Menu arguments --- ##
+	if [ -n "${1:-}" ]; then
+		local _input
+		for _input in "${@:-}"; do
+			case ${_input} in
+				-i=* | --install-dir=*)
+					NVM_DIR="${_input#*=}"
+					shift;;
+				-n=* | --node-version=*)
+					NODE_VERSION="${_input#*=}"
+					shift;;
+				*)
+					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[INFO]: USAGE: ${0}  -i=*, --install-dir=* | -n=*, --node-version=*"
+					exit 1;;
+			esac
+		done
+	fi
+	## --- Menu arguments --- ##
+
+
+	if [ -z "${NVM_DIR}" ]; then
+		echo "[ERROR]: NVM_DIR variable is empty!"
+		exit 2
+	fi
+
 	if [ -d "${NVM_DIR}" ] && [ -r "${NVM_DIR}/nvm.sh" ]; then
 		echo "[INFO]: NVM is already installed in '${MINICONDA_INSTALL_DIR}'."
 		_setup_shellrc || exit 2
@@ -87,7 +114,11 @@ main()
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Installing Node.js..."
-	nvm install --latest-npm --alias=default --lts || exit 2
+	local _arg_node_version="${NODE_VERSION}"
+	if [ -z "${_arg_node_version}" ]; then
+		_arg_node_version="--lts"
+	fi
+	nvm install --latest-npm --alias=default "${_arg_node_version}" || exit 2
 	nvm use default || exit 2
 	nvm cache clear || exit 2
 

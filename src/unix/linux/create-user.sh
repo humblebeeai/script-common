@@ -31,6 +31,11 @@ if ! command -v useradd >/dev/null 2>&1; then
 	exit 1
 fi
 
+if ! command -v usermod >/dev/null 2>&1; then
+	echo "[ERROR]: 'usermod' command not found or not installed!"
+	exit 1
+fi
+
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -123,15 +128,21 @@ main()
 	fi
 
 
-	local _sudo_group=""
+	local _arg_sudo_group=""
 	if [ "${WITH_SUDO}" = true ]; then
-		_sudo_group=",sudo"
+		_arg_sudo_group=",sudo"
 	fi
 
 	echo "[INFO]: Creating new user..."
 	#shellcheck disable=SC2086
-	${_SUDO} useradd -s /bin/bash -m -d "/home/${USERNAME}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_sudo_group}" ${_arg_uid} "${USERNAME}"
+	${_SUDO} useradd -s /bin/bash -m -d "/home/${USERNAME}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_arg_sudo_group}" ${_arg_uid} "${USERNAME}"
 	echo -e "[OK]: Done.\n"
+
+	if getent group docker >/dev/null 2>&1; then
+		echo "[INFO]: Adding user '${USERNAME}' to 'docker' group..."
+		${_SUDO} usermod -aG docker "${USERNAME}" || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 }
 
 main "${@:-}"

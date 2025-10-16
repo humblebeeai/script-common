@@ -56,6 +56,7 @@ fi
 
 ## --- Variables --- ##
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
+APT_UPGRADE=${APT_UPGRADE:-false}
 ## --- Variables --- ##
 
 
@@ -70,9 +71,12 @@ main()
 				-t=* | --tz=* | --timezone=*)
 					TZ_NAME="${_input#*=}"
 					shift;;
+				-u | --upgrade | --enable-apt-upgrade)
+					APT_UPGRADE=true
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=*"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade"
 					exit 1;;
 			esac
 		done
@@ -88,8 +92,12 @@ main()
 			exit 2
 		}
 
+	local _arg_upgrade=""
+	if [ "${APT_UPGRADE}" = false ]; then
+		_arg_upgrade="-d"
+	fi
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/ubuntu/install-basics.sh | \
-		bash -s -- -u || {
+		bash -s -- ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}

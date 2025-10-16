@@ -144,10 +144,17 @@ main()
 	fi
 
 	if [ "$(id -g "${USERNAME}")" != "${PRIMARY_GID}" ]; then
-		echo "[INFO]: Changing primary group for user '${USERNAME}' to GID '${PRIMARY_GID}'..."
 		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/linux/change-primary-group.sh | \
 			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!"
+				exit 2
+			}
+	fi
+
+	if getent group docker >/dev/null 2>&1 && ! id -nG "${USERNAME}" | grep -qw docker; then
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/unix/add-user-group.sh | \
+			bash -s -- -g=docker -u="${USERNAME}" || {
+				echo "[ERROR]: Failed to add user '${USERNAME}' to 'docker' group!"
 				exit 2
 			}
 	fi

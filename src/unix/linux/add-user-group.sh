@@ -36,6 +36,7 @@ fi
 
 ## --- Variables --- ##
 USERNAMES=${USERNAMES:-}
+GROUP=${GROUP:-}
 ## --- Variables --- ##
 
 
@@ -50,15 +51,23 @@ main()
 				-u=* | --users=* | --usernames=*)
 					USERNAMES="${_input#*=}"
 					shift;;
+				-g=* | --group=*)
+					GROUP="${_input#*=}"
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -u=*, --users=*, --usernames=*"
+					echo "[INFO]: USAGE: ${0}  -u=*, --users=*, --usernames=* |  -g=*, --group=*"
 					exit 1;;
 			esac
 		done
 	fi
 	## --- Menu arguments --- ##
 
+
+	if [ -z "${GROUP}" ]; then
+		echo "[ERROR]: GROUP variable is empty!"
+		exit 1
+	fi
 
 	USERNAMES=$(echo "${USERNAMES}" | tr ',' ' ' | xargs -n1 | grep -v "^root$" | xargs || echo "")
 	if [ -z "${USERNAMES}" ]; then
@@ -78,8 +87,8 @@ main()
 			continue
 		fi
 
-		echo "[INFO]: Adding user '${_username}' to 'sudo' group..."
-		${_SUDO} usermod -aG sudo "${_username}" || exit 2
+		echo "[INFO]: Adding user '${_username}' to '${GROUP}' group..."
+		${_SUDO} usermod -aG "${GROUP}" "${_username}" || exit 2
 		echo -e "[OK]: Done.\n"
 	done
 }

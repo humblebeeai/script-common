@@ -132,12 +132,12 @@ main()
 				-c | --disable-clean-cache)
 					CLEAN_CACHE=false
 					shift;;
-				-u | --disable-upgrade)
+				-d | --disable-upgrade)
 					APT_UPGRADE=false
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -b, --disable-bad-proxy-fix | -c, --disable-clean-cache | -u, --disable-upgrade"
+					echo "[INFO]: USAGE: ${0}  -b, --disable-bad-proxy-fix | -c, --disable-clean-cache | -d, --disable-upgrade"
 					exit 1;;
 			esac
 		done

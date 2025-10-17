@@ -56,6 +56,7 @@ fi
 
 ## --- Variables --- ##
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
+NEW_HOSTNAME=${NEW_HOSTNAME:-}
 DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
 DO_USER_SETUP=${DO_USER_SETUP:-true}
 ALL_RUNTIMES=${ALL_RUNTIMES:-false}
@@ -74,6 +75,9 @@ main()
 				-t=* | --tz=* | --timezone=*)
 					TZ_NAME="${_input#*=}"
 					shift;;
+				-n=* | --hostname=*)
+					NEW_HOSTNAME="${_input#*=}"
+					shift;;
 				-u | --upgrade | --enable-apt-upgrade)
 					DO_APT_UPGRADE=true
 					shift;;
@@ -88,7 +92,7 @@ main()
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --install-all-runtimes | -r, --disable-reboot"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -n=*, --hostname=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --install-all-runtimes | -r, --disable-reboot"
 					exit 1;;
 			esac
 		done
@@ -98,7 +102,7 @@ main()
 
 	echo "[INFO]: Setting up Ubuntu/Debian..."
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh | \
-		bash -s -- -t="${TZ_NAME}" || {
+		bash -s -- -t="${TZ_NAME}" -n="${NEW_HOSTNAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"
 			exit 2
 		}

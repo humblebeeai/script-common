@@ -51,6 +51,7 @@ fi
 
 ## --- Variables --- ##
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
+NEW_HOSTNAME=${NEW_HOSTNAME:-}
 
 _USER_UMASK=$(cat <<'EOF'
 
@@ -73,9 +74,12 @@ main()
 				-t=* | --tz=* | --timezone=*)
 					TZ_NAME="${_input#*=}"
 					shift;;
+				-n=* | --hostname=*)
+					NEW_HOSTNAME="${_input#*=}"
+					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=*"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -n=*, --hostname=*"
 					exit 1;;
 			esac
 		done
@@ -116,9 +120,16 @@ main()
 	done
 	echo -e "[OK]: Done.\n"
 
+	if [ -n "${NEW_HOSTNAME}" ]; then
+		echo "[INFO]: Setting up hostname..."
+		${_SUDO} hostnamectl set-hostname "${NEW_HOSTNAME}" || exit 2
+		${_SUDO} sed -i "s/127.0.1.1.*/127.0.1.1 ${NEW_HOSTNAME}/" /etc/hosts || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
+
 	echo "[INFO]: Setting up timezone to '${TZ_NAME}'..."
 	if [[ ! -e "/usr/share/zoneinfo/${TZ_NAME}" ]]; then
-		echo "[ERROR] Timezone '${TZ_NAME}' not found in /usr/share/zoneinfo!"
+		echo "[ERROR] Timezone '${TZ_NAME}' not found in '/usr/share/zoneinfo/*'!"
 		exit 1
 	fi
 

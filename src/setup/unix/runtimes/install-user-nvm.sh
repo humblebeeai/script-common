@@ -124,7 +124,7 @@ main()
 	local _retry_delay=1
 	local _i=1
 	while ! nvm install --latest-npm --alias=default "${_arg_node_version}"; do
-		if [ "${_i}" -eq "${_retry_count}" ]; then
+		if [ "${_i}" -ge "${_retry_count}" ]; then
 			echo "[ERROR]: Node.js installation failed after ${_retry_count} attempts!"
 			exit 2
 		fi

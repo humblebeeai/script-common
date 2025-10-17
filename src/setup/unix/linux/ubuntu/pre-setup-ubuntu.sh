@@ -89,15 +89,6 @@ main()
 
 
 	echo "[INFO]: Starting pre-setup for Ubuntu/Debian..."
-
-	if [ -f "/etc/profile" ] && ! grep -q "umask" /etc/profile; then
-		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/profile >/dev/null || exit 2
-	fi
-
-	if [ -f "/etc/bash.bashrc" ] && ! grep -q "umask" /etc/bash.bashrc; then
-		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/bash.bashrc >/dev/null || exit 2
-	fi
-
 	echo "[INFO]: Disabling automatic updates and upgrades..."
 	if [ ! -d "/etc/apt/apt.conf.d" ]; then
 		${_SUDO} mkdir -vp "/etc/apt/apt.conf.d" || exit 2
@@ -113,7 +104,7 @@ main()
 	local _retry_delay=3
 	local _i=1
 	while ! ${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get install -y debconf systemd locales tzdata; do
-		if [ "${_i}" -eq "${_retry_count}" ]; then
+		if [ "${_i}" -ge "${_retry_count}" ]; then
 			echo "[ERROR]: Package installation failed after ${_retry_count} attempts!"
 			exit 2
 		fi
@@ -147,6 +138,16 @@ main()
 	${_SUDO} update-locale LANG=en_US.UTF-8 LC_ALL=en_AU.UTF-8 || exit 2
 
 	locale || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Setting up user umask for non-root users..."
+	if [ -f "/etc/profile" ] && ! grep -q "umask" /etc/profile; then
+		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/profile >/dev/null || exit 2
+	fi
+
+	if [ -f "/etc/bash.bashrc" ] && ! grep -q "umask" /etc/bash.bashrc; then
+		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/bash.bashrc >/dev/null || exit 2
+	fi
 	echo -e "[OK]: Done.\n"
 
 	echo -e "[OK]: Done.\n"

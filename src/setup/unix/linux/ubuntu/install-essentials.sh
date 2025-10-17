@@ -161,7 +161,7 @@ main()
 	local _retry_delay=3
 	local _i=1
 	while ! _install_packages; do
-		if [ "${_i}" -eq "${_retry_count}" ]; then
+		if [ "${_i}" -ge "${_retry_count}" ]; then
 			echo "[ERROR]: Package installation failed after ${_retry_count} attempts!"
 			exit 2
 		fi

@@ -92,6 +92,7 @@ main()
 
 	echo "[INFO]: Downloading Miniconda installer..."
 	mkdir -pv "${MINICONDA_DIR}" || exit 2
+	rm -vf miniconda.sh || exit 2
 	local _miniconda_filename
 	_miniconda_filename="Miniconda3-latest-Linux-$(uname -m).sh"
 	if [ "${_OS}" = "Darwin" ]; then
@@ -102,7 +103,7 @@ main()
 
 	echo "[INFO]: Installing Miniconda to '${MINICONDA_DIR}'..."
 	bash miniconda.sh -bu -p "${MINICONDA_DIR}" || exit 2
-	rm -vrf miniconda.sh || exit 2
+	rm -vf miniconda.sh || exit 2
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Setting up Miniconda..."
@@ -128,7 +129,21 @@ main()
 	echo "[INFO]: Creating python environment..."
 	local _conda_env
 	_conda_env="py${PYTHON_VERSION//./}"
-	conda create -y -n "${_conda_env}" python="${PYTHON_VERSION}" pip || exit 2
+
+	local _retry_count=3
+	local _retry_delay=1
+	local _i=1
+	while ! conda create -y -n "${_conda_env}" python="${PYTHON_VERSION}" pip; do
+		if [ "${_i}" -ge "${_retry_count}" ]; then
+			echo "[ERROR]: Python environment creation failed after ${_retry_count} attempts!"
+			exit 2
+		fi
+
+		echo "[WARN]: Python environment creation failed, retrying ${_i}/${_retry_count} after ${_retry_delay} seconds..."
+		sleep ${_retry_delay}
+		_i=$((_i + 1))
+	done
+
 	conda clean -av || exit 2
 	conda activate "${_conda_env}" || exit 2
 

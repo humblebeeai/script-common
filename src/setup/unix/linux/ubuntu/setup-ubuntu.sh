@@ -96,7 +96,7 @@ main()
 	## --- Menu arguments --- ##
 
 
-	echo "[INFO]: Setting up Ubuntu/Debian server..."
+	echo "[INFO]: Setting up Ubuntu/Debian..."
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh | \
 		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"

@@ -174,8 +174,8 @@ main()
 			exit 2
 		}
 	else
-		echo "[INFO]: Please reboot the server later to apply all changes!"
-		exec zsh
+		echo "[WARN]: Please logout or exit from the current session and login or enter again to apply user-related changes!"
+		echo "[WARN]: You must reboot the server later to apply all system-related changes!"
 	fi
 	echo -e "[OK]: Done.\n"
 }

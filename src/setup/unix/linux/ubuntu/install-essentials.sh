@@ -101,7 +101,6 @@ _install_packages()
 		less \
 		ripgrep \
 		watch \
-		watchman \
 		fzf \
 		httpie \
 		zsh; then
@@ -110,6 +109,7 @@ _install_packages()
 	fi
 
 	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y btop || true
+	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y watchman || true
 	echo -e "[OK]: Done.\n"
 }
 

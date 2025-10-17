@@ -145,6 +145,7 @@ main()
 			}
 	fi
 
+	echo "[INFO]: Setting up for root user..."
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-ohmyzsh.sh | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!"
 		exit 2
@@ -164,6 +165,7 @@ main()
 		echo "[ERROR]: Failed to setup extra configs for root user!"
 		exit 2
 	}
+	echo -e "[OK]: Done.\n"
 
 
 	if [ "${DO_REBOOT}" = true ]; then

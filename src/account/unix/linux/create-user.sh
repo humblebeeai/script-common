@@ -21,25 +21,24 @@ if [ "${_OS}" != "Linux" ]; then
 	exit 1
 fi
 
-if ! command -v getent >/dev/null 2>&1; then
-	echo "[ERROR]: 'getent' command not found or not installed!"
-	exit 1
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 
-if ! command -v useradd >/dev/null 2>&1; then
+if ! ${_SUDO} command -v useradd >/dev/null 2>&1; then
 	echo "[ERROR]: 'useradd' command not found or not installed!"
 	exit 1
 fi
 
-if ! command -v usermod >/dev/null 2>&1; then
+if ! ${_SUDO} command -v usermod >/dev/null 2>&1; then
 	echo "[ERROR]: 'usermod' command not found or not installed!"
 	exit 1
 fi
 
-
-_SUDO="sudo"
-if [ "$(id -u)" -eq 0 ]; then
-	_SUDO=""
+if ! command -v getent >/dev/null 2>&1; then
+	echo "[ERROR]: 'getent' command not found or not installed!"
+	exit 1
 fi
 ## --- Base --- ##
 

@@ -36,15 +36,14 @@ else
 	exit 1
 fi
 
-if ! command -v apt >/dev/null 2>&1; then
-	echo "[ERROR]: Not found 'apt' command, please install 'apt' package manager!"
-	exit 1
-fi
-
-
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
 	_SUDO=""
+fi
+
+if ! ${_SUDO} command -v apt-get >/dev/null 2>&1; then
+	echo "[ERROR]: Not found 'apt-get' command, please install 'apt' package manager!"
+	exit 1
 fi
 ## --- Base --- ##
 
@@ -75,6 +74,8 @@ _install_packages()
 		ca-certificates \
 		systemd \
 		apt-utils \
+		adduser \
+		passwd \
 		build-essential \
 		cmake \
 		tzdata \
@@ -86,30 +87,33 @@ _install_packages()
 		curl \
 		ssh \
 		git \
-		git-lfs \
 		rsync \
-		unzip \
-		zip \
 		tmux \
 		vim \
 		nano \
 		jq \
-		htop \
-		ncdu \
-		pydf \
 		tree \
-		less \
 		ripgrep \
-		watch \
-		fzf \
-		httpie \
 		zsh; then
 		echo "[WARN]: 'apt-get install' command failed!"
 		return 2
 	fi
+	echo -e "[OK]: Done.\n"
 
-	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y btop || true
-	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y watchman || true
+	echo "[INFO]: Installing additional packages..."
+	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -o Acquire::Retries=5 \
+		less \
+		watch \
+		unzip \
+		zip \
+		git-lfs \
+		htop \
+		ncdu \
+		pydf \
+		fzf \
+		httpie || true
+
+	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -q btop || true
 	echo -e "[OK]: Done.\n"
 }
 

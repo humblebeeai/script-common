@@ -21,20 +21,19 @@ if [ "${_OS}" != "Linux" ]; then
 	exit 1
 fi
 
-if ! command -v openssl >/dev/null 2>&1; then
-	echo "[ERROR]: 'openssl' command not found or not installed!"
-	exit 1
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 
-if ! command -v chpasswd >/dev/null 2>&1; then
+if ! ${_SUDO} command -v chpasswd >/dev/null 2>&1; then
 	echo "[ERROR]: 'chpasswd' command not found or not installed!"
 	exit 1
 fi
 
-
-_SUDO="sudo"
-if [ "$(id -u)" -eq 0 ]; then
-	_SUDO=""
+if ! command -v openssl >/dev/null 2>&1; then
+	echo "[ERROR]: 'openssl' command not found or not installed!"
+	exit 1
 fi
 ## --- Base --- ##
 

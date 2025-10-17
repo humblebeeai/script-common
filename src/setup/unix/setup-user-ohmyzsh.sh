@@ -40,12 +40,6 @@ if [ -z "${HOME:-}" ]; then
 	echo "[ERROR]: HOME environment variable is not set!"
 	exit 2
 fi
-
-
-_SUDO="sudo"
-if [ "$(id -u)" -eq 0 ]; then
-	_SUDO=""
-fi
 ## --- Base --- ##
 
 
@@ -177,7 +171,7 @@ ZSH_DISABLE_COMPFIX="true"
 	fi
 
 	local _p10k_theme="p10k-rainbow.zsh"
-	if [ -z "${_SUDO}" ]; then
+	if [ "$(id -u)" -eq 0 ]; then
 		_p10k_theme="p10k-classic.zsh"
 	fi
 

@@ -41,15 +41,14 @@ if [ "$(uname -m)" != "x86_64" ] && [ "$(uname -m)" != "aarch64" ] && [ "$(uname
 	exit 1
 fi
 
-if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' not found or not installed!"
-	exit 1
-fi
-
-
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
 	_SUDO=""
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+	echo "[ERROR]: 'curl' not found or not installed!"
+	exit 1
 fi
 ## --- Base --- ##
 

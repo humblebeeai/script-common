@@ -36,15 +36,14 @@ else
 	exit 1
 fi
 
-if ! command -v apt >/dev/null 2>&1; then
-	echo "[ERROR]: Not found 'apt' command, please check your .bashrc, system configs or 'PATH' environment variable!"
-	exit 1
-fi
-
-
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
 	_SUDO=""
+fi
+
+if ! ${_SUDO} command -v apt-get >/dev/null 2>&1; then
+	echo "[ERROR]: Not found 'apt-get' command, please check your system configs or 'PATH' environment variable!"
+	exit 1
 fi
 ## --- Base --- ##
 

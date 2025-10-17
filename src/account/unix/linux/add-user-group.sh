@@ -21,15 +21,14 @@ if [ "${_OS}" != "Linux" ]; then
 	exit 1
 fi
 
-if ! command -v usermod >/dev/null 2>&1; then
-	echo "[ERROR]: 'usermod' command not found or not installed!"
-	exit 1
-fi
-
-
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
 	_SUDO=""
+fi
+
+if ! ${_SUDO} command -v usermod >/dev/null 2>&1; then
+	echo "[ERROR]: 'usermod' command not found or not installed!"
+	exit 1
 fi
 ## --- Base --- ##
 

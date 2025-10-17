@@ -59,7 +59,6 @@ main()
 		less \
 		ripgrep \
 		watch \
-		watchman \
 		fzf \
 		yq \
 		fd \

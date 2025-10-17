@@ -173,6 +173,9 @@ main()
 			echo "[ERROR]: Failed to reboot server!"
 			exit 2
 		}
+	else
+		echo "[INFO]: Please reboot the server later to apply all changes!"
+		bash
 	fi
 	echo -e "[OK]: Done.\n"
 }

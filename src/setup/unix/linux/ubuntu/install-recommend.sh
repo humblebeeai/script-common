@@ -56,6 +56,11 @@ if ! command -v wget >/dev/null 2>&1; then
 	exit 1
 fi
 
+if ! command -v tar >/dev/null 2>&1; then
+	echo "[ERROR]: 'tar' not found or not installed!"
+	exit 1
+fi
+
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then

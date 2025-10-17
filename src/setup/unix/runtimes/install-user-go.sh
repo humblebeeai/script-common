@@ -21,8 +21,13 @@ if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
 	exit 1
 fi
 
-if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' not found or not installed!"
+if ! command -v wget >/dev/null 2>&1; then
+	echo "[ERROR]: 'wget' not found or not installed!"
+	exit 1
+fi
+
+if ! command -v tar >/dev/null 2>&1; then
+	echo "[ERROR]: 'tar' not found or not installed!"
 	exit 1
 fi
 

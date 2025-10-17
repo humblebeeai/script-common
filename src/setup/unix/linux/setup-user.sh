@@ -31,6 +31,11 @@ if ! command -v curl >/dev/null 2>&1; then
 	exit 1
 fi
 
+if ! command -v chmod >/dev/null 2>&1; then
+	echo "[ERROR]: 'chmod' command not found or not installed!"
+	exit 1
+fi
+
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -201,6 +206,8 @@ main()
 		echo "[ERROR]: Failed to setup extra configs for user '${USERNAME}'!"
 		exit 2
 	}
+
+	${_SUDO} chmod -c 775 "/home/${USERNAME}" || exit 2
 }
 
 main "${@:-}"

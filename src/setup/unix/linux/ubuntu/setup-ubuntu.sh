@@ -97,12 +97,6 @@ main()
 
 
 	echo "[INFO]: Setting up Ubuntu/Debian server..."
-
-	echo "[INFO]: Disabling automatic updates and upgrades..."
-	echo 'APT::Periodic::Update-Package-Lists "0";' | ${_SUDO} tee /etc/apt/apt.conf.d/20auto-upgrades >/dev/null || exit 2
-	echo 'APT::Periodic::Unattended-Upgrade "0";' | ${_SUDO} tee -a /etc/apt/apt.conf.d/20auto-upgrades >/dev/null || exit 2
-	echo -e "[OK]: Done.\n"
-
 	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh | \
 		bash -s -- -t="${TZ_NAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"

@@ -51,6 +51,13 @@ fi
 
 ## --- Variables --- ##
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
+
+_USER_UMASK=$(cat <<'EOF'
+if [ "$(id -u)" -ge 1000 ]; then
+	umask 002
+fi
+EOF
+)
 ## --- Variables --- ##
 
 
@@ -74,6 +81,32 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+
+	if [ -z "${TZ_NAME}" ]; then
+		echo "[ERROR]: TZ_NAME variable is empty!"
+		exit 1
+	fi
+
+
+	echo "[INFO]: Starting pre-setup for Ubuntu/Debian..."
+
+	if [ -f "/etc/profile" ] && ! grep -q "umask" /etc/profile; then
+		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/profile >/dev/null || exit 2
+	fi
+
+	if [ -f "/etc/bash.bashrc" ] && ! grep -q "umask" /etc/bash.bashrc; then
+		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/bash.bashrc >/dev/null || exit 2
+	fi
+
+	echo "[INFO]: Disabling automatic updates and upgrades..."
+	if [ ! -d "/etc/apt/apt.conf.d" ]; then
+		${_SUDO} mkdir -vp "/etc/apt/apt.conf.d" || exit 2
+	fi
+	echo 'APT::Periodic::Update-Package-Lists "0";' | ${_SUDO} tee /etc/apt/apt.conf.d/20auto-upgrades >/dev/null || exit 2
+	echo 'APT::Periodic::Unattended-Upgrade "0";' | ${_SUDO} tee -a /etc/apt/apt.conf.d/20auto-upgrades >/dev/null || exit 2
+	echo -e "[OK]: Done.\n"
+
+	echo "[INFO]: Installing important base packages..."
 	${_SUDO} apt-get update || true
 
 	local _retry_count=3
@@ -89,19 +122,14 @@ main()
 		sleep ${_retry_delay}
 		_i=$((_i + 1))
 	done
+	echo -e "[OK]: Done.\n"
 
-	if [ -z "${TZ_NAME}" ]; then
-		echo "[ERROR]: Timezone is empty!"
-		exit 1
-	fi
-
+	echo "[INFO]: Setting up timezone to '${TZ_NAME}'..."
 	if [[ ! -e "/usr/share/zoneinfo/${TZ_NAME}" ]]; then
 		echo "[ERROR] Timezone '${TZ_NAME}' not found in /usr/share/zoneinfo!"
 		exit 1
 	fi
 
-
-	echo "[INFO]: Setting up timezone to '${TZ_NAME}'..."
 	${_SUDO} timedatectl set-timezone "${TZ_NAME}" || exit 2
 	${_SUDO} timedatectl set-ntp on || exit 2
 
@@ -119,6 +147,8 @@ main()
 	${_SUDO} update-locale LANG=en_US.UTF-8 LC_ALL=en_AU.UTF-8 || exit 2
 
 	locale || exit 2
+	echo -e "[OK]: Done.\n"
+
 	echo -e "[OK]: Done.\n"
 
 }

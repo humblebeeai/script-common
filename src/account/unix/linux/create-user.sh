@@ -47,6 +47,11 @@ if ! command -v getent >/dev/null 2>&1; then
 	exit 1
 fi
 
+if ! command -v chmod >/dev/null 2>&1; then
+	echo "[ERROR]: 'chmod' command not found or not installed!"
+	exit 1
+fi
+
 
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -146,7 +151,8 @@ main()
 
 	echo "[INFO]: Creating new user..."
 	#shellcheck disable=SC2086
-	${_SUDO} useradd -s /bin/bash -m -d "/home/${USERNAME}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_arg_sudo_group}" ${_arg_uid} "${USERNAME}"
+	${_SUDO} useradd -s /bin/bash -m -d "/home/${USERNAME}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_arg_sudo_group}" ${_arg_uid} "${USERNAME}" || exit 2
+	${_SUDO} chmod -c 775 "/home/${USERNAME}" || exit 2
 	echo -e "[OK]: Done.\n"
 
 	if getent group docker >/dev/null 2>&1; then

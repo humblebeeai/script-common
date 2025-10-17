@@ -71,10 +71,11 @@ main()
 		_arg_all_runtimes="-s -- -a"
 	fi
 	#shellcheck disable=SC2086
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | bash ${_arg_all_runtimes} || {
-		echo "[ERROR]: Failed to setup user environment!"
-		exit 2
-	}
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | \
+		bash ${_arg_all_runtimes} || {
+			echo "[ERROR]: Failed to setup user environment!"
+			exit 2
+		}
 
 	echo -e "[OK]: Done.\n"
 }

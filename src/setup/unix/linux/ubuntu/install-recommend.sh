@@ -100,6 +100,7 @@ main()
 	echo "[INFO]: Installing 'lsd'..."
 	local _lsd_version
 	_lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -vf "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	wget "https://github.com/lsd-rs/lsd/releases/download/v${_lsd_version}/lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
@@ -108,6 +109,7 @@ main()
 	echo "[INFO]: Installing 'duf'..."
 	local _duf_version
 	_duf_version=$(curl -s https://api.github.com/repos/muesli/duf/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -vf "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	wget "https://github.com/muesli/duf/releases/download/v${_duf_version}/duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
@@ -116,6 +118,7 @@ main()
 	echo "[INFO]: Installing 'q'..."
 	local _q_version
 	_q_version=$(curl -s https://api.github.com/repos/natesales/q/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -vf "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	wget "https://github.com/natesales/q/releases/download/v${_q_version}/q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
@@ -129,6 +132,7 @@ main()
 	fi
 	local _fastfetch_version
 	_fastfetch_version=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -vf "fastfetch-linux-${_cpu_arch}.deb" || exit 2
 	wget "https://github.com/fastfetch-cli/fastfetch/releases/download/${_fastfetch_version}/fastfetch-linux-${_cpu_arch}.deb" || exit 2
 	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "fastfetch-linux-${_cpu_arch}.deb" || exit 2
 	rm -vf "fastfetch-linux-${_cpu_arch}.deb" || exit 2
@@ -137,6 +141,7 @@ main()
 	echo "[INFO]: Installing 'bat'..."
 	local _bat_version
 	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
@@ -145,6 +150,7 @@ main()
 	echo "[INFO]: Installing 'fd'..."
 	local _fd_version
 	_fd_version=$(curl -s https://api.github.com/repos/sharkdp/fd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -vf "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
 	wget "https://github.com/sharkdp/fd/releases/download/v${_fd_version}/fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
 	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
@@ -154,6 +160,7 @@ main()
 		echo "[INFO]: Installing 'xh'..."
 		local _xh_version
 		_xh_version=$(curl -s https://api.github.com/repos/ducaale/xh/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+		rm -vf "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
 		wget "https://github.com/ducaale/xh/releases/download/v${_xh_version}/xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
 		${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
 		rm -vf "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
@@ -171,6 +178,7 @@ main()
 	if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
 		_nvim_arch="arm64"
 	fi
+	rm -vf "nvim-linux-${_nvim_arch}.tar.gz" || exit 2
 	wget "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${_nvim_arch}.tar.gz" || exit 2
 	${_SUDO} rm -rf "/opt/nvim-linux-${_nvim_arch}" || exit 2
 	${_SUDO} tar -C /opt -xzf "nvim-linux-${_nvim_arch}.tar.gz" || exit 2

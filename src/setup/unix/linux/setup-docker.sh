@@ -89,7 +89,7 @@ main()
 	if ! command -v docker >/dev/null 2>&1; then
 		echo "[INFO]: Installing docker..."
 		curl -fsSL https://get.docker.com -o get-docker.sh || exit 2
-		DRY_RUN=1 ${_SUDO} sh get-docker.sh || exit 2
+		${_SUDO} DEBIAN_FRONTEND=noninteractive DRY_RUN=1 sh get-docker.sh || exit 2
 		rm -vrf get-docker.sh || exit 2
 		echo -e "[OK]: Done.\n"
 	fi

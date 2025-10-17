@@ -73,7 +73,7 @@ main()
 	local _lsd_version
 	_lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/lsd-rs/lsd/releases/download/v${_lsd_version}/lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "lsd_${_lsd_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
@@ -81,7 +81,7 @@ main()
 	local _duf_version
 	_duf_version=$(curl -s https://api.github.com/repos/muesli/duf/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/muesli/duf/releases/download/v${_duf_version}/duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "duf_${_duf_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
@@ -89,7 +89,7 @@ main()
 	local _q_version
 	_q_version=$(curl -s https://api.github.com/repos/natesales/q/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/natesales/q/releases/download/v${_q_version}/q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "q_${_q_version}_linux_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
@@ -102,7 +102,7 @@ main()
 	local _fastfetch_version
 	_fastfetch_version=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/fastfetch-cli/fastfetch/releases/download/${_fastfetch_version}/fastfetch-linux-${_cpu_arch}.deb" || exit 2
-	${_SUDO} dpkg -i "fastfetch-linux-${_cpu_arch}.deb" || exit 2
+	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "fastfetch-linux-${_cpu_arch}.deb" || exit 2
 	rm -vf "fastfetch-linux-${_cpu_arch}.deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
@@ -110,7 +110,7 @@ main()
 	local _bat_version
 	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "bat_${_bat_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
@@ -118,7 +118,7 @@ main()
 	local _fd_version
 	_fd_version=$(curl -s https://api.github.com/repos/sharkdp/fd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	wget "https://github.com/sharkdp/fd/releases/download/v${_fd_version}/fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
-	${_SUDO} dpkg -i "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
+	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
 	rm -vf "fd_${_fd_version}_$(dpkg --print-architecture).deb" || exit 2
 	echo -e "[OK]: Done.\n"
 
@@ -127,7 +127,7 @@ main()
 		local _xh_version
 		_xh_version=$(curl -s https://api.github.com/repos/ducaale/xh/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 		wget "https://github.com/ducaale/xh/releases/download/v${_xh_version}/xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
-		${_SUDO} dpkg -i "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
+		${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
 		rm -vf "xh_${_xh_version}_$(dpkg --print-architecture).deb" || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
@@ -162,16 +162,16 @@ main()
 		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
 			${_SUDO} tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
 		${_SUDO} apt-get update && \
-		${_SUDO} apt-get install gh -y
+		${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install gh -y
 	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Installing 'Tailscale'..."
 	sleep 1
-	curl -fsSL https://tailscale.com/install.sh | sh || exit 2
+	curl -fsSL https://tailscale.com/install.sh | ${_SUDO} DEBIAN_FRONTEND=noninteractive sh || exit 2
 	echo -e "[OK]: Done.\n"
 
 	# echo "[INFO]: Installing 'ZeroTier One'..."
-	# curl -s https://install.zerotier.com | ${_SUDO} bash || exit 2
+	# curl -s https://install.zerotier.com | ${_SUDO} DEBIAN_FRONTEND=noninteractive bash || exit 2
 	# echo -e "[OK]: Done.\n"
 
 	echo -e "[OK]: Done.\n"

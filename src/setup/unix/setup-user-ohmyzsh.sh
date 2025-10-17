@@ -57,7 +57,7 @@ CHSH=${CHSH:-no}
 
 
 ## --- Main --- ##
-update_zshrc()
+_update_zshrc()
 {
 	if [ -z "${1:-}" ]; then
 		echo "[ERROR]: No sed expression provided for updating .zshrc!"
@@ -95,11 +95,20 @@ main()
 		echo -e "[OK]: Done.\n"
 	fi
 
-	update_zshrc 's/# DISABLE_MAGIC_FUNCTIONS="true"/DISABLE_MAGIC_FUNCTIONS="true"/' || exit 2
+
+	_update_zshrc 's/# DISABLE_MAGIC_FUNCTIONS="true"/DISABLE_MAGIC_FUNCTIONS="true"/' || exit 2
+
 	if ! grep -q 'ZSH_DISABLE_COMPFIX=' ~/.zshrc; then
-		echo -e '\nZSH_DISABLE_COMPFIX="true"\n' >> ~/.zshrc || exit 2
+		# echo -e '\nZSH_DISABLE_COMPFIX="true"\n' >> ~/.zshrc || exit 2
+		if [ "${_OS}" = "Linux" ]; then
+			sed -i '/^[#[:space:]]*DISABLE_MAGIC_FUNCTIONS.*/a ZSH_DISABLE_COMPFIX="true"' "${HOME}/.zshrc" || exit 2
+		else
+			sed -i '' '/^[#[:space:]]*DISABLE_MAGIC_FUNCTIONS.*/a\
+ZSH_DISABLE_COMPFIX="true"
+' "${HOME}/.zshrc" || exit 2
+		fi
 	else
-		update_zshrc 's/^ZSH_DISABLE_COMPFIX=.*/ZSH_DISABLE_COMPFIX="true"/' || exit 2
+		_update_zshrc 's/^ZSH_DISABLE_COMPFIX=.*/ZSH_DISABLE_COMPFIX="true"/' || exit 2
 	fi
 
 
@@ -112,7 +121,7 @@ main()
 
 	if ! grep -q 'zsh-autosuggestions' ~/.zshrc; then
 		echo "[INFO]: Adding 'zsh-autosuggestions' plugin to .zshrc..."
-		update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions)/' || exit 2
+		_update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions)/' || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 
@@ -126,7 +135,7 @@ main()
 
 	if ! grep -q 'zsh-syntax-highlighting' ~/.zshrc; then
 		echo "[INFO]: Adding 'zsh-syntax-highlighting' plugin to .zshrc..."
-		update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-syntax-highlighting)/' || exit 2
+		_update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-syntax-highlighting)/' || exit 2
 		echo -e "[OK]: Done.\n"
 	fi
 
@@ -137,7 +146,7 @@ main()
 	echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
 	for _plugin in ${_plugins}; do
 		if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
-			update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
+			_update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
 		fi
 	done
 
@@ -147,7 +156,7 @@ main()
 		echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
 		for _plugin in ${_plugins}; do
 			if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
-				update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
+				_update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
 			fi
 		done
 		echo -e "[OK]: Done.\n"
@@ -162,7 +171,7 @@ main()
 	fi
 
 	if grep -q "ZSH_THEME=" "${HOME}/.zshrc"; then
-		update_zshrc 's/^ZSH_THEME="[^"]*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' || exit 2
+		_update_zshrc 's/^ZSH_THEME="[^"]*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' || exit 2
 	else
 		echo -e '\nZSH_THEME="powerlevel10k/powerlevel10k"\n' >> ~/.zshrc || exit 2
 	fi

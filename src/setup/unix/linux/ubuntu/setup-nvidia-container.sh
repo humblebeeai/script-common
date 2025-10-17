@@ -84,7 +84,7 @@ main()
 
 		${_SUDO} apt-get update || exit 2
 		#shellcheck disable=SC2086
-		${_SUDO} apt-get install -y \
+		${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
 			nvidia-container-toolkit=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
 			nvidia-container-toolkit-base=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
 			libnvidia-container-tools=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \

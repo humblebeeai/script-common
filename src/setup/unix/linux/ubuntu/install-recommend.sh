@@ -64,9 +64,32 @@ fi
 ## --- Base --- ##
 
 
+## --- Variables --- ##
+INSTALL_EXTRAS=${INSTALL_EXTRAS:-false}
+## --- Variables --- ##
+
+
 ## --- Main --- ##
 main()
 {
+	## --- Menu arguments --- ##
+	if [ -n "${1:-}" ]; then
+		local _input
+		for _input in "${@:-}"; do
+			case ${_input} in
+				-e | --install-extras)
+					INSTALL_EXTRAS=true
+					shift;;
+				*)
+					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[INFO]: USAGE: ${0}  -e | --install-extras"
+					exit 1;;
+			esac
+		done
+	fi
+	## --- Menu arguments --- ##
+
+
 	echo "[INFO]: Installing recommended packages..."
 
 	echo "[INFO]: Installing 'lsd'..."
@@ -170,9 +193,11 @@ main()
 	curl -fsSL https://tailscale.com/install.sh | ${_SUDO} DEBIAN_FRONTEND=noninteractive sh || exit 2
 	echo -e "[OK]: Done.\n"
 
-	# echo "[INFO]: Installing 'ZeroTier One'..."
-	# curl -s https://install.zerotier.com | ${_SUDO} DEBIAN_FRONTEND=noninteractive bash || exit 2
-	# echo -e "[OK]: Done.\n"
+	if [ "${INSTALL_EXTRAS}" = true ]; then
+		echo "[INFO]: Installing 'ZeroTier One'..."
+		curl -s https://install.zerotier.com | ${_SUDO} DEBIAN_FRONTEND=noninteractive bash || exit 2
+		echo -e "[OK]: Done.\n"
+	fi
 
 	echo -e "[OK]: Done.\n"
 }

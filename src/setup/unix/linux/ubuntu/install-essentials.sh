@@ -144,6 +144,7 @@ main()
 	fi
 	## --- Menu arguments --- ##
 
+
 	if [ "${ADD_BAD_PROXY_FIX}" = true ]; then
 		echo "Acquire::http::Pipeline-Depth 0;" | ${_SUDO} tee /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2
 		echo "Acquire::http::No-Cache true;" | ${_SUDO} tee -a /etc/apt/apt.conf.d/99fixbadproxy >/dev/null || exit 2

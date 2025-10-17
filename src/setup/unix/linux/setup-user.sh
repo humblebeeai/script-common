@@ -207,7 +207,7 @@ main()
 		exit 2
 	}
 
-	${_SUDO} chmod -c 775 "/home/${USERNAME}" || exit 2
+	${_SUDO} chmod -c 755 "/home/${USERNAME}" || exit 2
 }
 
 main "${@:-}"

@@ -73,7 +73,7 @@ main()
 		exit 2
 	fi
 
-	if [ -d "${MINICONDA_DIR}" ] && [ -f "${MINICONDA_DIR}/bin/conda" ]; then
+	if [ -d "${MINICONDA_DIR}" ] && [ -x "${MINICONDA_DIR}/bin/conda" ]; then
 		echo "[INFO]: Miniconda is already installed in '${MINICONDA_DIR}'."
 
 		if ! grep -q ">>> conda initialize >>>" "${HOME}/.bashrc"; then
@@ -92,12 +92,12 @@ main()
 
 	echo "[INFO]: Downloading Miniconda installer..."
 	mkdir -pv "${MINICONDA_DIR}" || exit 2
-	rm -vf miniconda.sh || exit 2
 	local _miniconda_filename
 	_miniconda_filename="Miniconda3-latest-Linux-$(uname -m).sh"
 	if [ "${_OS}" = "Darwin" ]; then
 		_miniconda_filename="Miniconda3-latest-MacOSX-$(uname -m).sh"
 	fi
+	rm -vf miniconda.sh || exit 2
 	wget https://repo.anaconda.com/miniconda/"${_miniconda_filename}" -O miniconda.sh || exit 2
 	echo -e "[OK]: Done.\n"
 

@@ -80,7 +80,7 @@ main()
 
 	if [ -z "${RUST_DIR}" ]; then
 		echo "[ERROR]: RUST_DIR variable is empty!"
-		exit 2
+		exit 1
 	fi
 
 	CARGO_HOME="${RUST_DIR}/.cargo"

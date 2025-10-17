@@ -53,6 +53,7 @@ fi
 TZ_NAME=${TZ_NAME:-Asia/Seoul}
 
 _USER_UMASK=$(cat <<'EOF'
+
 if [ "$(id -u)" -ge 1000 ]; then
 	umask 002
 fi

@@ -152,7 +152,7 @@ main()
 	echo "[INFO]: Creating new user..."
 	#shellcheck disable=SC2086
 	${_SUDO} useradd -s /bin/bash -m -d "/home/${USERNAME}" -N -g "${PRIMARY_GID}" -G "${PRIMARY_GID}${_arg_sudo_group}" ${_arg_uid} "${USERNAME}" || exit 2
-	${_SUDO} chmod -c 775 "/home/${USERNAME}" || exit 2
+	${_SUDO} chmod -c 755 "/home/${USERNAME}" || exit 2
 	echo -e "[OK]: Done.\n"
 
 	if getent group docker >/dev/null 2>&1; then

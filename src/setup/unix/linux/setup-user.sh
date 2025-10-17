@@ -42,7 +42,7 @@ fi
 ## --- Variables --- ##
 PRIMARY_GID=${PRIMARY_GID:-11000}
 USERNAME=${USERNAME:-}
-if [ -z "${USERNAME}" ] && [ -n "${_SUDO}" ]; then
+if [ -z "${USERNAME}" ] && [ "$(id -u)" -ne 0 ]; then
 	USERNAME=$(id -un)
 fi
 PASSWORD=${PASSWORD:-}

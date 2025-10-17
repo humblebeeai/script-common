@@ -96,7 +96,7 @@ main()
 
 	echo "[INFO]: Creating 'docker' group and adding user to it..."
 	${_SUDO} groupadd docker || true
-	if [ -n "${_SUDO}" ]; then
+	if [ "$(id -u)" -ne 0 ]; then
 		${_SUDO} usermod -aG docker "$(id -un)" || exit 2
 	fi
 	echo -e "[OK]: Done.\n"

@@ -142,7 +142,7 @@ main()
 	${_SUDO} sed -i -e 's/# ko_KR.UTF-8 UTF-8/ko_KR.UTF-8 UTF-8/' /etc/locale.gen || exit 2
 
 	${_SUDO} dpkg-reconfigure -f noninteractive locales || exit 2
-	${_SUDO} update-locale LANG=en_US.UTF-8 LC_ALL=en_AU.UTF-8 || exit 2
+	${_SUDO} update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_AU.UTF-8 || exit 2
 
 	locale || exit 2
 	echo -e "[OK]: Done.\n"

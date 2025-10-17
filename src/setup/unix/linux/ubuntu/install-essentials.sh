@@ -65,12 +65,12 @@ _install_packages()
 
 	if [ "${DO_APT_UPGRADE}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		${_SUDO} apt-get upgrade -y -o Acquire::Retries=3 || true
+		${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get upgrade -y -o Acquire::Retries=3 || true
 		echo -e "[OK]: Done.\n"
 	fi
 
 	echo "[INFO]: Installing essential packages..."
-	if ! ${_SUDO} apt-get install -y -o Acquire::Retries=5 \
+	if ! ${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -o Acquire::Retries=5 \
 		sudo \
 		ca-certificates \
 		systemd \
@@ -109,7 +109,7 @@ _install_packages()
 		return 2
 	fi
 
-	${_SUDO} apt-get install -y btop || true
+	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y btop || true
 	echo -e "[OK]: Done.\n"
 }
 

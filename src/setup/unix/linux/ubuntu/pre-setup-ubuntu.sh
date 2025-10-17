@@ -50,7 +50,7 @@ fi
 
 
 ## --- Variables --- ##
-TZ_NAME=${TZ_NAME:-Asia/Seoul}
+TZ_NAME=${TZ_NAME:-}
 NEW_HOSTNAME=${NEW_HOSTNAME:-}
 
 _USER_UMASK=$(cat <<'EOF'
@@ -87,12 +87,6 @@ main()
 	## --- Menu arguments --- ##
 
 
-	if [ -z "${TZ_NAME}" ]; then
-		echo "[ERROR]: TZ_NAME variable is empty!"
-		exit 1
-	fi
-
-
 	echo "[INFO]: Starting pre-setup for Ubuntu/Debian..."
 	echo "[INFO]: Disabling automatic updates and upgrades..."
 	if [ ! -d "/etc/apt/apt.conf.d" ]; then
@@ -127,19 +121,20 @@ main()
 		echo -e "[OK]: Done.\n"
 	fi
 
-	echo "[INFO]: Setting up timezone to '${TZ_NAME}'..."
-	if [[ ! -e "/usr/share/zoneinfo/${TZ_NAME}" ]]; then
-		echo "[ERROR] Timezone '${TZ_NAME}' not found in '/usr/share/zoneinfo/*'!"
-		exit 1
+	if [ -n "${TZ_NAME}" ]; then
+		echo "[INFO]: Setting up timezone to '${TZ_NAME}'..."
+		if [[ ! -e "/usr/share/zoneinfo/${TZ_NAME}" ]]; then
+			echo "[ERROR] Timezone '${TZ_NAME}' not found in '/usr/share/zoneinfo/*'!"
+			exit 1
+		fi
+
+		${_SUDO} timedatectl set-timezone "${TZ_NAME}" || exit 2
+		${_SUDO} timedatectl set-ntp on || exit 2
+		${_SUDO} dpkg-reconfigure -f noninteractive tzdata || exit 2
+
+		timedatectl || exit 2
+		echo -e "[OK]: Done.\n"
 	fi
-
-	${_SUDO} timedatectl set-timezone "${TZ_NAME}" || exit 2
-	${_SUDO} timedatectl set-ntp on || exit 2
-
-	${_SUDO} dpkg-reconfigure -f noninteractive tzdata || exit 2
-
-	timedatectl || exit 2
-	echo -e "[OK]: Done.\n"
 
 	echo "[INFO]: Setting up locales..."
 	${_SUDO} sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen || exit 2

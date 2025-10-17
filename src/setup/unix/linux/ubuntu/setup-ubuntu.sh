@@ -55,7 +55,7 @@ fi
 
 
 ## --- Variables --- ##
-TZ_NAME=${TZ_NAME:-Asia/Seoul}
+TZ_NAME=${TZ_NAME:-}
 NEW_HOSTNAME=${NEW_HOSTNAME:-}
 DO_APT_UPGRADE=${DO_APT_UPGRADE:-false}
 DO_USER_SETUP=${DO_USER_SETUP:-true}

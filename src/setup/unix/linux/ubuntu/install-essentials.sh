@@ -36,14 +36,15 @@ else
 	exit 1
 fi
 
+if ! command -v apt-get >/dev/null 2>&1; then
+	echo "[ERROR]: Not found 'apt-get' command, please install 'apt' package manager!"
+	exit 1
+fi
+
+
 _SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
 	_SUDO=""
-fi
-
-if ! ${_SUDO} command -v apt-get >/dev/null 2>&1; then
-	echo "[ERROR]: Not found 'apt-get' command, please install 'apt' package manager!"
-	exit 1
 fi
 ## --- Base --- ##
 

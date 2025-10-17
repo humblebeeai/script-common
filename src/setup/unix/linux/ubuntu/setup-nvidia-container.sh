@@ -36,12 +36,7 @@ else
 	exit 1
 fi
 
-_SUDO="sudo"
-if [ "$(id -u)" -eq 0 ]; then
-	_SUDO=""
-fi
-
-if ! ${_SUDO} command -v docker >/dev/null 2>&1; then
+if ! command -v docker >/dev/null 2>&1; then
 	echo "[ERROR]: Not found 'docker' command, please install Docker first!"
 	exit 1
 fi
@@ -59,6 +54,12 @@ fi
 if ! command -v curl >/dev/null 2>&1; then
 	echo "[ERROR]: 'curl' command not found or not installed!"
 	exit 1
+fi
+
+
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 ## --- Base --- ##
 

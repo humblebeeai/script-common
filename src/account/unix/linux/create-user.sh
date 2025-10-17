@@ -16,22 +16,28 @@ fi
 
 
 _OS="$(uname)"
-if [ "${_OS}" != "Linux" ]; then
+_OS_DISTRO=""
+if [ "${_OS}" = "Linux" ]; then
+	if [ -r /etc/os-release ]; then
+		# shellcheck disable=SC1091
+		_OS_DISTRO="$(source /etc/os-release && echo "${ID}")"
+		_OS_DISTRO="$(echo "${_OS_DISTRO}" | tr '[:upper:]' '[:lower:]')"
+
+		if [ "${_OS_DISTRO}" = "debian" ]; then
+			PATH="/usr/sbin:${PATH}"
+		fi
+	fi
+else
 	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' is supported!"
 	exit 1
 fi
 
-_SUDO="sudo"
-if [ "$(id -u)" -eq 0 ]; then
-	_SUDO=""
-fi
-
-if ! ${_SUDO} command -v useradd >/dev/null 2>&1; then
+if ! command -v useradd >/dev/null 2>&1; then
 	echo "[ERROR]: 'useradd' command not found or not installed!"
 	exit 1
 fi
 
-if ! ${_SUDO} command -v usermod >/dev/null 2>&1; then
+if ! command -v usermod >/dev/null 2>&1; then
 	echo "[ERROR]: 'usermod' command not found or not installed!"
 	exit 1
 fi
@@ -39,6 +45,12 @@ fi
 if ! command -v getent >/dev/null 2>&1; then
 	echo "[ERROR]: 'getent' command not found or not installed!"
 	exit 1
+fi
+
+
+_SUDO="sudo"
+if [ "$(id -u)" -eq 0 ]; then
+	_SUDO=""
 fi
 ## --- Base --- ##
 

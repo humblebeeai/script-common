@@ -175,7 +175,7 @@ main()
 		}
 	else
 		echo "[INFO]: Please reboot the server later to apply all changes!"
-		bash
+		exec zsh
 	fi
 	echo -e "[OK]: Done.\n"
 }

@@ -67,7 +67,7 @@ fi
 ## --- Main --- ##
 main()
 {
-	echo "[INFO]: Installing extra development tools..."
+	echo "[INFO]: Installing recommended packages..."
 
 	echo "[INFO]: Installing 'lsd'..."
 	local _lsd_version

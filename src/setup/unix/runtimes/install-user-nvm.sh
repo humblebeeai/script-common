@@ -46,12 +46,14 @@ _setup_shell()
 		echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.bashrc" || exit 2
 		echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.bashrc" || exit 2
 		echo "[ -s \"\$NVM_DIR/bash_completion\" ] && \\. \"\$NVM_DIR/bash_completion\"" >> "${HOME}/.bashrc" || exit 2
+		echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" || exit 2
 	fi
 	echo -e "\n" >> "${HOME}/.bashrc" || exit 2
 
 	if [ -f "${HOME}/.zshrc" ] && ! grep -q "export NVM_DIR=" "${HOME}/.zshrc"; then
 		if grep -q "nvm" "${HOME}/.zshrc" && ! grep -q "export NVM_DIR=" "${HOME}/.zshenv"; then
 			echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.zshenv" || exit 2
+			echo "" >> "${HOME}/.zshrc" || exit 2
 		else
 			echo "export NVM_DIR=\"${NVM_DIR}\"" >> "${HOME}/.zshrc" || exit 2
 			echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"" >> "${HOME}/.zshrc" || exit 2

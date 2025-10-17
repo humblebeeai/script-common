@@ -168,46 +168,12 @@ main()
 			}
 	fi
 
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-workspaces.sh | bash" || {
-		echo "[ERROR]: Failed to create workspaces for user '${USERNAME}'!"
-		exit 2
-	}
-
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-ohmyzsh.sh | bash" || {
-		echo "[ERROR]: Failed to install 'oh-my-zsh' for user '${USERNAME}'!"
-		exit 2
-	}
-
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-shell.sh | bash" || {
-		echo "[ERROR]: Failed to setup shells for user '${USERNAME}'!"
-		exit 2
-	}
-
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-miniconda.sh | bash" || {
-		echo "[ERROR]: Failed to install 'Miniconda' for user '${USERNAME}'!"
-	}
-
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-nvm.sh | bash" || {
-		echo "[ERROR]: Failed to install 'NVM' for user '${USERNAME}'!"
-	}
-
+	local _arg_all_runtimes=""
 	if [ "${ALL_RUNTIMES}" = true ]; then
-		${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-rust.sh | bash" || {
-			echo "[ERROR]: Failed to install 'Rust' for user '${USERNAME}'!"
-		}
-
-		${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-go.sh | bash" || {
-			echo "[ERROR]: Failed to install 'Go' for user '${USERNAME}'!"
-		}
+		_arg_all_runtimes="-s -- -a"
 	fi
-
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-nvchad.sh | bash" || {
-		echo "[ERROR]: Failed to setup 'NvChad' for user '${USERNAME}'!"
-		exit 2
-	}
-
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/post-setup-user.sh | bash" || {
-		echo "[ERROR]: Failed to post setup for user '${USERNAME}'!"
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | bash ${_arg_all_runtimes}" || {
+		echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!"
 		exit 2
 	}
 

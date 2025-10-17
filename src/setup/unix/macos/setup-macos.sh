@@ -26,7 +26,6 @@ if ! command -v curl >/dev/null 2>&1; then
 	exit 1
 fi
 
-
 if [ "$(id -u)" -eq 0 ]; then
 	echo "[ERROR]: Current user is 'root', please run this script as a normal user!"
 	exit 1
@@ -67,42 +66,13 @@ main()
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-workspaces.sh | bash || {
-		echo "[ERROR]: Failed to create workspaces!"
-		exit 2
-	}
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-ohmyzsh.sh | bash || {
-		echo "[ERROR]: Failed to install 'oh-my-zsh'!"
-		exit 2
-	}
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-shell.sh | bash || {
-		echo "[ERROR]: Failed to setup shell configs!"
-		exit 2
-	}
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-miniconda.sh | bash || {
-		echo "[ERROR]: Failed to install 'Miniconda'!"
-	}
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-nvm.sh | bash || {
-		echo "[ERROR]: Failed to install 'NVM'!"
-	}
-
+	local _arg_all_runtimes=""
 	if [ "${ALL_RUNTIMES}" = true ]; then
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/runtimes/install-user-rust.sh | bash || {
-			echo "[ERROR]: Failed to install 'Rust'!"
-		}
+		_arg_all_runtimes="-s -- -a"
 	fi
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-nvchad.sh | bash || {
-		echo "[ERROR]: Failed to setup 'NvChad'!"
-		exit 2
-	}
-
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/post-setup-user.sh | bash || {
-		echo "[ERROR]: Failed to setup extra configs!"
+	#shellcheck disable=SC2086
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | bash ${_arg_all_runtimes} || {
+		echo "[ERROR]: Failed to setup user environment!"
 		exit 2
 	}
 

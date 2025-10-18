@@ -43,6 +43,9 @@ USAGE: ${0} [options]
 OPTIONS:
     -w, --workspaces, --workspaces-dir [PATH]    Set workspaces directory path.
     -l, --symlink, --symlink-dir       [PATH]    Set target dir and symlink WORKSPACES_DIR to it.
+	-d, --subdirs [DIR1,DIR2,...]                Comma-separated list of subdirectories to create under WORKSPACES_DIR.
+	-s, --services [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'services' subdirectory.
+	-p, --projects [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'projects' subdirectory.
     -h, --help                                   Show help.
 
 EXAMPLES:
@@ -53,6 +56,7 @@ EOF
 
 while [ $# -gt 0 ]; do
 	case "${1}" in
+	# workspaces:
 	-w | --workspaces | --workspaces-dir)
 		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
 		WORKSPACES_DIR="${2}"
@@ -60,12 +64,37 @@ while [ $# -gt 0 ]; do
 	-w=* | --workspaces=* | --workspaces-dir=*)
 		WORKSPACES_DIR="${1#*=}"
 		shift;;
+	# symlink:
 	-l | --symlink | --symlink-dir)
 		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
 		SYMLINK_DIR="${2}"
 		shift 2;;
 	-l=* | --symlink=* | --symlink-dir=*)
 		SYMLINK_DIR=${1#*=}
+		shift;;
+	# subdirs:
+	-d | --subdirs)
+		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+		WORKSPACES_SUBDIRS="${2}"
+		shift 2;;
+	-d=* | --subdirs=*)
+		WORKSPACES_SUBDIRS="${1#*=}"
+		shift;;
+	# services:
+	-s | --services)
+		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+		SERVICES_SUBDIRS="${2}"
+		shift 2;;
+	-s=* | --services=*)
+		SERVICES_SUBDIRS="${1#*=}"
+		shift;;
+	# projects:
+	-p | --projects)
+		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+		PROJECTS_SUBDIRS="${2}"
+		shift 2;;
+	-p=* | --projects=*)
+		PROJECTS_SUBDIRS="${1#*=}"
 		shift;;
 	-h | --help)
 		_usage_help
@@ -152,7 +181,8 @@ main()
 		done
 	fi
 
-	echo -e "[OK]: Successfully created workspaces '${WORKSPACES_DIR}' and subdirectories.\n"
+	echo "[OK]: Successfully created workspaces '${WORKSPACES_DIR}' and subdirectories."
+	echo ""
 }
 
 main

@@ -37,6 +37,7 @@ fi
 ## --- Variables --- ##
 GO_DIR="${GO_DIR:-${HOME}/workspaces/runtimes/go}"
 GO_VERSION="${GO_VERSION:-1.25.3}"
+FORCE_INSTALL=${FORCE_INSTALL:-false}
 ## --- Variables --- ##
 
 
@@ -48,6 +49,7 @@ USAGE: ${0} [options]
 OPTIONS:
     -d, --install-dir [PATH]         Specify the installation directory for Go. Default: '~/workspaces/runtimes/go'.
     -g, --go-version [GO_VERSION]    Specify the Go version to install. Default: '1.25.3'.
+	-f, --force                      Force installation even if different version is installed. Default: false.
     -h, --help                       Show help.
 
 EXAMPLES:
@@ -70,6 +72,9 @@ while [ $# -gt 0 ]; do
 			shift 2;;
 		-g=* | --go-version=*)
 			GO_VERSION="${1#*=}"
+			shift;;
+		-f | --force)
+			FORCE_INSTALL=true
 			shift;;
 		-h | --help)
 			_usage_help
@@ -114,11 +119,20 @@ main()
 
 
 	if [ -d "${GO_DIR}" ] && [ -x "${GO_DIR}/go/bin/go" ]; then
-		_setup_shell || exit 2
 		local _go_version
 		_go_version="$("${GO_DIR}/go/bin/go" version | awk '{print $3}' | sed 's/go//')" || exit 2
-		echo "[WARN]: Go '${_go_version}' version is already installed in '${GO_DIR}', skipping!"
-		exit 0
+		if [ "${_go_version}" = "${GO_VERSION}" ]; then
+			_setup_shell || exit 2
+			echo "[OK]: Go '${_go_version}' version is already installed in '${GO_DIR}', skipping!"
+			echo ""
+			exit 0
+		elif [ "${FORCE_INSTALL}" = true ]; then
+			echo "[WARN]: Different Go '${_go_version}' version is already installed in '${GO_DIR}', but proceeding due to force install flag." >&2
+		else
+			echo "[ERROR]: Different Go '${_go_version}' version is already installed in '${GO_DIR}'!" >&2
+			echo ""
+			exit 1
+		fi
 	fi
 
 	echo "[INFO]: Preparing installation..."

@@ -101,7 +101,7 @@ main()
 
 
 	echo "[INFO]: Setting up Ubuntu/Debian..."
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh | \
 		bash -s -- -t="${TZ_NAME}" -n="${NEW_HOSTNAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!"
 			exit 2
@@ -112,25 +112,25 @@ main()
 		_arg_upgrade="-s -- -u"
 	fi
 	#shellcheck disable=SC2086
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/ubuntu/install-essentials.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/install-essentials.sh | \
 		bash ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install basic packages!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/ubuntu/install-recommend.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/install-recommend.sh | \
 		bash || {
 			echo "[ERROR]: Failed to install development tools!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/setup-docker.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-docker.sh | \
 		bash || {
 			echo "[ERROR]: Failed to setup Docker!"
 			exit 2
 		}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/account/unix/linux/change-user-pgroup.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/account/unix/linux/change-user-pgroup.sh | \
 		bash -s -- -a || {
 			echo "[ERROR]: Failed to change primary group!"
 			exit 2
@@ -142,7 +142,7 @@ main()
 			_arg_all_runtimes="-s -- -a"
 		fi
 		#shellcheck disable=SC2086
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/setup-user.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-user.sh | \
 			bash ${_arg_all_runtimes} || {
 				echo "[ERROR]: Failed to setup current user!"
 				exit 2
@@ -150,22 +150,22 @@ main()
 	fi
 
 	echo "[INFO]: Setting up for root user..."
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/setup-user-ohmyzsh.sh | ${_SUDO} bash || {
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-ohmyzsh.sh | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!"
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/setup-user-shell.sh | ${_SUDO} bash || {
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-shell.sh | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup shells for root user!"
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/setup-user-nvchad.sh | ${_SUDO} bash || {
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-nvchad.sh | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup 'NvChad' for root user!"
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/post-setup-user.sh | ${_SUDO} bash || {
+	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/post-setup-user.sh | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup extra configs for root user!"
 		exit 2
 	}

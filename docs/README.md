@@ -36,13 +36,13 @@ This repository contains a collection of common useful scripts.
 ### Setup server environment on **Ubuntu (20.04+), Debian (12.0+)**
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | bash -s -- -u -a
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | bash -s -- -u -a
 ```
 
 Or with other useful options:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | bash -s -- \
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | bash -s -- \
     --upgrade \
     --hostname=my-server \
     --timezone=Asia/Seoul \
@@ -54,13 +54,13 @@ curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/head
 Setup development environment for the current user:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/setup-user.sh | bash -s -- -a
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-user.sh | bash -s -- -a
 ```
 
 Create a new user and setup development environment:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/setup-user.sh | bash -s -- \
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-user.sh | bash -s -- \
     --user=user \
     --all-runtimes
 ```
@@ -68,7 +68,7 @@ curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/head
 Create a new user with sudo privileges, password and setup development environment:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/setup-user.sh | bash -s -- \
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-user.sh | bash -s -- \
     --user=admin \
     --password="admin_pass123" \
     --sudo \
@@ -80,7 +80,7 @@ curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/head
 Note: This script will install **Homebrew** and any other essential packages if not already installed.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/macos/setup-macos.sh | bash -s -- -a
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/macos/setup-macos.sh | bash -s -- -a
 ```
 
 ### Setup development environment on **Unix/Linux/macOS**
@@ -88,5 +88,5 @@ curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/head
 Note: This script will only install and setup user-level runtimes and configurations, not system-level packages. Thus it doesn't require root privileges.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/setup-user-env.sh | bash -s -- -a
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-env.sh | bash -s -- -a
 ```

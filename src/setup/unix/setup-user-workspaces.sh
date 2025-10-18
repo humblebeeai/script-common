@@ -110,8 +110,8 @@ main()
 		echo "[WARN]: WORKSPACES_DIR '${WORKSPACES_DIR}' already exists, skipping!"
 	fi
 
-	if [ ! -d "${WORKSPACES_DIR}" ]; then
-		echo "[ERROR]: WORKSPACES_DIR '${WORKSPACES_DIR}' is not a directory!" >&2
+	if [ ! -d "${WORKSPACES_DIR}" ] && [ ! -L "${WORKSPACES_DIR}" ]; then
+		echo "[ERROR]: WORKSPACES_DIR '${WORKSPACES_DIR}' is not a directory or broken symlink!" >&2
 		exit 1
 	fi
 

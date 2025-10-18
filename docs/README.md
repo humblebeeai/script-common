@@ -26,9 +26,9 @@ This repository contains a collection of common useful scripts.
 - Basic command-line tools (curl/wget, git, etc.)
 - Internet connection for downloading packages
 - Root access for system-level setup and account management
-- Most Unix-like OS:
-    - **Linux** (Primary support - Ubuntu/Debian)
-    - **macOS** (Full support with Homebrew)
+- Common Unix-like/Linux OS:
+    - **Linux** (primary support - Ubuntu/Debian)
+    - **macOS** (support with Homebrew)
     - Other Unix-like systems (limited support)
 
 ## 🚸 Usage/Examples

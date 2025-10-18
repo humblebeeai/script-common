@@ -14,23 +14,14 @@ fi
 
 
 _OS="$(uname)"
-_OS_DISTRO=""
-if [ "${_OS}" = "Linux" ]; then
-	if [ -r /etc/os-release ]; then
-		# shellcheck disable=SC1091
-		_OS_DISTRO="$(source /etc/os-release && echo "${ID}")"
-		_OS_DISTRO="$(echo "${_OS_DISTRO}" | tr '[:upper:]' '[:lower:]')"
-	fi
-elif [ "${_OS}" = "Darwin" ]; then
-	_OS_DISTRO="macos"
-else
+if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
 	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2
 	exit 1
 fi
 
 if [ -z "${HOME:-}" ]; then
 	echo "[ERROR]: HOME environment variable is not set!" >&2
-	exit 2
+	exit 1
 fi
 ## --- Base --- ##
 
@@ -179,12 +170,15 @@ main()
 	if command -v zsh >/dev/null 2>&1; then
 		echo "[INFO]: Setting up 'zsh'..."
 		if [ ! -f "${HOME}/.zshrc" ]; then
-			echo "[INFO]: Not found '.zshrc' file in user home directory, restoring default or creating new one..."
+			echo "[WARN]: Not found '.zshrc' file in user home directory, restoring default or creating new one..."
 			if [ -f "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" ]; then
+				echo "[INFO]: Restoring default '.zshrc' file from Oh My Zsh template..."
 				cp -v "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" "${HOME}/.zshrc" || exit 2
 			elif [ -f "/etc/zsh/zshrc" ]; then
+				echo "[INFO]: Restoring default '.zshrc' file from '/etc/zsh/zshrc'..."
 				cp -v "/etc/zsh/zshrc" "${HOME}/.zshrc" || exit 2
 			elif [ -f "/etc/zshrc" ]; then
+				echo "[INFO]: Restoring default '.zshrc' file from '/etc/zshrc'..."
 				cp -v "/etc/zshrc" "${HOME}/.zshrc" || exit 2
 			else
 				touch "${HOME}/.zshrc" || exit 2
@@ -236,10 +230,10 @@ main()
 				echo "" >> "${HOME}/.zshrc" || exit 2
 			fi
 			echo "[OK]: Done."
+			echo ""
 		else
 			echo "[WARN]: Already setup '.zshrc' file, skipping!"
 		fi
-
 		echo "[OK]: Done."
 		echo ""
 	else

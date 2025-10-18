@@ -21,7 +21,7 @@ fi
 
 if [ -z "${HOME:-}" ]; then
 	echo "[ERROR]: HOME environment variable is not set!" >&2
-	exit 2
+	exit 1
 fi
 ## --- Base --- ##
 

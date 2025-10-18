@@ -3,48 +3,45 @@ set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
+# _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
-# Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
-	source .env
+	. .env
 fi
 
 
 _OS="$(uname)"
 if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
-	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2
 	exit 1
 fi
 
 if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' not found or not installed!"
+	echo "[ERROR]: 'curl' not found or not installed!" >&2
 	exit 1
 fi
 
 if ! command -v git >/dev/null 2>&1; then
-	echo "[ERROR]: 'git' not found or not installed!"
+	echo "[ERROR]: 'git' not found or not installed!" >&2
 	exit 1
 fi
 
 if ! command -v zsh >/dev/null 2>&1; then
-	echo "[ERROR]: 'zsh' not found or not installed!"
+	echo "[ERROR]: 'zsh' not found or not installed!" >&2
 	exit 1
 fi
 
 if [ -z "${HOME:-}" ]; then
-	echo "[ERROR]: HOME environment variable is not set!"
-	exit 2
+	echo "[ERROR]: HOME environment variable is not set!" >&2
+	exit 1
 fi
 ## --- Base --- ##
 
 
 ## --- Variables --- ##
-# Flags:
 RUNZSH=${RUNZSH:-no}
 CHSH=${CHSH:-no}
 ## --- Variables --- ##
@@ -54,46 +51,49 @@ CHSH=${CHSH:-no}
 _update_zshrc()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: No sed expression provided for updating .zshrc!"
+		echo "[ERROR]: No sed expression provided for updating '.zshrc' file!" >&2
 		exit 2
 	fi
 
 	if [ "${_OS}" = "Linux" ]; then
-		sed -i "${1}" ~/.zshrc || exit 2
+		sed -i "${1}" "${HOME}/.zshrc" || exit 2
 	else
-		sed -i '' "${1}" ~/.zshrc || exit 2
+		sed -i '' "${1}" "${HOME}/.zshrc" || exit 2
 	fi
 }
 
 main()
 {
+	echo ""
 	echo "[INFO]: Settting up 'Oh My Zsh'..."
 
-	## Backup existing .zshrc file:
+	## Backup existing '.zshrc' file:
 	if [ -f "${HOME}/.zshrc" ] && [ ! -f "${HOME}/.zshrc.bak" ]; then
-		echo "[INFO]: Backing up existing .zshrc file..."
-		cp -v ~/.zshrc ~/.zshrc.bak || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[INFO]: Backing up existing '.zshrc' file..."
+		cp -v "${HOME}/.zshrc" "${HOME}/.zshrc".bak || exit 2
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 	## Setting up 'Oh My Zsh':
 	if [ ! -d "${ZSH:-${HOME}/.oh-my-zsh}" ]; then
 		echo "[INFO]: Installing 'Oh My Zsh'..."
 		RUNZSH=${RUNZSH} CHSH=${CHSH} sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 	if [ ! -f "${HOME}/.zshrc" ]; then
-		echo "[INFO]: Creating default .zshrc file..."
+		echo "[INFO]: Creating default '.zshrc' file..."
 		cp -v "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" "${HOME}/.zshrc" || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 
 	_update_zshrc 's/# DISABLE_MAGIC_FUNCTIONS="true"/DISABLE_MAGIC_FUNCTIONS="true"/' || exit 2
 
-	if ! grep -q 'ZSH_DISABLE_COMPFIX=' ~/.zshrc; then
-		# echo -e '\nZSH_DISABLE_COMPFIX="true"\n' >> ~/.zshrc || exit 2
+	if ! grep -q 'ZSH_DISABLE_COMPFIX=' "${HOME}/.zshrc"; then
 		if [ "${_OS}" = "Linux" ]; then
 			sed -i '/^[#[:space:]]*DISABLE_MAGIC_FUNCTIONS.*/a ZSH_DISABLE_COMPFIX="true"' "${HOME}/.zshrc" || exit 2
 		else
@@ -110,13 +110,15 @@ ZSH_DISABLE_COMPFIX="true"
 	if [ ! -d "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
 		echo "[INFO]: Cloning 'zsh-autosuggestions' plugin..."
 		git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
-	if ! grep -q 'zsh-autosuggestions' ~/.zshrc; then
-		echo "[INFO]: Adding 'zsh-autosuggestions' plugin to .zshrc..."
+	if ! grep -q 'zsh-autosuggestions' "${HOME}/.zshrc"; then
+		echo "[INFO]: Adding 'zsh-autosuggestions' plugin to '.zshrc' file..."
 		_update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions)/' || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 
@@ -124,22 +126,24 @@ ZSH_DISABLE_COMPFIX="true"
 	if [ ! -d "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
 		echo "[INFO]: Cloning 'zsh-syntax-highlighting' plugin..."
 		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
-	if ! grep -q 'zsh-syntax-highlighting' ~/.zshrc; then
-		echo "[INFO]: Adding 'zsh-syntax-highlighting' plugin to .zshrc..."
+	if ! grep -q 'zsh-syntax-highlighting' "${HOME}/.zshrc"; then
+		echo "[INFO]: Adding 'zsh-syntax-highlighting' plugin to '.zshrc' file..."
 		_update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-syntax-highlighting)/' || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 
 	## Adding other recommended plugins:
 	local _plugins="docker docker-compose"
 	local _plugin
-	echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
+	echo "[INFO]: Adding '${_plugins}' plugins to '.zshrc' file (if not present)..."
 	for _plugin in ${_plugins}; do
-		if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
+		if ! grep -Eq "^plugins=.*\b${_plugin}\b" "${HOME}/.zshrc"; then
 			_update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
 		fi
 	done
@@ -147,13 +151,14 @@ ZSH_DISABLE_COMPFIX="true"
 	if [ "$(id -u)" -ne 0 ]; then
 		local _plugins="python pip nvm node npm"
 		local _plugin
-		echo "[INFO]: Adding '${_plugins}' plugins to .zshrc (if not present)..."
+		echo "[INFO]: Adding '${_plugins}' plugins to '.zshrc' file (if not present)..."
 		for _plugin in ${_plugins}; do
-			if ! grep -Eq "^plugins=.*\b${_plugin}\b" ~/.zshrc; then
+			if ! grep -Eq "^plugins=.*\b${_plugin}\b" "${HOME}/.zshrc"; then
 				_update_zshrc "/^plugins=/ s/)/ ${_plugin})/" || exit 2
 			fi
 		done
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 
@@ -161,13 +166,16 @@ ZSH_DISABLE_COMPFIX="true"
 	if [ ! -d "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
 		echo "[INFO]: Cloning 'powerlevel10k' theme..."
 		git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k" || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 	if grep -q "ZSH_THEME=" "${HOME}/.zshrc"; then
 		_update_zshrc 's/^ZSH_THEME="[^"]*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' || exit 2
 	else
-		echo -e '\nZSH_THEME="powerlevel10k/powerlevel10k"\n' >> ~/.zshrc || exit 2
+		echo "" >> "${HOME}/.zshrc" || exit 2
+		echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> "${HOME}/.zshrc" || exit 2
+		echo "" >> "${HOME}/.zshrc" || exit 2
 	fi
 
 	local _p10k_theme="p10k-rainbow.zsh"
@@ -176,19 +184,24 @@ ZSH_DISABLE_COMPFIX="true"
 	fi
 
 	if [ ! -f "${HOME}/.p10k.zsh" ]; then
-		echo "[INFO]: Copying 'powerlevel10k's 'rainbow' theme config to ~/.p10k.zsh..."
-		cp -v "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k/config/${_p10k_theme}" ~/.p10k.zsh || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[INFO]: Copying 'powerlevel10k's theme config to '${HOME}/.p10k.zsh'..."
+		cp -v "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k/config/${_p10k_theme}" "${HOME}/.p10k.zsh" || exit 2
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 	if ! grep -q "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" "${HOME}/.zshrc"; then
-		echo "[INFO]: Adding 'powerlevel10k' theme source line to .zshrc..."
-		echo -e "\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh\n" >> ~/.zshrc || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[INFO]: Adding 'powerlevel10k' theme source line to '.zshrc' file..."
+		echo "" >> "${HOME}/.zshrc" || exit 2
+		echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "${HOME}/.zshrc" || exit 2
+		echo "" >> "${HOME}/.zshrc" || exit 2
+		echo "[OK]: Done."
+		echo ""
 	fi
 
-	echo -e "[OK]: Done.\n"
+	echo "[OK]: Successfully set up 'Oh My Zsh'."
+	echo ""
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

@@ -43,9 +43,9 @@ USAGE: ${0} [options]
 OPTIONS:
     -w, --workspaces, --workspaces-dir [PATH]    Set workspaces directory path.
     -l, --symlink, --symlink-dir       [PATH]    Set target dir and symlink WORKSPACES_DIR to it.
-	-d, --subdirs [DIR1,DIR2,...]                Comma-separated list of subdirectories to create under WORKSPACES_DIR.
-	-s, --services [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'services' subdirectory.
-	-p, --projects [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'projects' subdirectory.
+    -d, --subdirs [DIR1,DIR2,...]                Comma-separated list of subdirectories to create under WORKSPACES_DIR.
+    -s, --services [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'services' subdirectory.
+    -p, --projects [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'projects' subdirectory.
     -h, --help                                   Show help.
 
 EXAMPLES:

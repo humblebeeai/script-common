@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 
@@ -7,10 +7,8 @@ set -euo pipefail
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
-if [ -f ".env" ]; then
-	# shellcheck disable=SC1091
-	. .env
-fi
+# shellcheck disable=SC1091
+[ -f .env ] && . .env
 
 
 _OS="$(uname)"

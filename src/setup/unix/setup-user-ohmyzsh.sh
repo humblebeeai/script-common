@@ -160,6 +160,8 @@ ZSH_DISABLE_COMPFIX="true"
 		echo "[OK]: Done."
 		echo ""
 	fi
+	echo "[OK]: Done."
+	echo ""
 
 
 	## Setting up 'powerlevel10k' theme:

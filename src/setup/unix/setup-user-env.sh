@@ -3,114 +3,129 @@ set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
-cd "${_SCRIPT_DIR}" || exit 2
+# _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
+# cd "${_SCRIPT_DIR}" || exit 2
 
 
-# Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
-	source .env
+	. .env
 fi
 
 
 _OS="$(uname)"
 if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
-	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2
 	exit 1
 fi
 
 if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' command not found or not installed!"
+	echo "[ERROR]: 'curl' command not found or not installed!" >&2
 	exit 1
 fi
 
 if [ "$(id -u)" -eq 0 ]; then
-	echo "[ERROR]: Current user is 'root', please run this script as a normal user!"
+	echo "[ERROR]: Current user is 'root', please run this script as a normal user!" >&2
 	exit 1
 fi
 
 if [ -z "${HOME:-}" ]; then
-	echo "[ERROR]: HOME environment variable is not set!"
-	exit 2
+	echo "[ERROR]: HOME environment variable is not set!" >&2
+	exit 1
 fi
 ## --- Base --- ##
 
 
 ## --- Variables --- ##
-ALL_RUNTIMES=${ALL_RUNTIMES:-false}
+INSTALL_ALL_RUNTIMES=${INSTALL_ALL_RUNTIMES:-false}
 ## --- Variables --- ##
+
+
+## --- Menu arguments --- ##
+_usage_help() {
+	cat <<EOF
+USAGE: ${0} [options]
+
+OPTIONS:
+    -a, --all, --install-all-runtimes    Install all runtimes (Rust, Go, Miniconda, NVM).
+    -h, --help                           Show help.
+
+EXAMPLES:
+    ${0} --all
+EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		-a | --all | --install-all-runtimes)
+			INSTALL_ALL_RUNTIMES=true
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
+	esac
+done
+## --- Menu arguments --- ##
 
 
 ## --- Main --- ##
 main()
 {
-	## --- Menu arguments --- ##
-	if [ -n "${1:-}" ]; then
-		local _input
-		for _input in "${@:-}"; do
-			case ${_input} in
-				-a | --install-all-runtimes)
-					ALL_RUNTIMES=true
-					shift;;
-				*)
-					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -a, --install-all-runtimes"
-					exit 1;;
-			esac
-		done
-	fi
-	## --- Menu arguments --- ##
-
-
-	echo "[INFO]: Setting up user environment..."
+	echo ""
+	echo "[INFO]: Setting up user development environment..."
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-workspaces.sh | bash || {
-		echo "[ERROR]: Failed to create workspaces!"
+		echo "[ERROR]: Failed to create workspaces!" >&2
 		exit 2
 	}
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-ohmyzsh.sh | bash || {
-		echo "[ERROR]: Failed to install 'oh-my-zsh'!"
+		echo "[ERROR]: Failed to install 'oh-my-zsh'!" >&2
 		exit 2
 	}
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-shell.sh | bash || {
-		echo "[ERROR]: Failed to setup shell configs!"
+		echo "[ERROR]: Failed to setup shellrc!" >&2
 		exit 2
 	}
 
+	echo "[INFO]: Installing runtimes..."
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-miniconda.sh | bash || {
-		echo "[ERROR]: Failed to install 'Miniconda'!"
+		echo "[WARN]: Failed to install 'Miniconda'!"
 	}
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-nvm.sh | bash || {
-		echo "[ERROR]: Failed to install 'NVM'!"
+		echo "[WARN]: Failed to install 'NVM'!"
 	}
 
-	if [ "${ALL_RUNTIMES}" = true ]; then
+	if [ "${INSTALL_ALL_RUNTIMES}" = true ]; then
 		curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-rust.sh | bash || {
-			echo "[ERROR]: Failed to install 'Rust'!"
+			echo "[WARN]: Failed to install 'Rust'!"
 		}
 
 		curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-go.sh | bash || {
-			echo "[ERROR]: Failed to install 'Go'!"
+			echo "[WARN]: Failed to install 'Go'!"
 		}
 	fi
+	echo "[OK]: Done."
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-nvchad.sh | bash || {
-		echo "[ERROR]: Failed to setup 'NvChad'!"
+		echo "[ERROR]: Failed to setup 'NvChad'!" >&2
 		exit 2
 	}
 
 	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/post-setup-user.sh | bash || {
-		echo "[ERROR]: Failed to post setup!"
+		echo "[ERROR]: Failed to post setup!" >&2
 		exit 2
 	}
 
-	echo -e "[OK]: Done.\n"
+	echo "[OK]: Successfully setup user development environment!"
+	echo ""
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

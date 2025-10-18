@@ -7,90 +7,79 @@ hide:
 
 # Home
 
-## Scripts Overview
+This repository contains a collection of common useful scripts.
 
-### 🛠️ System Setup
+## ✨ Features
 
-- **setup-user-groups.sh** - Create users and groups | [📖 docs](./setup/setup-user-groups.md)
-- **setup-dir-structure.sh** - Create workspace directory structure | [📖 docs](./setup/setup-dir-structure.md)
+- Shell scripts
+- Setup and installation scripts
+- Configuration scripts
+- Preparation for environments
+- Pre-configured for ease of use
 
-### 📦 Installation Scripts
-
-- **install-essentials.sh** - Install essential system packages | [📖 docs](./install/install-essentials.md)
-- **install-docker.sh** - Install Docker with logging & data directory config | [📖 docs](./install/install-docker.md)
-- **install-ohmyzsh.sh** - Install Oh My Zsh with plugins | [📖 docs](./install/install-ohmyzsh.md)
-
-### 🚀 Runtime Environments
-
-- **install-go.sh** - Install Go programming language | [📖 docs](./install/runtimes/install-go.md)
-- **install-rust.sh** - Install Rust via rustup | [📖 docs](./install/runtimes/install-rust.md)
-- **install-nvm.sh** - Install Node Version Manager | [📖 docs](./install/runtimes/install-nvm.md)
-- **install-miniconda.sh** - Install Miniconda Python distribution | [📖 docs](./install/runtimes/install-miniconda.md)
-
-## Quick Start
-
-```bash
-# Clone and navigate to scripts
-git clone <repository-url>
-cd script.common
-
-# Make scripts executable
-chmod +x src/**/*.sh
-
-# Install essential packages
-./src/install/install-essentials.sh
-
-# Create workspace structure
-./src/setup/setup-dir-structure.sh
-
-# Install development tools
-./src/install/runtimes/install-go.sh
-./src/install/runtimes/install-rust.sh
-./src/install/install-docker.sh
-```
-
-## Configuration
-
-All scripts support configuration via `.env` files. Place `.env` in:
-
-- Script directory
-- Parent directory of script
-- Current working directory
-
-Example `.env`:
-
-```bash
-# Workspace configuration
-WORKSPACE_BASE_DIR=/home/user/workspaces
-
-# Runtime versions
-GO_VERSION=1.22.3
-RUST_TOOLCHAIN=stable
-NODE_VERSION=20
-
-# Docker settings
-CONFIGURE_DOCKER_LOGGING=yes
-DOCKER_LOG_MAX_SIZE=50m
-```
-
-## Script Standards
-
-All scripts follow a consistent three-section structure:
-
-- **Base**: Initialization, dependency checks, OS detection
-- **Variables**: Configurable environment variables with defaults
-- **Main**: Core functionality in organized functions
-
-See **coding standards** for detailed guidelines.
-
-## Platform Support
-
-- **Linux**: Ubuntu/Debian (primary support)
-- **macOS**: Full support with Homebrew
-- **Other**: Limited support, may require modifications
-
-## Requirements
+## 🚧 Prerequisites
 
 - Bash 4.0+
-- Standard Unix utilities (curl/wget, git, etc.)
+- Standard utilities (curl/wget, git, etc.)
 - Root access for system-level installations
+- Unix-like OS:
+    - **Linux** (Primary support - Ubuntu/Debian)
+    - **macOS** (Full support with Homebrew)
+    - Other Unix-like systems (limited support)
+
+## 🚸 Usage/Examples
+
+### Setup server environment on **Ubuntu [20.04+], Debian [12.0+]** (amd64/arm64/aarch64)
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | \
+    bash -s -- -u -a
+```
+
+Or with other useful options:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | bash -s -- \
+    --upgrade \
+    --hostname=my-server \
+    --timezone=Asia/Seoul \
+    --all-runtimes
+```
+
+### Create a new user and setup development environment on most **Linux** (amd64/arm64/aarch64)
+
+Setup development environment for the current user:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-user.sh | bash -s -- -a
+```
+
+Create a new user and setup development environment:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-user.sh | bash -s -- \
+    --user=user \
+    --all-runtimes
+```
+
+Create a new user with sudo privileges, password and setup development environment:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/setup-user.sh | bash -s -- \
+    --user=admin \
+    --password="admin_pass123" \
+    --sudo \
+    --all-runtimes
+```
+
+### Setup development environment on most **Linux** (amd64/arm64/aarch64)
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | bash -s -- -a
+```
+
+### Setup development environment on **macOS** (intel/apple-silicon)
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/macos/setup-macos.sh | bash -s -- -a
+```

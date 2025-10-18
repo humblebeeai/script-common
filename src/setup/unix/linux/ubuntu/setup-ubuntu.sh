@@ -84,7 +84,7 @@ main()
 				-d | --disable-user-setup)
 					DO_USER_SETUP=false
 					shift;;
-				-a | --install-all-runtimes)
+				-a | --all-runtimes | --install-all-runtimes)
 					ALL_RUNTIMES=true
 					shift;;
 				-r | --disable-reboot)
@@ -92,7 +92,7 @@ main()
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -n=*, --hostname=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --install-all-runtimes | -r, --disable-reboot"
+					echo "[INFO]: USAGE: ${0}  -t=*, --tz=*, --timezone=* | -n=*, --hostname=* | -u, --upgrade, --enable-apt-upgrade | -d, --disable-user-setup | -a, --all-runtimes, --install-all-runtimes | -r, --disable-reboot"
 					exit 1;;
 			esac
 		done

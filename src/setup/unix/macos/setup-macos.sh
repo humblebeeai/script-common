@@ -46,12 +46,12 @@ main()
 		local _input
 		for _input in "${@:-}"; do
 			case ${_input} in
-				-a | --install-all-runtimes)
+				-a | --all-runtimes | --install-all-runtimes)
 					ALL_RUNTIMES=true
 					shift;;
 				*)
 					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -a, --install-all-runtimes"
+					echo "[INFO]: USAGE: ${0}  -a, --all-runtimes, --install-all-runtimes"
 					exit 1;;
 			esac
 		done

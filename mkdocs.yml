@@ -1,5 +1,5 @@
 site_name: HBAI - Common Scripts
-site_description: "This repository contains a collection of common scripts."
+site_description: "This repository contains a collection of common useful scripts."
 repo_name: humblebeeai/script-common
 repo_url: https://github.com/humblebeeai/script-common
 theme:

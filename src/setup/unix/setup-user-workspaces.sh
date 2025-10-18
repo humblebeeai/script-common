@@ -89,12 +89,13 @@ main()
 
 
 	echo "[INFO]: Creating workspaces '${WORKSPACES_DIR}' and subdirectories..."
+
 	if [ -n "${SYMLINK_DIR}" ]; then
 		if [ ! -e "${SYMLINK_DIR}" ]; then
 			#shellcheck disable=SC2174
 			mkdir -pv -m 775 "${SYMLINK_DIR}" || exit 2
 		else
-			echo "[WARN]: Symlink '${SYMLINK_DIR}' already exists, skipping!"
+			echo "[WARN]: SYMLINK_DIR '${SYMLINK_DIR}' already exists, skipping!"
 		fi
 	fi
 
@@ -106,11 +107,11 @@ main()
 			mkdir -pv -m 775 "${WORKSPACES_DIR}" || exit 2
 		fi
 	else
-		echo "[WARN]: Workspaces '${WORKSPACES_DIR}' already exists, skipping!"
+		echo "[WARN]: WORKSPACES_DIR '${WORKSPACES_DIR}' already exists, skipping!"
 	fi
 
 	if [ ! -d "${WORKSPACES_DIR}" ]; then
-		echo "[ERROR]: Workspaces '${WORKSPACES_DIR}' is not a directory or symlink to a directory!" >&2
+		echo "[ERROR]: WORKSPACES_DIR '${WORKSPACES_DIR}' is not a directory!" >&2
 		exit 1
 	fi
 
@@ -150,7 +151,8 @@ main()
 			fi
 		done
 	fi
-	echo -e "[OK]: Successfully created workspaces and subdirectories.\n"
+
+	echo -e "[OK]: Successfully created workspaces '${WORKSPACES_DIR}' and subdirectories.\n"
 }
 
 main

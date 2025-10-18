@@ -61,8 +61,10 @@ main()
 	## --- Menu arguments --- ##
 
 	echo "[INFO]: Creating workspaces '${WORKSPACES_DIR}' directory structure..."
+	local _is_created=false
 	if [ -n "${SYMLINK_WORKSPACES_DIR}" ]; then
 		mkdir -vp "${SYMLINK_WORKSPACES_DIR}" || exit 2
+		_is_created=true
 	fi
 
 	if [ ! -d "${WORKSPACES_DIR}" ]; then
@@ -70,6 +72,7 @@ main()
 			ln -sv "${SYMLINK_WORKSPACES_DIR}" "${WORKSPACES_DIR}" || exit 2
 		else
 			mkdir -vp "${WORKSPACES_DIR}" || exit 2
+			_is_created=true
 		fi
 	fi
 
@@ -102,6 +105,10 @@ main()
 			echo -e "[OK]: Done.\n"
 		fi
 	done
+
+	if [ "${_is_created}" = true ]; then
+		find "${WORKSPACES_DIR}" -type d -exec chmod -c 775 {} + || exit 2
+	fi
 	echo -e "[OK]: Done.\n"
 }
 

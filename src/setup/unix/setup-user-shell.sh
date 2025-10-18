@@ -3,12 +3,10 @@ set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
+# _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
-# Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
 	source .env
@@ -26,22 +24,27 @@ if [ "${_OS}" = "Linux" ]; then
 elif [ "${_OS}" = "Darwin" ]; then
 	_OS_DISTRO="macos"
 else
-	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2
 	exit 1
 fi
 
 if [ -z "${HOME:-}" ]; then
-	echo "[ERROR]: HOME environment variable is not set!"
+	echo "[ERROR]: HOME environment variable is not set!" >&2
 	exit 2
 fi
 ## --- Base --- ##
 
 
 ## --- Variables --- ##
-_BASE_CONFIGS=$(cat <<'EOF'
+_CUSTOM_CONFIGS=$(cat <<'EOF'
 
 ### CUSTOM CONFIGS ###
 
+umask 0002
+EOF
+)
+
+_LESS_COLOR_ENV=$(cat <<'EOF'
 export LESS_TERMCAP_mb=$'\e[1;32m'
 export LESS_TERMCAP_md=$'\e[1;32m'
 export LESS_TERMCAP_me=$'\e[0m'
@@ -49,8 +52,6 @@ export LESS_TERMCAP_se=$'\e[0m'
 export LESS_TERMCAP_so=$'\e[01;33m'
 export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
-
-umask 0002
 EOF
 )
 
@@ -58,7 +59,6 @@ _LINUX_LS_ALIAS=$(cat <<'EOF'
 alias ls='ls -aF --group-directories-first --color=auto'
 alias l='ls'
 alias ll='ls -alhF --group-directories-first --color=auto'
-
 EOF
 )
 
@@ -101,7 +101,7 @@ alias tree='lsd -aF --group-dirs first --tree'
 EOF
 )
 
-_BAT_ALIAS="\nalias bat='bat --theme=ansi'\n"
+_BAT_ALIAS="alias bat='bat --theme=ansi'"
 
 _NEOVIM_ALIAS=$(cat <<'EOF'
 alias vi='nvim'
@@ -114,22 +114,28 @@ EOF
 ## --- Main --- ##
 main()
 {
+	echo ""
+	echo "[INFO]: Setting up user shell configs..."
+
 	echo "[INFO]: Setting up 'bash'..."
 	if [ ! -f "${HOME}/.bashrc" ]; then
-		echo "[INFO]: Not found '.bashrc' file in home directory, restoring default or creating new one..."
+		echo "[WARN]: Not found '.bashrc' file in home directory, restoring default or creating new one..."
 		if [ -f "/etc/skel/.bashrc" ]; then
-			echo "[INFO]: Restoring default '.bashrc' file from /etc/skel/.bashrc..."
+			echo "[INFO]: Restoring default '.bashrc' file from '/etc/skel/.bashrc'..."
 			/bin/cp -v "/etc/skel/.bashrc" "${HOME}/.bashrc" || exit 2
 		else
 			touch "${HOME}/.bashrc" || exit 2
 		fi
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 	if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.bashrc"; then
 		echo "[INFO]: Updating '.bashrc' file..."
 		echo "" >> "${HOME}/.bashrc" || exit 2
-		echo "${_BASE_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
+		echo "${_CUSTOM_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
+		echo "" >> "${HOME}/.bashrc" || exit 2
+		echo "${_LESS_COLOR_ENV}" >> "${HOME}/.bashrc" || exit 2
 		echo "" >> "${HOME}/.bashrc" || exit 2
 
 		if [ "${_OS}" = "Linux" ]; then
@@ -137,6 +143,7 @@ main()
 			echo "" >> "${HOME}/.bashrc" || exit 2
 			if command -v tree >/dev/null 2>&1; then
 				echo "${_LINUX_TREE_ALIAS}" >> "${HOME}/.bashrc" || exit 2
+				echo "" >> "${HOME}/.bashrc" || exit 2
 			fi
 		elif [ "${_OS}" = "Darwin" ]; then
 			if command -v gls >/dev/null 2>&1; then
@@ -148,22 +155,26 @@ main()
 
 			if command -v tree >/dev/null 2>&1; then
 				echo "${_MACOS_TREE_ALIAS}" >> "${HOME}/.bashrc" || exit 2
+				echo "" >> "${HOME}/.bashrc" || exit 2
 			fi
 		fi
 
 		if command -v bat >/dev/null 2>&1; then
-			echo -e "${_BAT_ALIAS}" >> "${HOME}/.bashrc" || exit 2
+			echo "${_BAT_ALIAS}" >> "${HOME}/.bashrc" || exit 2
+			echo "" >> "${HOME}/.bashrc" || exit 2
 		fi
 
 		if command -v nvim >/dev/null 2>&1; then
 			echo "${_NEOVIM_ALIAS}" >> "${HOME}/.bashrc" || exit 2
+			echo "" >> "${HOME}/.bashrc" || exit 2
 		fi
-		echo "" >> "${HOME}/.bashrc" || exit 2
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	else
-		echo "[WARN]: Already setup '.bashrc' file, skipping...!"
+		echo "[WARN]: Already setup '.bashrc' file, skipping!"
 	fi
-	echo -e "[OK]: Done.\n"
+	echo "[OK]: Done."
+	echo ""
 
 	if command -v zsh >/dev/null 2>&1; then
 		echo "[INFO]: Setting up 'zsh'..."
@@ -178,22 +189,27 @@ main()
 			else
 				touch "${HOME}/.zshrc" || exit 2
 			fi
-			echo -e "[OK]: Done.\n"
+			echo "[OK]: Done."
+			echo ""
 		fi
 
 		if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.zshrc"; then
 			echo "[INFO]: Updating '.zshrc' file..."
-			echo "${_BASE_CONFIGS}" >> "${HOME}/.zshrc" || exit
+			echo "${_CUSTOM_CONFIGS}" >> "${HOME}/.zshrc" || exit
+			echo "" >> "${HOME}/.zshrc" || exit 2
+			echo "${_LESS_COLOR_ENV}" >> "${HOME}/.zshrc" || exit 2
 			echo "" >> "${HOME}/.zshrc" || exit 2
 
 			if command -v lsd >/dev/null 2>&1 && [ "$(id -u)" -ne 0 ]; then
 				echo "${_LSD_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+				echo "" >> "${HOME}/.zshrc" || exit 2
 			else
 				if [ "${_OS}" = "Linux" ]; then
 					echo "${_LINUX_LS_ALIAS}" >> "${HOME}/.zshrc" || exit 2
 					echo "" >> "${HOME}/.zshrc" || exit 2
 					if command -v tree >/dev/null 2>&1; then
 						echo "${_LINUX_TREE_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+						echo "" >> "${HOME}/.zshrc" || exit 2
 					fi
 				elif [ "${_OS}" = "Darwin" ]; then
 					if command -v gls >/dev/null 2>&1; then
@@ -205,29 +221,34 @@ main()
 
 					if command -v tree >/dev/null 2>&1; then
 						echo "${_MACOS_TREE_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+						echo "" >> "${HOME}/.zshrc" || exit 2
 					fi
 				fi
 			fi
 
 			if command -v bat >/dev/null 2>&1; then
-				echo -e "${_BAT_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+				echo "${_BAT_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+				echo "" >> "${HOME}/.zshrc" || exit 2
 			fi
 
 			if command -v nvim >/dev/null 2>&1; then
 				echo "${_NEOVIM_ALIAS}" >> "${HOME}/.zshrc" || exit 2
+				echo "" >> "${HOME}/.zshrc" || exit 2
 			fi
-			echo "" >> "${HOME}/.zshrc" || exit 2
-			echo -e "[OK]: Done.\n"
+			echo "[OK]: Done."
 		else
-			echo "[WARN]: Already setup '.zshrc' file, skipping...!"
+			echo "[WARN]: Already setup '.zshrc' file, skipping!"
 		fi
 
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
+		echo ""
 	else
-		echo "[WARN]: Not found 'zsh', skipping...!"
+		echo "[WARN]: Not found 'zsh', skipping!"
 	fi
+
+	echo "[OK]: Successfully setup user shell configs."
+	echo ""
 }
 
-
-main "${@:-}"
+main
 ## --- Main --- ##

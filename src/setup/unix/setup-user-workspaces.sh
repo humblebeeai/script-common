@@ -111,13 +111,13 @@ done
 ## --- Main --- ##
 main()
 {
+	echo ""
+	echo "[INFO]: Creating workspaces and subdirectories..."
+
 	if [ -z "${WORKSPACES_DIR}" ]; then
 		echo "[ERROR]: WORKSPACES_DIR variable is empty!" >&2
 		exit 1
 	fi
-
-
-	echo "[INFO]: Creating workspaces '${WORKSPACES_DIR}' and subdirectories..."
 
 	if [ -n "${SYMLINK_DIR}" ]; then
 		if [ ! -e "${SYMLINK_DIR}" ]; then
@@ -181,7 +181,7 @@ main()
 		done
 	fi
 
-	echo "[OK]: Successfully created workspaces '${WORKSPACES_DIR}' and subdirectories."
+	echo "[OK]: Successfully created workspaces and subdirectories."
 	echo ""
 }
 

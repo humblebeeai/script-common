@@ -45,7 +45,7 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -f, --force, --force-remove    Force remove existing NvChad configuration.
+    -f, --force, --force-remove    Force remove existing NvChad configuration. Default: false
     -h, --help                     Show help.
 
 EXAMPLES:

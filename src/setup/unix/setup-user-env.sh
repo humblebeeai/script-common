@@ -46,7 +46,7 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -a, --all, --install-all-runtimes    Install all runtimes (Rust, Go, Miniconda, NVM).
+    -a, --all, --install-all-runtimes    Install all runtimes (Rust, Go, Miniconda, NVM). Default: false
     -h, --help                           Show help.
 
 EXAMPLES:
@@ -104,26 +104,26 @@ main()
 
 	echo "[INFO]: Installing runtimes..."
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
-		echo "[WARN]: Failed to install 'Miniconda'!" >&2
+		echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
 	}
 
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-nvm.sh" | bash || {
-		echo "[WARN]: Failed to install 'NVM'!" >&2
+		echo "[WARN]: Failed to install 'NVM', skipping!" >&2
 	}
 
 	if [ "${INSTALL_ALL_RUNTIMES}" = true ]; then
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-rust.sh" | bash || {
-			echo "[WARN]: Failed to install 'Rust'!" >&2
+			echo "[WARN]: Failed to install 'Rust', skipping!" >&2
 		}
 
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-go.sh" | bash || {
-			echo "[WARN]: Failed to install 'Go'!" >&2
+			echo "[WARN]: Failed to install 'Go', skipping!" >&2
 		}
 	fi
 	echo "[OK]: Done."
 
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-nvchad.sh" | bash || {
-		echo "[WARN]: Failed to setup 'NvChad'!" >&2
+		echo "[WARN]: Failed to setup 'NvChad', skipping!" >&2
 	}
 
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/post-setup-user.sh" | bash || {

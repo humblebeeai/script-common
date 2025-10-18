@@ -39,15 +39,18 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -w, --workspaces, --workspaces-dir [PATH]    Set workspaces directory path.
+    -w, --workspaces, --workspaces-dir [PATH]    Set workspaces directory path. Default: '~/workspaces'
     -l, --symlink, --symlink-dir       [PATH]    Set target dir and symlink WORKSPACES_DIR to it.
     -d, --subdirs [DIR1,DIR2,...]                Comma-separated list of subdirectories to create under WORKSPACES_DIR.
+                                                     Default: 'runtimes,projects,services,datasets,models,storage,archives,education'
     -s, --services [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'services' subdirectory.
+                                                     Default: 'prod,staging,test,qa,docs'
     -p, --projects [DIR1,DIR2,...]               Comma-separated list of subdirectories to create under 'projects' subdirectory.
+                                                     Default: 'hbai,shared,my,tmp'
     -h, --help                                   Show help.
 
 EXAMPLES:
-    ${0} --workspaces=${HOME}/workspaces
+    ${0} --workspaces=./workspaces
     ${0} -w ~/workspaces -l /mnt/nas/accounts/username/workspaces
 EOF
 }
@@ -116,6 +119,7 @@ main()
 		echo "[ERROR]: WORKSPACES_DIR variable is empty!" >&2
 		exit 1
 	fi
+
 
 	if [ -n "${SYMLINK_DIR}" ]; then
 		if [ ! -e "${SYMLINK_DIR}" ]; then

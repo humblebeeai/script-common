@@ -23,7 +23,8 @@ This repository contains a collection of common useful scripts.
 ## 🚧 Prerequisites
 
 - Bash 4.0+
-- Standard utilities (curl/wget, git, etc.)
+- Basic command-line tools (curl/wget, git, etc.)
+- Internet connection
 - Root access for system-level installations
 - Most Unix-like OS:
     - **Linux** (Primary support - Ubuntu/Debian)
@@ -89,23 +90,3 @@ Note: This script will only install and setup user-level runtimes and configurat
 ```sh
 curl -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | bash -s -- -a
 ```
-
----
-
-## 📑 References
-
-- <https://www.shellscript.sh>
-- <https://www.shellcheck.net>
-- <https://www.gnu.org/software/bash/manual/bash.html>
-- <https://www.zsh.org>
-- <https://ohmyz.sh>
-- <https://github.com/romkatv/powerlevel10k>
-- <https://drasite.com/blog/Pimp%20my%20terminal>
-- <https://gnunn1.github.io/tilix-web>
-- <https://sw.kovidgoyal.net/kitty>
-- <https://iterm2.com>
-- <https://github.com/microsoft/terminal>
-- <https://mobaxterm.mobatek.net>
-- <https://hyper.is>
-- <https://termius.com>
-- <https://termux.dev>

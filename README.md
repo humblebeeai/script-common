@@ -19,7 +19,8 @@ This repository contains a collection of common useful scripts.
 ## 🚧 Prerequisites
 
 - Bash 4.0+
-- Standard utilities (curl/wget, git, etc.)
+- Basic command-line tools (curl/wget, git, etc.)
+- Internet connection
 - Root access for system-level installations
 - Most Unix-like OS:
     - **Linux** (Primary support - Ubuntu/Debian)

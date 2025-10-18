@@ -100,7 +100,7 @@ while [ $# -gt 0 ]; do
 		_usage_help
 		exit 0;;
 	*)
-		echo "[ERROR]: Failed to parse input -> ${1}!" >&2
+		echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
 		_usage_help
 		exit 1;;
 	esac

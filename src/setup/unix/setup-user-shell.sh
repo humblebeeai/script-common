@@ -119,7 +119,7 @@ main()
 
 	echo "[INFO]: Setting up 'bash'..."
 	if [ ! -f "${HOME}/.bashrc" ]; then
-		echo "[WARN]: Not found '.bashrc' file in home directory, restoring default or creating new one..."
+		echo "[WARN]: Not found '.bashrc' file in user home directory, restoring default or creating new one..."
 		if [ -f "/etc/skel/.bashrc" ]; then
 			echo "[INFO]: Restoring default '.bashrc' file from '/etc/skel/.bashrc'..."
 			/bin/cp -v "/etc/skel/.bashrc" "${HOME}/.bashrc" || exit 2
@@ -179,7 +179,7 @@ main()
 	if command -v zsh >/dev/null 2>&1; then
 		echo "[INFO]: Setting up 'zsh'..."
 		if [ ! -f "${HOME}/.zshrc" ]; then
-			echo "[INFO]: Not found '.zshrc' file in home directory, restoring default or creating new one..."
+			echo "[INFO]: Not found '.zshrc' file in user home directory, restoring default or creating new one..."
 			if [ -f "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" ]; then
 				cp -v "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" "${HOME}/.zshrc" || exit 2
 			elif [ -f "/etc/zsh/zshrc" ]; then

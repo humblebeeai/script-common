@@ -3,37 +3,35 @@ set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
+# _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
 # cd "${_SCRIPT_DIR}" || exit 2
 
 
-# Loading .env file (if exists):
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
-	source .env
+	. .env
 fi
 
 
 _OS="$(uname)"
 if [ "${_OS}" != "Linux" ] && [ "${_OS}" != "Darwin" ]; then
-	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!"
+	echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2
 	exit 1
 fi
 
 if ! command -v git >/dev/null 2>&1; then
-	echo "[ERROR]: 'git' not found or not installed!"
+	echo "[ERROR]: 'git' not found or not installed!" >&2
 	exit 1
 fi
 
 if ! command -v nvim >/dev/null 2>&1; then
-	echo "[ERROR]: 'nvim' not found or not installed!"
+	echo "[ERROR]: 'nvim' not found or not installed!" >&2
 	exit 1
 fi
 
 if [ -z "${HOME:-}" ]; then
-	echo "[ERROR]: HOME environment variable is not set!"
-	exit 2
+	echo "[ERROR]: HOME environment variable is not set!" >&2
+	exit 1
 fi
 ## --- Base --- ##
 
@@ -43,26 +41,42 @@ FORCE_REMOVE=${FORCE_REMOVE:-false}
 ## --- Variables --- ##
 
 
+## --- Menu arguments --- ##
+_usage_help() {
+	cat <<EOF
+USAGE: ${0} [options]
+
+OPTIONS:
+    -f, --force, --force-remove    Force remove existing NvChad configuration.
+    -h, --help                     Show help.
+
+EXAMPLES:
+    ${0} --force
+EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		-f | --force | --force-remove)
+			FORCE_REMOVE=true
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
+	esac
+done
+## --- Menu arguments --- ##
+
+
 ## --- Main --- ##
 main()
 {
-	## --- Menu arguments --- ##
-	if [ -n "${1:-}" ]; then
-		local _input
-		for _input in "${@:-}"; do
-			case ${_input} in
-				-f | --force | --force-remove)
-					FORCE_REMOVE=true
-					shift;;
-				*)
-					echo "[ERROR]: Failed to parsing input -> ${_input}!"
-					echo "[INFO]: USAGE: ${0}  -f | --force | --force-remove"
-					exit 1;;
-			esac
-		done
-	fi
-	## --- Menu arguments --- ##
-
+	echo ""
+	echo "[INFO]: Setting up 'NvChad'..."
 
 	if [ -d "${HOME}/.config/nvim" ] && [ "${FORCE_REMOVE}" = true ]; then
 		echo "[INFO]: Removing existing 'nvim' configuration..."
@@ -70,13 +84,16 @@ main()
 		rm -rf ~/.local/state/nvim
 		rm -rf ~/.local/share/nvim
 		rm -rf ~/.cache/nvim
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
 	fi
 
 	if [ ! -d "${HOME}/.config/nvim" ]; then
-		echo "[INFO]: Setting up 'NvChad'..."
+		echo "[INFO]: Cloning 'NvChad'..."
 		git clone https://github.com/NvChad/starter "${HOME}/.config/nvim" || exit 2
 		rm -rf "${HOME}/.config/nvim/.git" || exit 2
+		echo "[OK]: Done."
+
+		echo "[INFO]: Installing 'NvChad' plugins and updating parsers..."
 		nvim --headless "+Lazy! sync" "+MasonUpdate" "+TSUpdateSync" +qa || exit 2
 
 		# if [ -f "${HOME}/.config/nvim/lua/chadrc.lua" ]; then
@@ -87,12 +104,14 @@ main()
 		# 	fi
 		# fi
 
-		echo -e "[OK]: Done.\n"
+		echo "[OK]: Done."
 	else
-		echo "[WARN]: 'nvim' configuration already exists, skipping..."
+		echo "[WARN]: 'nvim' configuration already exists, skipping!"
 	fi
+
+	echo "[OK]: Successfully setup 'NvChad'."
+	echo ""
 }
 
-
-main "${@:-}"
+main
 ## --- Main --- ##

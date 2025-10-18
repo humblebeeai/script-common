@@ -56,53 +56,53 @@ EOF
 
 while [ $# -gt 0 ]; do
 	case "${1}" in
-	# workspaces:
-	-w | --workspaces | --workspaces-dir)
-		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
-		WORKSPACES_DIR="${2}"
-		shift 2;;
-	-w=* | --workspaces=* | --workspaces-dir=*)
-		WORKSPACES_DIR="${1#*=}"
-		shift;;
-	# symlink:
-	-l | --symlink | --symlink-dir)
-		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
-		SYMLINK_DIR="${2}"
-		shift 2;;
-	-l=* | --symlink=* | --symlink-dir=*)
-		SYMLINK_DIR=${1#*=}
-		shift;;
-	# subdirs:
-	-d | --subdirs)
-		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
-		WORKSPACES_SUBDIRS="${2}"
-		shift 2;;
-	-d=* | --subdirs=*)
-		WORKSPACES_SUBDIRS="${1#*=}"
-		shift;;
-	# services:
-	-s | --services)
-		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
-		SERVICES_SUBDIRS="${2}"
-		shift 2;;
-	-s=* | --services=*)
-		SERVICES_SUBDIRS="${1#*=}"
-		shift;;
-	# projects:
-	-p | --projects)
-		[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
-		PROJECTS_SUBDIRS="${2}"
-		shift 2;;
-	-p=* | --projects=*)
-		PROJECTS_SUBDIRS="${1#*=}"
-		shift;;
-	-h | --help)
-		_usage_help
-		exit 0;;
-	*)
-		echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
-		_usage_help
-		exit 1;;
+		# workspaces:
+		-w | --workspaces | --workspaces-dir)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			WORKSPACES_DIR="${2}"
+			shift 2;;
+		-w=* | --workspaces=* | --workspaces-dir=*)
+			WORKSPACES_DIR="${1#*=}"
+			shift;;
+		# symlink:
+		-l | --symlink | --symlink-dir)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			SYMLINK_DIR="${2}"
+			shift 2;;
+		-l=* | --symlink=* | --symlink-dir=*)
+			SYMLINK_DIR=${1#*=}
+			shift;;
+		# subdirs:
+		-d | --subdirs)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			WORKSPACES_SUBDIRS="${2}"
+			shift 2;;
+		-d=* | --subdirs=*)
+			WORKSPACES_SUBDIRS="${1#*=}"
+			shift;;
+		# services:
+		-s | --services)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			SERVICES_SUBDIRS="${2}"
+			shift 2;;
+		-s=* | --services=*)
+			SERVICES_SUBDIRS="${1#*=}"
+			shift;;
+		# projects:
+		-p | --projects)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			PROJECTS_SUBDIRS="${2}"
+			shift 2;;
+		-p=* | --projects=*)
+			PROJECTS_SUBDIRS="${1#*=}"
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
 	esac
 done
 ## --- Menu arguments --- ##

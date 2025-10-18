@@ -127,7 +127,7 @@ main()
 			echo ""
 			exit 0
 		elif [ "${FORCE_INSTALL}" = true ]; then
-			echo "[WARN]: Different Go '${_go_version}' version is already installed in '${GO_DIR}', but proceeding due to force install flag." >&2
+			echo "[WARN]: Different Go '${_go_version}' version is already installed in '${GO_DIR}', but proceeding due to force." >&2
 		else
 			echo "[ERROR]: Different Go '${_go_version}' version is already installed in '${GO_DIR}'!" >&2
 			echo ""

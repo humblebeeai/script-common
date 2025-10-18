@@ -65,7 +65,7 @@ _update_zshrc()
 main()
 {
 	echo ""
-	echo "[INFO]: Settting up 'Oh My Zsh'..."
+	echo "[INFO]: Setting up 'Oh My Zsh'..."
 
 	## Backup existing '.zshrc' file:
 	if [ -f "${HOME}/.zshrc" ] && [ ! -f "${HOME}/.zshrc.bak" ]; then
@@ -190,7 +190,7 @@ ZSH_DISABLE_COMPFIX="true"
 		echo ""
 	fi
 
-	if ! grep -q "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" "${HOME}/.zshrc"; then
+	if ! grep -Fq "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" "${HOME}/.zshrc"; then
 		echo "[INFO]: Adding 'powerlevel10k' theme source line to '.zshrc' file..."
 		echo "" >> "${HOME}/.zshrc" || exit 2
 		echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "${HOME}/.zshrc" || exit 2

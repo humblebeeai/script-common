@@ -106,7 +106,7 @@ EOF
 main()
 {
 	echo ""
-	echo "[INFO]: Setting up user shell configs..."
+	echo "[INFO]: Setting up user shellrc..."
 
 	echo "[INFO]: Setting up 'bash'..."
 	if [ ! -f "${HOME}/.bashrc" ]; then
@@ -243,7 +243,7 @@ main()
 		echo "[WARN]: Not found 'zsh', skipping!"
 	fi
 
-	echo "[OK]: Successfully setup user shell configs."
+	echo "[OK]: Successfully setup user shellrc."
 	echo ""
 }
 

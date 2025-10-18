@@ -72,7 +72,6 @@ main()
 		echo "[INFO]: Backing up existing '.zshrc' file..."
 		cp -v "${HOME}/.zshrc" "${HOME}/.zshrc".bak || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	## Setting up 'Oh My Zsh':
@@ -80,14 +79,12 @@ main()
 		echo "[INFO]: Installing 'Oh My Zsh'..."
 		RUNZSH=${RUNZSH} CHSH=${CHSH} sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	if [ ! -f "${HOME}/.zshrc" ]; then
 		echo "[INFO]: Creating default '.zshrc' file..."
 		cp -v "${ZSH:-${HOME}/.oh-my-zsh}/templates/zshrc.zsh-template" "${HOME}/.zshrc" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 
@@ -111,14 +108,12 @@ ZSH_DISABLE_COMPFIX="true"
 		echo "[INFO]: Cloning 'zsh-autosuggestions' plugin..."
 		git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	if ! grep -q 'zsh-autosuggestions' "${HOME}/.zshrc"; then
 		echo "[INFO]: Adding 'zsh-autosuggestions' plugin to '.zshrc' file..."
 		_update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions)/' || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 
@@ -127,14 +122,12 @@ ZSH_DISABLE_COMPFIX="true"
 		echo "[INFO]: Cloning 'zsh-syntax-highlighting' plugin..."
 		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	if ! grep -q 'zsh-syntax-highlighting' "${HOME}/.zshrc"; then
 		echo "[INFO]: Adding 'zsh-syntax-highlighting' plugin to '.zshrc' file..."
 		_update_zshrc 's/^plugins=(\(.*\))/plugins=(\1 zsh-syntax-highlighting)/' || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 
@@ -158,10 +151,8 @@ ZSH_DISABLE_COMPFIX="true"
 			fi
 		done
 		echo "[OK]: Done."
-		echo ""
 	fi
 	echo "[OK]: Done."
-	echo ""
 
 
 	## Setting up 'powerlevel10k' theme:
@@ -169,7 +160,6 @@ ZSH_DISABLE_COMPFIX="true"
 		echo "[INFO]: Cloning 'powerlevel10k' theme..."
 		git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	if grep -q "ZSH_THEME=" "${HOME}/.zshrc"; then
@@ -189,7 +179,6 @@ ZSH_DISABLE_COMPFIX="true"
 		echo "[INFO]: Copying 'powerlevel10k's theme config to '${HOME}/.p10k.zsh'..."
 		cp -v "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/themes/powerlevel10k/config/${_p10k_theme}" "${HOME}/.p10k.zsh" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	if ! grep -Fq "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" "${HOME}/.zshrc"; then
@@ -198,7 +187,6 @@ ZSH_DISABLE_COMPFIX="true"
 		echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "${HOME}/.zshrc" || exit 2
 		echo "" >> "${HOME}/.zshrc" || exit 2
 		echo "[OK]: Done."
-		echo ""
 	fi
 
 	echo "[OK]: Successfully set up 'Oh My Zsh'."

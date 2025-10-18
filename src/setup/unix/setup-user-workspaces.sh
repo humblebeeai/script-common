@@ -109,6 +109,11 @@ main()
 		echo "[WARN]: Workspaces '${WORKSPACES_DIR}' already exists, skipping!"
 	fi
 
+	if [ ! -d "${WORKSPACES_DIR}" ]; then
+		echo "[ERROR]: Workspaces '${WORKSPACES_DIR}' is not a directory or symlink to a directory!" >&2
+		exit 1
+	fi
+
 	if [ -n "${WORKSPACES_SUBDIRS}" ]; then
 		local _workspaces_subdirs_arr
 		IFS=',' read -r -a _workspaces_subdirs_arr <<< "${WORKSPACES_SUBDIRS}"

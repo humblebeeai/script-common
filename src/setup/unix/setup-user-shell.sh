@@ -9,7 +9,7 @@ set -euo pipefail
 
 if [ -f ".env" ]; then
 	# shellcheck disable=SC1091
-	source .env
+	. .env
 fi
 
 
@@ -119,6 +119,11 @@ main()
 		fi
 		echo "[OK]: Done."
 		echo ""
+	elif [ ! -f "${HOME}/.bashrc.bak" ]; then
+		echo "[INFO]: Backing up existing '.bashrc' file..."
+		cp -v "${HOME}/.bashrc" "${HOME}/.bashrc.bak" || exit 2
+		echo "[OK]: Done."
+		echo ""
 	fi
 
 	if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.bashrc"; then
@@ -183,6 +188,11 @@ main()
 			else
 				touch "${HOME}/.zshrc" || exit 2
 			fi
+			echo "[OK]: Done."
+			echo ""
+		elif [ ! -f "${HOME}/.zshrc.bak" ]; then
+			echo "[INFO]: Backing up existing '.zshrc' file..."
+			cp -v "${HOME}/.zshrc" "${HOME}/.zshrc.bak" || exit 2
 			echo "[OK]: Done."
 			echo ""
 		fi

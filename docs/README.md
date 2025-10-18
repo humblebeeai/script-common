@@ -24,8 +24,8 @@ This repository contains a collection of common useful scripts.
 
 - Bash 4.0+
 - Basic command-line tools (curl/wget, git, etc.)
-- Internet connection
-- Root access for system-level installations
+- Internet connection for downloading packages
+- Root access for system-level setup and account management
 - Most Unix-like OS:
     - **Linux** (Primary support - Ubuntu/Debian)
     - **macOS** (Full support with Homebrew)

@@ -115,7 +115,7 @@ main()
 
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/account/unix/linux/create-group.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/account/unix/linux/create-group.sh | \
 			bash -s -- -g="${PRIMARY_GID}" || {
 				echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!"
 				exit 2
@@ -129,7 +129,7 @@ main()
 			_arg_sudo="-s"
 		fi
 
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/account/unix/linux/create-user.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/account/unix/linux/create-user.sh | \
 			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" ${_arg_sudo} || {
 				echo "[ERROR]: Failed to create user '${USERNAME}'!"
 				exit 2
@@ -145,7 +145,7 @@ main()
 			_arg_is_plain=""
 		fi
 
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/account/unix/linux/change-password.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/account/unix/linux/change-password.sh | \
 			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_is_plain} || {
 				echo "[ERROR]: Failed to set password for user '${USERNAME}'!"
 				exit 2
@@ -153,7 +153,7 @@ main()
 	fi
 
 	if [ "$(id -g "${USERNAME}")" != "${PRIMARY_GID}" ]; then
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/account/unix/linux/change-user-pgroup.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/account/unix/linux/change-user-pgroup.sh | \
 			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!"
 				exit 2
@@ -161,7 +161,7 @@ main()
 	fi
 
 	if getent group docker >/dev/null 2>&1 && ! id -nG "${USERNAME}" | grep -qw docker; then
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/account/unix/linux/add-user-group.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/account/unix/linux/add-user-group.sh | \
 			bash -s -- -g=docker -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to add user '${USERNAME}' to 'docker' group!"
 				exit 2
@@ -172,7 +172,7 @@ main()
 	if [ "${ALL_RUNTIMES}" = true ]; then
 		_arg_all_runtimes="-s -- -a"
 	fi
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | bash ${_arg_all_runtimes}" || {
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/setup-user-env.sh | bash ${_arg_all_runtimes}" || {
 		echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!"
 		exit 2
 	}

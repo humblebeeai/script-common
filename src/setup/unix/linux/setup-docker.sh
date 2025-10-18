@@ -107,7 +107,7 @@ main()
 	echo -e "[OK]: Done.\n"
 
 	if [ "${_INSTALL_NVIDIA_CONTAINER}" = true ]; then
-		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/linux/ubuntu/setup-nvidia-container.sh | \
+		curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/linux/ubuntu/setup-nvidia-container.sh | \
 			bash || {
 				echo "[ERROR]: Failed to setup NVIDIA container toolkit!"
 				exit 2

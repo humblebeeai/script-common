@@ -61,7 +61,7 @@ main()
 
 	echo "[INFO]: Setting up development environment on macOS..."
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/macos/install-essentials.sh | bash || {
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/macos/install-essentials.sh | bash || {
 		echo "[ERROR]: Failed to install essential packages!"
 		exit 2
 	}
@@ -71,7 +71,7 @@ main()
 		_arg_all_runtimes="-s -- -a"
 	fi
 	#shellcheck disable=SC2086
-	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/HEAD/src/setup/unix/setup-user-env.sh | \
+	curl -H 'Cache-Control: no-cache' -fsSL https://raw.githubusercontent.com/humblebeeai/script-common/refs/heads/main/src/setup/unix/setup-user-env.sh | \
 		bash ${_arg_all_runtimes} || {
 			echo "[ERROR]: Failed to setup user environment!"
 			exit 2

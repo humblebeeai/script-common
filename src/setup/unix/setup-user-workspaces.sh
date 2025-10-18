@@ -47,7 +47,7 @@ OPTIONS:
 
 EXAMPLES:
     ${0} --workspaces=${HOME}/workspaces
-    ${0} -w ~/workspaces -l /mnt/nas/accounts/user/workspaces
+    ${0} -w ~/workspaces -l /mnt/nas/accounts/username/workspaces
 EOF
 }
 
@@ -90,23 +90,23 @@ main()
 
 	echo "[INFO]: Creating workspaces '${WORKSPACES_DIR}' and subdirectories..."
 	if [ -n "${SYMLINK_DIR}" ]; then
-		if [ ! -d "${SYMLINK_DIR}" ]; then
+		if [ ! -e "${SYMLINK_DIR}" ]; then
 			#shellcheck disable=SC2174
 			mkdir -pv -m 775 "${SYMLINK_DIR}" || exit 2
 		else
-			echo "[WARN]: SYMLINK_DIR '${SYMLINK_DIR}' already exists, skipping!"
+			echo "[WARN]: Symlink '${SYMLINK_DIR}' already exists, skipping!"
 		fi
 	fi
 
-	if [ ! -d "${WORKSPACES_DIR}" ]; then
-		if [ -n "${SYMLINK_DIR}" ] && [ -d "${SYMLINK_DIR}" ]; then
+	if [ ! -e "${WORKSPACES_DIR}" ]; then
+		if [ -n "${SYMLINK_DIR}" ] && [ -e "${SYMLINK_DIR}" ]; then
 			ln -snfv "${SYMLINK_DIR}" "${WORKSPACES_DIR}" || exit 2
 		else
 			#shellcheck disable=SC2174
 			mkdir -pv -m 775 "${WORKSPACES_DIR}" || exit 2
 		fi
 	else
-		echo "[WARN]: WORKSPACES_DIR '${WORKSPACES_DIR}' already exists, skipping!"
+		echo "[WARN]: Workspaces '${WORKSPACES_DIR}' already exists, skipping!"
 	fi
 
 	if [ -n "${WORKSPACES_SUBDIRS}" ]; then

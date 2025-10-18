@@ -123,8 +123,7 @@ main()
 	echo "[OK]: Done."
 
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-nvchad.sh" | bash || {
-		echo "[ERROR]: Failed to setup 'NvChad'!" >&2
-		exit 2
+		echo "[WARN]: Failed to setup 'NvChad'!" >&2
 	}
 
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/post-setup-user.sh" | bash || {

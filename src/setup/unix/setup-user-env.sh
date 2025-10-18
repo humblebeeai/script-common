@@ -36,6 +36,7 @@ fi
 
 ## --- Variables --- ##
 INSTALL_ALL_RUNTIMES=${INSTALL_ALL_RUNTIMES:-false}
+SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
 ## --- Variables --- ##
 
 
@@ -71,52 +72,62 @@ done
 
 
 ## --- Main --- ##
+_fetch()
+{
+	if [ -z "${1:-}" ]; then
+		echo "[ERROR]: URL is empty!" >&2
+		exit 1
+	fi
+
+	curl -H 'Cache-Control: no-cache' -fsSL "${1}";
+}
+
 main()
 {
 	echo ""
 	echo "[INFO]: Setting up user development environment..."
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-workspaces.sh | bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-workspaces.sh" | bash || {
 		echo "[ERROR]: Failed to create workspaces!" >&2
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-ohmyzsh.sh | bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-ohmyzsh.sh" | bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh'!" >&2
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-shell.sh | bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-shell.sh" | bash || {
 		echo "[ERROR]: Failed to setup shellrc!" >&2
 		exit 2
 	}
 
 	echo "[INFO]: Installing runtimes..."
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-miniconda.sh | bash || {
-		echo "[WARN]: Failed to install 'Miniconda'!"
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
+		echo "[WARN]: Failed to install 'Miniconda'!" >&2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-nvm.sh | bash || {
-		echo "[WARN]: Failed to install 'NVM'!"
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-nvm.sh" | bash || {
+		echo "[WARN]: Failed to install 'NVM'!" >&2
 	}
 
 	if [ "${INSTALL_ALL_RUNTIMES}" = true ]; then
-		curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-rust.sh | bash || {
-			echo "[WARN]: Failed to install 'Rust'!"
+		_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-rust.sh" | bash || {
+			echo "[WARN]: Failed to install 'Rust'!" >&2
 		}
 
-		curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-go.sh | bash || {
-			echo "[WARN]: Failed to install 'Go'!"
+		_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-go.sh" | bash || {
+			echo "[WARN]: Failed to install 'Go'!" >&2
 		}
 	fi
 	echo "[OK]: Done."
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-nvchad.sh | bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-nvchad.sh" | bash || {
 		echo "[ERROR]: Failed to setup 'NvChad'!" >&2
 		exit 2
 	}
 
-	curl -H 'Cache-Control: no-cache' -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/post-setup-user.sh | bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/post-setup-user.sh" | bash || {
 		echo "[ERROR]: Failed to post setup!" >&2
 		exit 2
 	}

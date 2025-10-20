@@ -171,7 +171,6 @@ main()
 		echo "[WARN]: Already setup '.bashrc' file, skipping!"
 	fi
 	echo "[OK]: Done."
-	echo ""
 
 	if command -v zsh >/dev/null 2>&1; then
 		echo "[INFO]: Setting up 'zsh'..."

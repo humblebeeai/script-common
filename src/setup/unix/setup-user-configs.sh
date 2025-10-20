@@ -198,7 +198,7 @@ main()
 
 		if ! grep -q '### CUSTOM CONFIGS ###' "${HOME}/.zshrc"; then
 			echo "[INFO]: Updating '.zshrc' file..."
-			echo "${_CUSTOM_CONFIGS}" >> "${HOME}/.zshrc" || exit
+			echo "${_CUSTOM_CONFIGS}" >> "${HOME}/.zshrc" || exit 2
 			echo "" >> "${HOME}/.zshrc" || exit 2
 			echo "${_LESS_COLOR_ENV}" >> "${HOME}/.zshrc" || exit 2
 			echo "" >> "${HOME}/.zshrc" || exit 2

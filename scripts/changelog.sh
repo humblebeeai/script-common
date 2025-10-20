@@ -1,29 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
 _PROJECT_DIR="$(cd "${_SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 cd "${_PROJECT_DIR}" || exit 2
 
 
-# Loading .env file (if exists):
-if [ -f ".env" ]; then
-	# shellcheck disable=SC1091
-	source .env
-fi
+# shellcheck disable=SC1091
+[ -f .env ] && . .env
 
 
-if [ -z "$(which gh)" ]; then
-	echo "[ERROR]: 'gh' not found or not installed!"
+if ! command -v gh >/dev/null 2>&1; then
+	echo "[ERROR]: 'gh' not found or not installed!" >&2
 	exit 1
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
-    echo "[ERROR]: You need to login: 'gh auth login'!"
-    exit 1
+	echo "[ERROR]: You need to login: 'gh auth login'!" >&2
+	exit 1
 fi
 ## --- Base --- ##
 
@@ -54,7 +50,7 @@ main()
 					_IS_PUSH=true
 					shift;;
 				*)
-					echo "[ERROR]: Failed to parse input -> ${_input}!"
+					echo "[ERROR]: Failed to parse input -> ${_input}!" >&2
 					echo "[INFO]: USAGE: ${0}  -c, --commit | -p, --push"
 					exit 1;;
 			esac
@@ -64,8 +60,8 @@ main()
 
 
 	if [ "${_IS_COMMIT}" == true ]; then
-		if [ -z "$(which git)" ]; then
-			echo "[ERROR]: 'git' not found or not installed!"
+		if ! command -v git >/dev/null 2>&1; then
+			echo "[ERROR]: 'git' not found or not installed!" >&2
 			exit 1
 		fi
 	fi

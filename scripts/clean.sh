@@ -1,10 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
 _PROJECT_DIR="$(cd "${_SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 cd "${_PROJECT_DIR}" || exit 2
 ## --- Base --- ##
@@ -27,7 +26,7 @@ main()
 					_IS_ALL=true
 					shift;;
 				*)
-					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[ERROR]: Failed to parsing input -> ${_input}!" >&2
 					echo "[INFO]: USAGE: ${0}  -a, --all"
 					exit 1;;
 			esac

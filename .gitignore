@@ -512,3 +512,4 @@ dataset
 datasets
 env
 *.bak
+_test.sh

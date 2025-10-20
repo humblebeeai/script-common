@@ -1,23 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 
 ## --- Base --- ##
-# Getting path of this script file:
-_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
 _PROJECT_DIR="$(cd "${_SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 cd "${_PROJECT_DIR}" || exit 2
 
 
-if [ -z "$(which mkdocs)" ]; then
-	echo "[ERROR]: 'mkdocs' not found or not installed!"
-	exit 1
-fi
-
-if [ -z "$(which mike)" ]; then
-	echo "[ERROR]: 'mike' not found or not installed!"
-	exit 1
-fi
+for _cmd in mkdocs mike; do
+	if ! command -v "${_cmd}" >/dev/null 2>&1; then
+		echo "[ERROR]: Not found '${_cmd}' command, please install it first!" >&2
+		exit 1
+	fi
+done
 ## --- Base --- ##
 
 
@@ -47,7 +43,7 @@ main()
 					_IS_CLEAN=false
 					shift;;
 				*)
-					echo "[ERROR]: Failed to parsing input -> ${_input}!"
+					echo "[ERROR]: Failed to parsing input -> ${_input}!" >&2
 					echo "[INFO]: USAGE: ${0}  -b, --build | -p, --publish | -c, --disable-clean"
 					exit 1;;
 			esac
@@ -57,8 +53,8 @@ main()
 
 
 	if [ "${_IS_PUBLISH}" == true ]; then
-		if [ -z "$(which git)" ]; then
-			echo "[ERROR]: 'git' not found or not installed!"
+		if ! command -v git >/dev/null 2>&1; then
+			echo "[ERROR]: 'git' not found or not installed!" >&2
 			exit 1
 		fi
 	fi

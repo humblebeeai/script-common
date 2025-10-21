@@ -89,7 +89,10 @@ main()
 		echo "[OK]: Done."
 
 		echo "[INFO]: Installing 'NvChad' plugins and updating parsers..."
-		nvim --headless "+Lazy! sync" "+MasonUpdate" "+TSUpdateSync" +qa || exit 2
+		nvim --headless "+Lazy! sync" "+MasonUpdate" "+TSUpdateSync" +qa || {
+			echo "[WARN]: Failed to install 'NvChad' plugins or update parsers, skipping!" >&2
+			exit 0
+		}
 
 		# if [ -f "${HOME}/.config/nvim/lua/chadrc.lua" ]; then
 		# 	if [ "${_OS}" = "Linux" ]; then

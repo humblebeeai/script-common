@@ -180,7 +180,7 @@ main()
 			exit 2
 		}
 
-	if [ "${_IS_OLD_VERSION_OS}" = false ] || [ "${_OS_DISTRO}" = "kali" ]; then
+	if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-docker.sh" | \
 			bash || {
 				echo "[ERROR]: Failed to setup Docker!" >&2

@@ -25,7 +25,7 @@ fi
 #shellcheck disable=SC1091
 _OS_DISTRO="$(. /etc/os-release && echo "${ID,,}")"
 case "${_OS_DISTRO}" in
-	ubuntu | debian) : ;;
+	ubuntu | debian | kali) : ;;
 	*) echo "[ERROR]: Unsupported Linux distro '${_OS_DISTRO}', only Ubuntu/Debian are supported!" >&2; exit 1;;
 esac
 

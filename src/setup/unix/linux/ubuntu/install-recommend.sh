@@ -27,7 +27,7 @@ _IS_OLD_VERSION_OS=false
 . /etc/os-release
 _OS_DISTRO="${ID,,}"
 case "${_OS_DISTRO}" in
-	ubuntu | debian)
+	ubuntu | debian | kali)
 		_OS_VERSION=$(echo "${VERSION_ID}" | tr -d '"')
 		if [ "${_OS_DISTRO}" = "ubuntu" ] && [ "${_OS_VERSION%%.*}" -lt 22 ]; then
 			_IS_OLD_VERSION_OS=true

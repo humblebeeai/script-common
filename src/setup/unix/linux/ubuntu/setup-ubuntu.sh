@@ -170,7 +170,7 @@ main()
 	#shellcheck disable=SC2086
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/ubuntu/install-essentials.sh" | \
 		bash ${_arg_upgrade} || {
-			echo "[ERROR]: Failed to install basic packages!" >&2
+			echo "[ERROR]: Failed to install essential packages!" >&2
 			exit 2
 		}
 

@@ -102,12 +102,18 @@ _install_packages()
 
 	if [ "${UPGRADE_APT_PACKAGES}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get upgrade -y -o Acquire::Retries=3 || true
+		${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get upgrade -y \
+			-o Dpkg::Options::="--force-confdef" \
+			-o Dpkg::Options::="--force-confnew" \
+			-o Acquire::Retries=3 || true
 		echo "[OK]: Done."
 	fi
 
 	echo "[INFO]: Installing essential packages..."
-	if ! ${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -o Acquire::Retries=5 \
+	if ! ${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
+		-o Acquire::Retries=5 \
+		-o Dpkg::Options::="--force-confdef" \
+		-o Dpkg::Options::="--force-confnew" \
 		sudo \
 		ca-certificates \
 		systemd \
@@ -140,7 +146,10 @@ _install_packages()
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing additional packages..."
-	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -o Acquire::Retries=3 \
+	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
+		-o Acquire::Retries=3 \
+		-o Dpkg::Options::="--force-confdef" \
+		-o Dpkg::Options::="--force-confnew" \
 		less \
 		watch \
 		unzip \
@@ -152,7 +161,10 @@ _install_packages()
 		fzf \
 		httpie || true
 
-	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -q btop || true
+	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
+		-o Dpkg::Options::="--force-confdef" \
+		-o Dpkg::Options::="--force-confnew" \
+		btop || true
 	echo "[OK]: Done."
 }
 

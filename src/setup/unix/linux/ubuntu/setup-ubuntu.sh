@@ -180,14 +180,14 @@ main()
 			exit 2
 		}
 
-	if [ "${_IS_OLD_VERSION_OS}" = false ]; then
+	if [ "${_IS_OLD_VERSION_OS}" = false ] || [ "${_OS_DISTRO}" = "kali" ]; then
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-docker.sh" | \
 			bash || {
 				echo "[ERROR]: Failed to setup Docker!" >&2
 				exit 2
 			}
 	else
-		echo "[WARN]: OS version is too old to install Docker, skipping!" >&2
+		echo "[WARN]: OS version does not support Docker installation script, skipping!" >&2
 		echo "[WARN]: If you need to use Docker, install it manually: https://docs.docker.com/engine/install/ubuntu" >&2
 	fi
 

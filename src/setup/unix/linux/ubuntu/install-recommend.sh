@@ -160,19 +160,24 @@ main()
 	${_SUDO} chmod +x /usr/local/bin/yq || exit 2
 	echo "[OK]: Done."
 
-	echo "[INFO]: Installing 'neovim'..."
-	local _arch
-	_arch="${_ARCH_UNAME}"
-	if [ "${_arch}" = "aarch64" ]; then
-		_arch="arm64"
+	if [ "${_IS_OLD_VERSION_OS}" = false ]; then
+		echo "[INFO]: Installing 'neovim'..."
+		local _arch
+		_arch="${_ARCH_UNAME}"
+		if [ "${_arch}" = "aarch64" ]; then
+			_arch="arm64"
+		fi
+		rm -fv "nvim-linux-${_arch}.tar.gz" || exit 2
+		wget "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${_arch}.tar.gz" || exit 2
+		${_SUDO} rm -rf "/opt/nvim-linux-${_arch}" || exit 2
+		${_SUDO} tar -C /opt -xzf "nvim-linux-${_arch}.tar.gz" || exit 2
+		${_SUDO} ln -sf "/opt/nvim-linux-${_arch}/bin/nvim" /usr/local/bin/nvim || exit 2
+		rm -fv "nvim-linux-${_arch}.tar.gz"
+		echo "[OK]: Done."
+	else
+		echo "[WARN]: OS version is too old to install latest 'neovim', skipping!" >&2
+		echo "[WARN]: If you need to use latest 'neovim', build it from source and install it manually: https://github.com/neovim/neovim" >&2
 	fi
-	rm -fv "nvim-linux-${_arch}.tar.gz" || exit 2
-	wget "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${_arch}.tar.gz" || exit 2
-	${_SUDO} rm -rf "/opt/nvim-linux-${_arch}" || exit 2
-	${_SUDO} tar -C /opt -xzf "nvim-linux-${_arch}.tar.gz" || exit 2
-	${_SUDO} ln -sf "/opt/nvim-linux-${_arch}/bin/nvim" /usr/local/bin/nvim || exit 2
-	rm -fv "nvim-linux-${_arch}.tar.gz"
-	echo "[OK]: Done."
 
 	echo "[INFO]: Installing 'gh' (GitHub CLI)..."
 	local _tmp_file
@@ -209,7 +214,8 @@ main()
 		rm -fv "fastfetch-linux-${_arch}.deb" || exit 2
 		echo "[OK]: Done."
 	else
-		echo "[WARN]: Skipping 'fastfetch' installation on old version of OS!"
+		echo "[WARN]: OS version is too old to install 'fastfetch', skipping!" >&2
+		echo "[WARN]: If you need to use 'fastfetch', build it from source and install it manually: https://github.com/fastfetch-cli/fastfetch" >&2
 	fi
 
 	if [ "${_ARCH_DPKG}" = "amd64" ]; then

@@ -103,7 +103,10 @@ main()
 	export CARGO_HOME="${RUST_DIR}/.cargo"
 	export RUSTUP_HOME="${RUST_DIR}/.rustup"
 
-	if [ -d "${CARGO_HOME}" ] && [ -x "${CARGO_HOME}/bin/rustup" ]; then
+	if [ -d "${CARGO_HOME}" ] && \
+		[ -x "${CARGO_HOME}/bin/rustup" ] && \
+		[ -x "${CARGO_HOME}/bin/cargo" ] && \
+		[ -x "${CARGO_HOME}/bin/rustc" ]; then
 		"${CARGO_HOME}/bin/rustup" -V || exit 2
 		"${CARGO_HOME}/bin/cargo" -V || exit 2
 		"${CARGO_HOME}/bin/rustc" -V || exit 2
@@ -119,11 +122,23 @@ main()
 	echo "[OK]: Done."
 
 	echo "[INFO]: Downloading and installing Rust..."
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- \
+	local _retry_count=3
+	local _retry_delay=1
+	local _i=1
+	while ! curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- \
 		--default-toolchain stable \
 		--profile default \
-		--no-modify-path \
-		-y || exit 2
+		--no-modify-path -y; do
+
+		if [ "${_i}" -ge "${_retry_count}" ]; then
+			echo "[ERROR]: Rust installation failed after ${_retry_count} attempts!" >&2
+			exit 2
+		fi
+
+		echo "[WARN]: Rust installation failed, retrying ${_i}/${_retry_count} after ${_retry_delay} seconds..." >&2
+		sleep ${_retry_delay}
+		_i=$((_i + 1))
+	done
 
 	_setup_shell || exit 2
 	#shellcheck disable=SC1091

@@ -50,7 +50,6 @@ fi
 ADD_BAD_PROXY_FIX=${ADD_BAD_PROXY_FIX:-true}
 CLEAN_CACHE=${CLEAN_CACHE:-true}
 UPGRADE_APT_PACKAGES=${UPGRADE_APT_PACKAGES:-false}
-DPKG_FORCE_CONF="${DPKG_FORCE_CONF:---force-confold}"
 ## --- Variables --- ##
 
 
@@ -103,10 +102,9 @@ _install_packages()
 
 	if [ "${UPGRADE_APT_PACKAGES}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		DPKG_FORCE_CONF="--force-confnew"
 		${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get upgrade -y \
 			-o Dpkg::Options::="--force-confdef" \
-			-o Dpkg::Options::="${DPKG_FORCE_CONF}" \
+			-o Dpkg::Options::="--force-confold" \
 			-o Acquire::Retries=3 || true
 		echo "[OK]: Done."
 	fi
@@ -115,7 +113,7 @@ _install_packages()
 	if ! ${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
 		-o Acquire::Retries=5 \
 		-o Dpkg::Options::="--force-confdef" \
-		-o Dpkg::Options::="${DPKG_FORCE_CONF}" \
+		-o Dpkg::Options::="--force-confold" \
 		sudo \
 		ca-certificates \
 		systemd \
@@ -151,7 +149,7 @@ _install_packages()
 	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
 		-o Acquire::Retries=3 \
 		-o Dpkg::Options::="--force-confdef" \
-		-o Dpkg::Options::="${DPKG_FORCE_CONF}" \
+		-o Dpkg::Options::="--force-confold" \
 		less \
 		watch \
 		unzip \
@@ -165,7 +163,7 @@ _install_packages()
 
 	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
 		-o Dpkg::Options::="--force-confdef" \
-		-o Dpkg::Options::="${DPKG_FORCE_CONF}" \
+		-o Dpkg::Options::="--force-confold" \
 		btop || true
 	echo "[OK]: Done."
 }

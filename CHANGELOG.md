@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.1-251021 (2025-10-21)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### 🐛 Fixes
+* fix: add checks for old OS versions before installing 'neovim' and 'f… by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/3
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.0.0-251020...v1.0.1-251021
+
 ## v1.0.0-251020 (2025-10-20)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

@@ -168,6 +168,28 @@ main()
 	locale || exit 2
 	echo "[OK]: Done."
 
+	echo "[INFO]: Setting up ulimits..."
+	if [ "$(ulimit -n || echo 1024)" -lt 65536 ]; then
+		if [ -f "/etc/security/limits.conf" ] && ! grep -Fq "*    hard    nofile" /etc/security/limits.conf; then
+			echo "*    hard    nofile    65536" | ${_SUDO} tee -a /etc/security/limits.conf >/dev/null || exit 2
+			echo "*    soft    nofile    65536" | ${_SUDO} tee -a /etc/security/limits.conf >/dev/null || exit 2
+		fi
+
+		if [ -f "/etc/pam.d/common-session" ] && ! grep -Fq "pam_limits.so" /etc/pam.d/common-session; then
+			echo "session required pam_limits.so" | ${_SUDO} tee -a /etc/pam.d/common-session >/dev/null || exit 2
+		fi
+
+		if [ -f "/etc/pam.d/common-session-noninteractive" ] && ! grep -Fq "pam_limits.so" /etc/pam.d/common-session-noninteractive; then
+			echo "session required pam_limits.so" | ${_SUDO} tee -a /etc/pam.d/common-session-noninteractive >/dev/null || exit 2
+		fi
+
+		if  [ -f "/etc/sysctl.conf" ] && ! grep -Fq "fs.file-max" /etc/sysctl.conf; then
+			echo "fs.file-max = 1048576" | ${_SUDO} tee -a /etc/sysctl.conf >/dev/null || exit 2
+			${_SUDO} sysctl -p || exit 2
+		fi
+	fi
+	echo "[OK]: Done."
+
 	echo "[INFO]: Setting up user umask for non-root users..."
 	if [ -f "/etc/profile" ] && ! grep -Fq "umask" /etc/profile; then
 		echo "${_USER_UMASK}" | ${_SUDO} tee -a /etc/profile >/dev/null || exit 2

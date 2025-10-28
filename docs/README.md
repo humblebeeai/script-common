@@ -67,6 +67,8 @@ This repository contains a collection of common useful scripts.
 
 ### Setup user runtimes (per-user)
 
+| Script | Description | OS | Sudo | Docs |
+|--------|--------------|----|------|------|
 | `setup/unix/runtimes/install-user-miniconda.sh` | Install Miniconda and Python | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-miniconda.md) |
 | `setup/unix/runtimes/install-user-nvm.sh` | Install NVM and Node.js | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-nvm.md) |
 | `setup/unix/runtimes/install-user-rust.sh` | Install Rust toolchain and runtime | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-rust.md) |

@@ -223,7 +223,7 @@ main()
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-configs.sh" | ${_SUDO} bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-dotfiles.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup configs for root user!" >&2
 		exit 2
 	}

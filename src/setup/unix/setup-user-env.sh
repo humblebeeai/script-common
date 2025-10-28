@@ -107,7 +107,7 @@ main()
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-configs.sh" | bash || {
+	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-dotfiles.sh" | bash || {
 		echo "[ERROR]: Failed to setup configs!" >&2
 		exit 2
 	}

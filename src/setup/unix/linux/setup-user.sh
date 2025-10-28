@@ -44,7 +44,7 @@ fi
 PASSWORD=${PASSWORD:-}
 IS_HASHED=${IS_HASHED:-false}
 WITH_SUDO=${WITH_SUDO:-false}
-ALL_RUNTIMES=${ALL_RUNTIMES:-false}
+RUNTIMES=${RUNTIMES:-conda,nvm}
 SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
 ## --- Variables --- ##
 
@@ -55,17 +55,17 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -g, --gid, --primary-gid [GID]       Specify the primary GID for the new user. Default: 11000
-    -u, --user, --username [USERNAME]    Specify the username for the new user. Default: <current-user>
-    -p, --pass, --password [PASSWORD]    Specify the password for the new user. If new user created and password not provided, set to '<username>_PASSWORD123'
-    -H, --hashed, --hashed-password      Indicate that the provided password is already hashed. Default: false
-    -s, --sudo, --with-sudo              Grant sudo privileges to the new user. Default: false
-    -a, --all, --all-runtimes            Install all runtimes (Rust, Go, Miniconda, NVM). Default: false
-    -h, --help                           Show help.
+    -g, --gid, --primary-gid [GID]            Specify the primary GID for the new user. Default: 11000
+    -u, --user, --username [USERNAME]         Specify the username for the new user. Default: <current-user>
+    -p, --pass, --password [PASSWORD]         Specify the password for the new user. If new user created and password not provided, set to '<username>_PASSWORD123'
+    -H, --hashed, --hashed-password           Indicate that the provided password is already hashed. Default: false
+    -s, --sudo, --with-sudo                   Grant sudo privileges to the new user. Default: false
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -h, --help                                Show help.
 
 EXAMPLES:
-    ${0} -u newuser -s -a
-    ${0} --primary-gid=11000 --username=newuser --password=MyPass123 --with-sudo --all-runtimes
+    ${0} -u newuser -s -r all
+    ${0} --primary-gid=11000 --username=newuser --password=MyPass123 --with-sudo --runtimes=all
 EOF
 }
 
@@ -98,8 +98,12 @@ while [ $# -gt 0 ]; do
 		-s | --sudo | --with-sudo)
 			WITH_SUDO=true
 			shift;;
-		-a | --all | --all-runtimes)
-			ALL_RUNTIMES=true
+		-r | --runtimes)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			RUNTIMES="${2}"
+			shift 2;;
+		-r=* | --runtimes=*)
+			RUNTIMES="${1#*=}"
 			shift;;
 		-h | --help)
 			_usage_help
@@ -212,14 +216,11 @@ main()
 			}
 	fi
 
-	local _arg_all=""
-	if [ "${ALL_RUNTIMES}" = true ]; then
-		_arg_all="-s -- -a"
-	fi
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL ${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh | bash ${_arg_all}" || {
-		echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!" >&2
-		exit 2
-	}
+	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL ${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh | \
+		bash -s -- -r=${RUNTIMES}" || {
+			echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!" >&2
+			exit 2
+		}
 
 	${_SUDO} chmod -c 755 "/home/${USERNAME}" || exit 2
 

@@ -67,7 +67,7 @@ NEW_HOSTNAME=${NEW_HOSTNAME:-}
 PRIMARY_GID=${PRIMARY_GID:-11000}
 UPGRADE_APT_PACKAGES=${UPGRADE_APT_PACKAGES:-false}
 SETUP_USER=${SETUP_USER:-true}
-ALL_RUNTIMES=${ALL_RUNTIMES:-false}
+RUNTIMES=${RUNTIMES:-conda,nvm}
 RESTART_AFTER=${RESTART_AFTER:-true}
 SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
 ## --- Variables --- ##
@@ -79,14 +79,14 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -t, --tz, --timezone [TIMEZONE]        Set the system timezone (e.g., 'UTC'). Default: <system-default>
-    -n, --hostname [HOSTNAME]              Set the system hostname. Default: <current-hostname>
-    -g, --gid, --primary-gid [GID]         Specify the primary GID to set for the users. Default 11000
-    -u, --upgrade, --enable-apt-upgrade    Upgrade APT packages during setup. Default: false
-    -U, --disable-user-setup               Disable user setup process. Default: false
-    -a, --all, --all-runtimes              Install all runtimes (Rust, Go, Miniconda, NVM). Default: false
-    -r, --disable-restart                  Disable automatic system restart after setup. Default: false
-    -h, --help                             Show help.
+    -t, --tz, --timezone [TIMEZONE]           Set the system timezone (e.g., 'UTC'). Default: <system-default>
+    -n, --hostname [HOSTNAME]                 Set the system hostname. Default: <current-hostname>
+    -g, --gid, --primary-gid [GID]            Specify the primary GID to set for the users. Default 11000
+    -u, --upgrade, --enable-apt-upgrade       Upgrade APT packages during setup. Default: false
+    -U, --disable-user-setup                  Disable user setup process. Default: false
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -R, --disable-restart                     Disable automatic system restart after setup. Default: false
+    -h, --help                                Show help.
 
 EXAMPLES:
     ${0} --upgrade --all
@@ -123,10 +123,14 @@ while [ $# -gt 0 ]; do
 		-U | --disable-user-setup)
 			SETUP_USER=false
 			shift;;
-		-a | --all | --all-runtimes)
-			ALL_RUNTIMES=true
+		-r | --runtimes)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			RUNTIMES="${2}"
+			shift 2;;
+		-r=* | --runtimes=*)
+			RUNTIMES="${1#*=}"
 			shift;;
-		-r | --disable-restart)
+		-R | --disable-restart)
 			RESTART_AFTER=false
 			shift;;
 		-h | --help)
@@ -206,13 +210,8 @@ main()
 		}
 
 	if [ "${SETUP_USER}" = true ]; then
-		local _arg_all=""
-		if [ "${ALL_RUNTIMES}" = true ]; then
-			_arg_all="-a"
-		fi
-		#shellcheck disable=SC2086
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-user.sh" | \
-			bash -s -- -g="${PRIMARY_GID}" ${_arg_all} || {
+			bash -s -- -g="${PRIMARY_GID}" -r="${RUNTIMES}" || {
 				echo "[ERROR]: Failed to setup current user!" >&2
 				exit 2
 			}

@@ -30,7 +30,7 @@ fi
 
 
 ## --- Variables --- ##
-ALL_RUNTIMES=${ALL_RUNTIMES:-false}
+RUNTIMES=${RUNTIMES:-conda,nvm}
 SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
 ## --- Variables --- ##
 
@@ -41,8 +41,8 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -a, --all, --all-runtimes    Install all runtimes (Rust, Go, Miniconda, NVM). Default: false
-    -h, --help                   Show help.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -h, --help                                Show help.
 
 EXAMPLES:
     ${0} --all
@@ -51,8 +51,12 @@ EOF
 
 while [ $# -gt 0 ]; do
 	case "${1}" in
-		-a | --all | --all-runtimes)
-			ALL_RUNTIMES=true
+		-r | --runtimes)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			RUNTIMES="${2}"
+			shift 2;;
+		-r=* | --runtimes=*)
+			RUNTIMES="${1#*=}"
 			shift;;
 		-h | --help)
 			_usage_help
@@ -93,13 +97,8 @@ main()
 		exit 2
 	}
 
-	local _arg_all=""
-	if [ "${ALL_RUNTIMES}" = true ]; then
-		_arg_all="-s -- -a"
-	fi
-	#shellcheck disable=SC2086
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh" | \
-		bash ${_arg_all} || {
+		bash -s -- -r="${RUNTIMES}" || {
 			echo "[ERROR]: Failed to setup user environment!" >&2
 			exit 2
 		}

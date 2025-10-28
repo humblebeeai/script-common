@@ -35,7 +35,7 @@ fi
 
 
 ## --- Variables --- ##
-ALL_RUNTIMES=${ALL_RUNTIMES:-false}
+RUNTIMES=${RUNTIMES:-conda,nvm}
 SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
 ## --- Variables --- ##
 
@@ -46,18 +46,22 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -a, --all, --all-runtimes    Install all runtimes (Rust, Go, Miniconda, NVM). Default: false
-    -h, --help                   Show help.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]   Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -h, --help                               Show help.
 
 EXAMPLES:
-    ${0} --all
+    ${0} --runtimes all
 EOF
 }
 
 while [ $# -gt 0 ]; do
 	case "${1}" in
-		-a | --all | --all-runtimes)
-			ALL_RUNTIMES=true
+		-r | --runtimes)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			RUNTIMES="${2}"
+			shift 2;;
+		-r=* | --runtimes=*)
+			RUNTIMES="${1#*=}"
 			shift;;
 		-h | --help)
 			_usage_help
@@ -108,25 +112,48 @@ main()
 		exit 2
 	}
 
-	echo "[INFO]: Installing runtimes..."
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
-		echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
-	}
-
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-nvm.sh" | bash || {
-		echo "[WARN]: Failed to install 'NVM', skipping!" >&2
-	}
-
-	if [ "${ALL_RUNTIMES}" = true ]; then
-		_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-rust.sh" | bash || {
-			echo "[WARN]: Failed to install 'Rust', skipping!" >&2
-		}
-
-		_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-go.sh" | bash || {
-			echo "[WARN]: Failed to install 'Go', skipping!" >&2
-		}
+	if [ "${RUNTIMES}" = "all" ]; then
+		RUNTIMES="conda,nvm,rust,go"
+	elif [ "${RUNTIMES}" = "basic" ]; then
+		RUNTIMES="conda,nvm"
+	elif [ "${RUNTIMES}" = "none" ]; then
+		RUNTIMES=""
 	fi
-	echo "[OK]: Done."
+
+	if [ -n "${RUNTIMES}" ]; then
+		echo "[INFO]: Installing runtimes..."
+		local _runtimes_arr
+		IFS=',' read -r -a _runtimes_arr <<< "${RUNTIMES}"
+		local _runtime
+		for _runtime in "${_runtimes_arr[@]}"; do
+			case "${_runtime}" in
+				conda)
+					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
+						echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
+					}
+					break;;
+				nvm)
+					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-nvm.sh" | bash || {
+						echo "[WARN]: Failed to install 'NVM', skipping!" >&2
+					}
+					break;;
+				rust)
+					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-rust.sh" | bash || {
+						echo "[WARN]: Failed to install 'Rust', skipping!" >&2
+					}
+					break;;
+				go)
+					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-go.sh" | bash || {
+						echo "[WARN]: Failed to install 'Go', skipping!" >&2
+					}
+					break;;
+				*)
+					echo "[ERROR]: Unsupported runtimes option '${_runtime}'!" >&2
+					exit 1;;
+			esac
+		done
+		echo "[OK]: Done."
+	fi
 
 	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-nvchad.sh" | bash || {
 		echo "[WARN]: Failed to setup 'NvChad', skipping!" >&2

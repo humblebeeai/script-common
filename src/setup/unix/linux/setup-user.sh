@@ -193,7 +193,7 @@ main()
 		if [ "${IS_HASHED}" = true ]; then
 			_arg_hashed="-H"
 		fi
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-password.sh" | \
+		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-user-password.sh" | \
 			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_hashed} || {
 				echo "[ERROR]: Failed to set password for user '${USERNAME}'!" >&2
 				exit 2
@@ -201,7 +201,7 @@ main()
 	fi
 
 	if [ "$(id -g "${USERNAME}")" != "${PRIMARY_GID}" ]; then
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-user-pgroup.sh" | \
+		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-users-pgroup.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!" >&2
 				exit 2
@@ -209,7 +209,7 @@ main()
 	fi
 
 	if getent group docker >/dev/null 2>&1 && ! id -nG "${USERNAME}" | grep -wq docker; then
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/add-user-group.sh" | \
+		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/add-users-group.sh" | \
 			bash -s -- -g=docker -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to add user '${USERNAME}' to 'docker' group!" >&2
 				exit 2

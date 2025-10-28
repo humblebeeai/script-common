@@ -203,7 +203,7 @@ main()
 			}
 	fi
 
-	_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-user-pgroup.sh" | \
+	_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-users-pgroup.sh" | \
 		bash -s -- -a -g="${PRIMARY_GID}" || {
 			echo "[ERROR]: Failed to change primary group!" >&2
 			exit 2

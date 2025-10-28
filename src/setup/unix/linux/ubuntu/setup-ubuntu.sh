@@ -79,14 +79,14 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -t, --tz, --timezone [TIMEZONE]        Set the system timezone (e.g., 'UTC'). Default: <system-default>
-    -n, --hostname [HOSTNAME]              Set the system hostname. Default: <current-hostname>
-    -g, --gid, --primary-gid [GID]         Specify the primary GID to set for the users. Default 11000
-    -u, --upgrade, --enable-apt-upgrade    Upgrade APT packages during setup. Default: false
-    -U, --disable-user-setup               Disable user setup process. Default: false
-    -r, --runtimes                         Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
-    -R, --disable-restart                  Disable automatic system restart after setup. Default: false
-    -h, --help                             Show help.
+    -t, --tz, --timezone [TIMEZONE]           Set the system timezone (e.g., 'UTC'). Default: <system-default>
+    -n, --hostname [HOSTNAME]                 Set the system hostname. Default: <current-hostname>
+    -g, --gid, --primary-gid [GID]            Specify the primary GID to set for the users. Default 11000
+    -u, --upgrade, --enable-apt-upgrade       Upgrade APT packages during setup. Default: false
+    -U, --disable-user-setup                  Disable user setup process. Default: false
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -R, --disable-restart                     Disable automatic system restart after setup. Default: false
+    -h, --help                                Show help.
 
 EXAMPLES:
     ${0} --upgrade --all

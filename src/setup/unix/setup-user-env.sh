@@ -46,8 +46,8 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -r, --runtimes [RUNTIME1,RUNTIME2,...]   Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
-    -h, --help                               Show help.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -h, --help                                Show help.
 
 EXAMPLES:
     ${0} --runtimes all
@@ -131,22 +131,22 @@ main()
 					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
 						echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
 					}
-					break;;
+					continue;;
 				nvm)
 					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-nvm.sh" | bash || {
 						echo "[WARN]: Failed to install 'NVM', skipping!" >&2
 					}
-					break;;
+					continue;;
 				rust)
 					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-rust.sh" | bash || {
 						echo "[WARN]: Failed to install 'Rust', skipping!" >&2
 					}
-					break;;
+					continue;;
 				go)
 					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-go.sh" | bash || {
 						echo "[WARN]: Failed to install 'Go', skipping!" >&2
 					}
-					break;;
+					continue;;
 				*)
 					echo "[ERROR]: Unsupported runtimes option '${_runtime}'!" >&2
 					exit 1;;

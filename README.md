@@ -39,9 +39,14 @@ This repository contains a collection of common useful scripts.
 | `setup/unix/linux/ubuntu/pre-setup-ubuntu.sh` | Pre-flight setup: update, locale, timezone, hostname, ulimit, umask | Ubuntu/Debian | ✅ | [docs](./docs/setup/unix/linux/ubuntu/pre-setup-ubuntu.md) |
 | `setup/unix/linux/ubuntu/install-essentials.sh` | Install basic build tools & CLI utils | Ubuntu/Debian | ✅ | [docs](./docs/setup/unix/linux/ubuntu/install-essentials.md) |
 | `setup/unix/linux/ubuntu/install-recommend.sh` | Install recommended extras (lsd, neovim, tailscale...) | Ubuntu/Debian | ✅ | [docs](./docs/setup/unix/linux/ubuntu/install-recommend.md) |
-| `setup/unix/linux/ubuntu/setup-docker.sh` | Install and configure Docker | Ubuntu/Debian | ✅ | [docs](./docs/setup/unix/linux/ubuntu/setup-docker.md) |
 | `setup/unix/linux/ubuntu/setup-nvidia-container.sh` | Setup NVIDIA drivers & container runtime | Ubuntu/Debian | ✅ | [docs](./docs/setup/unix/linux/ubuntu/setup-nvidia-container.md) |
-| `setup/unix/linux/ubuntu/setup-user.sh` | Create/configure dev user post-install | Ubuntu/Debian | ✅ | [docs](./docs/setup/unix/linux/ubuntu/setup-user.md) |
+
+### 🧩 Setup - Linux
+
+| Script | Description | OS | Sudo | Docs |
+|--------|--------------|----|------|------|
+| `setup/unix/linux/setup-docker.sh` | Install and configure Docker | Linux | ✅ | [docs](./docs/setup/unix/linux/ubuntu/setup-docker.md) |
+| `setup/unix/linux/setup-user.sh` | Create/configure dev user post-install | Linux | ✅ | [docs](./docs/setup/unix/linux/ubuntu/setup-user.md) |
 
 ### 🍏 Setup - macOS
 
@@ -50,19 +55,22 @@ This repository contains a collection of common useful scripts.
 | `setup/unix/macos/setup-macos.sh` | Run complete macOS dev setup | macOS | ✅ | [docs](./docs/setup/unix/macos/setup-macos.md) |
 | `setup/unix/macos/install-essentials.sh` | Install Homebrew & core CLI tools | macOS | ✅ | [docs](./docs/setup/unix/macos/install-essentials.md) |
 
-## 🧠 Development Environment (per-user)
+## 🧠 Setup User Environment (per-user)
 
 | Script | Description | OS | Sudo | Docs |
 |--------|--------------|----|------|------|
-| `runtimes/setup-user-env.sh` | Setup user development environment | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-env.md) |
-| `runtimes/setup-user-workspaces.sh` | Create standard workspaces directories | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-workspaces.md) |
-| `runtimes/setup-user-ohmyzsh.sh` | Install Oh My Zsh & plugins | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-ohmyzsh.md) |
-| `runtimes/setup-user-dotfiles.sh` | Apply dotfiles/configs | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-dotfiles.md) |
-| `runtimes/install-user-miniconda.sh` | Install Miniconda and Python | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-miniconda.md) |
-| `runtimes/install-user-nvm.sh` | Install NVM and Node.js | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-nvm.md) |
-| `runtimes/install-user-rust.sh` | Install Rust toolchain and runtime | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-rust.md) |
-| `runtimes/install-user-go.sh` | Install Go runtime | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-go.md) |
-| `runtimes/setup-user-nvchad.sh` | Install & setup NvChad for Neovim | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-nvchad.md) |
+| `setup/unix/setup-user-env.sh` | Setup user development environment | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-env.md) |
+| `setup/unix/setup-user-workspaces.sh` | Create standard workspaces directories | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-workspaces.md) |
+| `setup/unix/setup-user-ohmyzsh.sh` | Install Oh My Zsh & plugins | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-ohmyzsh.md) |
+| `setup/unix/setup-user-dotfiles.sh` | Apply dotfiles/configs | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-dotfiles.md) |
+| `setup/unix/setup-user-nvchad.sh` | Install & setup NvChad for Neovim | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/setup-user-nvchad.md) |
+
+## 🧠 Setup Runtimes (per-user)
+
+| `setup/unix/runtimes/install-user-miniconda.sh` | Install Miniconda and Python | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-miniconda.md) |
+| `setup/unix/runtimes/install-user-nvm.sh` | Install NVM and Node.js | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-nvm.md) |
+| `setup/unix/runtimes/install-user-rust.sh` | Install Rust toolchain and runtime | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-rust.md) |
+| `setup/unix/runtimes/install-user-go.sh` | Install Go runtime | Unix/Linux/macOS | ❌ | [docs](./docs/runtimes/install-user-go.md) |
 
 ### ⚙️ Account Management (Linux)
 

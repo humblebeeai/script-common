@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.0.2-251028 (2025-10-28)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### ✨ Features
+* Add ulimits setup and improve runtime handling in setup scripts by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/4
+### 📝 Documentation
+* docs: update README.md references by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/5
+* Reorganize and enhance README setup scripts section by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/6
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.0.1-251021...v1.0.2-251028
+
 ## v1.0.1-251021 (2025-10-21)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

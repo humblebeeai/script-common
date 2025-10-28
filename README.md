@@ -39,7 +39,7 @@ This repository contains a collection of common useful scripts.
 | [`setup/unix/linux/ubuntu/pre-setup-ubuntu.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh) | Pre-flight setup: update, locale, timezone, hostname, ulimit, umask | Ubuntu/Debian | ✅ |
 | [`setup/unix/linux/ubuntu/install-essentials.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/install-essentials.sh) | Install basic build tools & CLI utils | Ubuntu/Debian | ✅ |
 | [`setup/unix/linux/ubuntu/install-recommend.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/install-recommend.sh) | Install recommended extras (lsd, neovim, tailscale...) | Ubuntu/Debian | ✅ |
-| [`setup/unix/linux/ubuntu/setup-nvidia-container.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-nvidia-container.sh) | Setup NVIDIA drivers & container runtime | Ubuntu/Debian | ✅ |
+| [`setup/unix/linux/ubuntu/setup-nvidia-container.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-nvidia-container.sh) | Setup NVIDIA container toolkit runtime | Ubuntu/Debian | ✅ |
 
 ### Setup - Linux
 

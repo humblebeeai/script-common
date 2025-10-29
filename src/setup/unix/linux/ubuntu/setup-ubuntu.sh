@@ -35,6 +35,11 @@ case "${_OS_DISTRO}" in
 	*) echo "[ERROR]: Unsupported Linux distro '${_OS_DISTRO}', only Ubuntu/Debian are supported!" >&2; exit 1;;
 esac
 
+_IS_WSL=false
+if [ -r /proc/version ] && grep -qi "microsoft" /proc/version; then
+	_IS_WSL=true
+fi
+
 _ARCH="$(uname -m)"
 case "${_ARCH}" in
 	x86_64 | aarch64 | arm64) : ;;
@@ -184,7 +189,7 @@ main()
 			exit 2
 		}
 
-	if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
+	if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_IS_WSL}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-docker.sh" | \
 			bash || {
 				echo "[ERROR]: Failed to setup Docker!" >&2

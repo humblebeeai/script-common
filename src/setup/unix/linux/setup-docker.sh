@@ -38,6 +38,11 @@ if [ -r /etc/os-release ]; then
 	esac
 fi
 
+if [ -r /proc/version ] && grep -qi "microsoft" /proc/version; then
+	echo "[ERROR]: WSL is not supported by this script, please install Docker Desktop for Windows instead!" >&2
+	exit 1
+fi
+
 for _cmd in curl jq rsync; do
 	if ! command -v "${_cmd}" >/dev/null 2>&1; then
 		echo "[ERROR]: Not found '${_cmd}' command, please install it first!" >&2

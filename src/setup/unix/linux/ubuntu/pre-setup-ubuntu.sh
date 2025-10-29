@@ -30,6 +30,11 @@ case "${_OS_DISTRO}" in
 	*) echo "[ERROR]: Unsupported Linux distro '${_OS_DISTRO}', only Ubuntu/Debian are supported!" >&2; exit 1;;
 esac
 
+_IS_WSL=false
+if [ -r /proc/version ] && grep -qi "microsoft" /proc/version; then
+	_IS_WSL=true
+fi
+
 if ! command -v apt-get >/dev/null 2>&1; then
 	echo "[ERROR]: Not found 'apt-get' command, please check your system configs or 'PATH' environment variable!" >&2
 	exit 1
@@ -135,7 +140,7 @@ main()
 	done
 	echo "[OK]: Done."
 
-	if [ -n "${NEW_HOSTNAME}" ]; then
+	if [ -n "${NEW_HOSTNAME}" ] && [ "${_IS_WSL}" = false ]; then
 		echo "[INFO]: Setting up hostname..."
 		${_SUDO} hostnamectl set-hostname "${NEW_HOSTNAME}" || exit 2
 		${_SUDO} sed -i "s/127.0.1.1.*/127.0.1.1 ${NEW_HOSTNAME}/" /etc/hosts || exit 2

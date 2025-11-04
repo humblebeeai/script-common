@@ -32,7 +32,7 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -b, --bump, --bump-type [major | minor | patch]    Specify the type of version bump. (REQUIRED)
+    -b, --bump, --bump-type [major | minor | patch]    Choose the type of version to bump. (REQUIRED)
     -c, --commit                                       Commit the bumped version to git.
     -t, --tag                                          Tag the new version in git.
     -p, --push                                         Push the commit and tag to the remote repository.

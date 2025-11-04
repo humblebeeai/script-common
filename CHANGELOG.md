@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.3-251104 (2025-11-04)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### 🔨 Scripts
+* scripts: streamline argument parsing and help usage for scripts by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/7
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.0.2-251028...v1.0.3-251104
+
 ## v1.0.2-251028 (2025-10-28)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

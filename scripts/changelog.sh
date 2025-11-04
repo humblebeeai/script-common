@@ -35,38 +35,56 @@ _IS_PUSH=false
 ## --- Variables --- ##
 
 
+## --- Menu arguments --- ##
+_usage_help() {
+	cat <<EOF
+USAGE: ${0} [options]
+
+OPTIONS:
+    -c, --commit    Commit changelog.
+    -p, --push      Push changelog commit.
+    -h, --help      Show help.
+
+EXAMPLES:
+    ${0}
+    ${0} --commit
+    ${0} -c -p
+EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		-c | --commit)
+			_IS_COMMIT=true
+			shift;;
+		-p | --push)
+			_IS_PUSH=true
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
+	esac
+done
+## --- Menu arguments --- ##
+
+
+## --- Validate arguments --- ##
+if [ "${_IS_COMMIT}" == true ]; then
+	if ! command -v git >/dev/null 2>&1; then
+		echo "[ERROR]: 'git' not found or not installed!" >&2
+		exit 1
+	fi
+fi
+## --- Validate arguments --- ##
+
+
 ## --- Main --- ##
 main()
 {
-	## --- Menu arguments --- ##
-	if [ -n "${1:-}" ]; then
-		local _input
-		for _input in "${@:-}"; do
-			case ${_input} in
-				-c | --commit)
-					_IS_COMMIT=true
-					shift;;
-				-p | --push)
-					_IS_PUSH=true
-					shift;;
-				*)
-					echo "[ERROR]: Failed to parse input -> ${_input}!" >&2
-					echo "[INFO]: USAGE: ${0}  -c, --commit | -p, --push"
-					exit 1;;
-			esac
-		done
-	fi
-	## --- Menu arguments --- ##
-
-
-	if [ "${_IS_COMMIT}" == true ]; then
-		if ! command -v git >/dev/null 2>&1; then
-			echo "[ERROR]: 'git' not found or not installed!" >&2
-			exit 1
-		fi
-	fi
-
-
 	local _changelog_title="# Changelog"
 	local _release_tag _release_notes _release_entry
 	_release_tag=$(gh release view --json tagName -q ".tagName")
@@ -110,5 +128,5 @@ main()
 	fi
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

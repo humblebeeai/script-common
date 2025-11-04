@@ -30,5 +30,5 @@ main()
 	echo "[OK]: Done."
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

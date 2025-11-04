@@ -25,40 +25,61 @@ _IS_CLEAN=true
 ## --- Variables --- ##
 
 
+## --- Menu arguments --- ##
+_usage_help() {
+	cat <<EOF
+USAGE: ${0} [options]
+
+OPTIONS:
+    -b, --build            Build documentation pages.
+    -p, --publish          Publish documentation pages.
+    -c, --disable-clean    Disable cleaning after publishing.
+    -h, --help             Show help.
+
+EXAMPLES:
+    ${0}
+    ${0} --build
+    ${0} --publish
+    ${0} -p -c
+EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		-b | --build)
+			_IS_BUILD=true
+			shift;;
+		-p | --publish)
+			_IS_PUBLISH=true
+			shift;;
+		-c | --disable-clean)
+			_IS_CLEAN=false
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
+	esac
+done
+## --- Menu arguments --- ##
+
+
+## --- Validate arguments --- ##
+if [ "${_IS_PUBLISH}" == true ]; then
+	if ! command -v git >/dev/null 2>&1; then
+		echo "[ERROR]: 'git' not found or not installed!" >&2
+		exit 1
+	fi
+fi
+## --- Validate arguments --- ##
+
+
 ## --- Main --- ##
 main()
 {
-	## --- Menu arguments --- ##
-	if [ -n "${1:-}" ]; then
-		local _input
-		for _input in "${@:-}"; do
-			case ${_input} in
-				-b | --build)
-					_IS_BUILD=true
-					shift;;
-				-p | --publish)
-					_IS_PUBLISH=true
-					shift;;
-				-c | --disable-clean)
-					_IS_CLEAN=false
-					shift;;
-				*)
-					echo "[ERROR]: Failed to parsing input -> ${_input}!" >&2
-					echo "[INFO]: USAGE: ${0}  -b, --build | -p, --publish | -c, --disable-clean"
-					exit 1;;
-			esac
-		done
-	fi
-	## --- Menu arguments --- ##
-
-
-	if [ "${_IS_PUBLISH}" == true ]; then
-		if ! command -v git >/dev/null 2>&1; then
-			echo "[ERROR]: 'git' not found or not installed!" >&2
-			exit 1
-		fi
-	fi
-
 	local _major_minor_version
 	if [ "${_IS_BUILD}" == true ]; then
 		echo "[INFO]: Building documentation pages (HTML) into the 'site' directory..."
@@ -87,5 +108,5 @@ main()
 	echo "[OK]: Done."
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

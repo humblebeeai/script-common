@@ -15,26 +15,41 @@ _IS_ALL=false
 ## --- Variables --- ##
 
 
+## --- Menu arguments --- ##
+_usage_help() {
+	cat <<EOF
+USAGE: ${0} [options]
+
+OPTIONS:
+    -a, --all     Clean all artifacts.
+    -h, --help    Show help.
+
+EXAMPLES:
+    ${0}
+    ${0} --all
+EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		-a | --all)
+			_IS_ALL=true
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
+	esac
+done
+## --- Menu arguments --- ##
+
+
 ## --- Main --- ##
 main()
 {
-	## --- Menu arguments --- ##
-	if [ -n "${1:-}" ]; then
-		for _input in "${@:-}"; do
-			case ${_input} in
-				-a | --all)
-					_IS_ALL=true
-					shift;;
-				*)
-					echo "[ERROR]: Failed to parsing input -> ${_input}!" >&2
-					echo "[INFO]: USAGE: ${0}  -a, --all"
-					exit 1;;
-			esac
-		done
-	fi
-	## --- Menu arguments --- ##
-
-
 	echo "[INFO]: Cleaning..."
 
 	find . -type f -name ".DS_Store" -print -delete || exit 2
@@ -59,5 +74,5 @@ main()
 	echo "[OK]: Done."
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

@@ -17,7 +17,6 @@ cd "${_PROJECT_DIR}" || exit 2
 # Load from envrionment variables:
 VERSION_FILE_PATH="${VERSION_FILE_PATH:-VERSION.txt}"
 
-
 _BUMP_TYPE=""
 
 # Flags:
@@ -27,54 +26,77 @@ _IS_PUSH=false
 ## --- Variables --- ##
 
 
+## --- Menu arguments --- ##
+_usage_help() {
+	cat <<EOF
+USAGE: ${0} [options]
+
+OPTIONS:
+    -b, --bump, --bump-type [major | minor | patch]    Specify the type of version bump. (REQUIRED)
+    -c, --commit                                       Commit the bumped version to git.
+    -t, --tag                                          Tag the new version in git.
+    -p, --push                                         Push the commit and tag to the remote repository.
+    -h, --help                                         Show help.
+
+EXAMPLES:
+    ${0} --bump-type patch
+    ${0} -b patch -c -t -p
+EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		-b | --bump | --bump-type)
+			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
+			_BUMP_TYPE="${2}"
+			shift 2;;
+		-b=* | --bump=* | --bump-type=*)
+			_BUMP_TYPE="${1#*=}"
+			shift;;
+		-c | --commit)
+			_IS_COMMIT=true
+			shift;;
+		-t | --tag)
+			_IS_TAG=true
+			shift;;
+		-p | --push)
+			_IS_PUSH=true
+			shift;;
+		-h | --help)
+			_usage_help
+			exit 0;;
+		*)
+			echo "[ERROR]: Failed to parse argument -> ${1}!" >&2
+			_usage_help
+			exit 1;;
+	esac
+done
+## --- Menu arguments --- ##
+
+
+## --- Validate arguments --- ##
+if [ -z "${_BUMP_TYPE:-}" ]; then
+	echo "[ERROR]: Bump type is empty, use '-b=' or '--bump-type=' argument!" >&2
+	exit 1
+fi
+
+if [ "${_BUMP_TYPE}" != "major" ] && [ "${_BUMP_TYPE}" != "minor" ] && [ "${_BUMP_TYPE}" != "patch" ]; then
+	echo "[ERROR]: Bump type '${_BUMP_TYPE}' is invalid, should be: 'major', 'minor' or 'patch'!" >&2
+	exit 1
+fi
+
+if [ "${_IS_COMMIT}" == true ]; then
+	if ! command -v git >/dev/null 2>&1; then
+		echo "[ERROR]: 'git' not found or not installed!" >&2
+		exit 1
+	fi
+fi
+## --- Validate arguments --- ##
+
+
 ## --- Main --- ##
 main()
 {
-	## --- Menu arguments --- ##
-	if [ -n "${1:-}" ]; then
-		local _input
-		for _input in "${@:-}"; do
-			case ${_input} in
-				-b=* | --bump-type=*)
-					_BUMP_TYPE="${_input#*=}"
-					shift;;
-				-c | --commit)
-					_IS_COMMIT=true
-					shift;;
-				-t | --tag)
-					_IS_TAG=true
-					shift;;
-				-p | --push)
-					_IS_PUSH=true
-					shift;;
-				*)
-					echo "[ERROR]: Failed to parse input -> ${_input}!" >&2
-					echo "[INFO]: USAGE: ${0}  -b=*, --bump-type=* [major | minor | patch] | -c, --commit | -t, --tag | -p, --push"
-					exit 1;;
-			esac
-		done
-	fi
-	## --- Menu arguments --- ##
-
-
-	if [ -z "${_BUMP_TYPE:-}" ]; then
-		echo "[ERROR]: Bump type is empty, use '-b=' or '--bump-type=' argument!" >&2
-		exit 1
-	fi
-
-	if [ "${_BUMP_TYPE}" != "major" ] && [ "${_BUMP_TYPE}" != "minor" ] && [ "${_BUMP_TYPE}" != "patch" ]; then
-		echo "[ERROR]: Bump type '${_BUMP_TYPE}' is invalid, should be: 'major', 'minor' or 'patch'!" >&2
-		exit 1
-	fi
-
-	if [ "${_IS_COMMIT}" == true ]; then
-		if ! command -v git >/dev/null 2>&1; then
-			echo "[ERROR]: 'git' not found or not installed!" >&2
-			exit 1
-		fi
-	fi
-
-
 	echo "[INFO]: Checking current version..."
 	local _current_version
 	_current_version="$(./scripts/get-version.sh)"
@@ -131,5 +153,5 @@ main()
 	fi
 }
 
-main "${@:-}"
+main
 ## --- Main --- ##

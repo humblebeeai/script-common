@@ -22,7 +22,7 @@ This repository contains a collection of common useful scripts.
 - Basic command-line tools (curl/wget, git, etc.)
 - Internet connection for downloading packages
 - Root access for system-level setup and account management
-- Common Unix-like/Linux OS:
+- Supports common Unix-like/Linux OS:
     - **Linux** (primary support - Ubuntu/Debian)
     - **macOS** (support with Homebrew)
     - Other Unix-like systems (limited support)

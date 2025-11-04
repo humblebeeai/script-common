@@ -31,7 +31,7 @@ This repository contains a collection of common useful scripts.
 
 ## 🔨 Scripts
 
-### Setup - Ubuntu/Debian
+### 🔄 Setup - Ubuntu/Debian
 
 | Script | Description | OS | Sudo |
 |--------|--------------|----|------|
@@ -41,21 +41,21 @@ This repository contains a collection of common useful scripts.
 | [`setup/unix/linux/ubuntu/install-recommend.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/install-recommend.sh) | Install recommended extras (lsd, neovim, tailscale...) | Ubuntu/Debian | ✅ |
 | [`setup/unix/linux/ubuntu/setup-nvidia-container.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-nvidia-container.sh) | Setup NVIDIA container toolkit runtime | Ubuntu/Debian | ✅ |
 
-### Setup - Linux
+### 🐧 Setup - Linux
 
 | Script | Description | OS | Sudo |
 |--------|--------------|----|------|
 | [`setup/unix/linux/setup-docker.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-docker.sh) | Install and configure Docker | Linux | ✅ |
 | [`setup/unix/linux/setup-user.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/setup-user.sh) | Create/configure dev user post-install | Linux | ✅ |
 
-### Setup - macOS
+### 🍎 Setup - macOS
 
 | Script | Description | OS | Sudo |
 |--------|--------------|----|------|
 | [`setup/unix/macos/setup-macos.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/macos/setup-macos.sh) | Run complete macOS dev setup | macOS | ✅ |
 | [`setup/unix/macos/install-essentials.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/macos/install-essentials.sh) | Install Homebrew & core CLI tools | macOS | ✅ |
 
-### Setup user environment (per-user)
+### 👨‍💻 Setup user environment (per-user)
 
 | Script | Description | OS | Sudo |
 |--------|--------------|----|------|
@@ -65,7 +65,7 @@ This repository contains a collection of common useful scripts.
 | [`setup/unix/setup-user-dotfiles.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-dotfiles.sh) | Apply dotfiles/configs | Unix/Linux/macOS | ❌ |
 | [`setup/unix/setup-user-nvchad.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/setup-user-nvchad.sh) | Install & setup NvChad for Neovim | Unix/Linux/macOS | ❌ |
 
-### Setup user runtimes (per-user)
+### 🏃 Setup user runtimes (per-user)
 
 | Script | Description | OS | Sudo |
 |--------|--------------|----|------|
@@ -74,7 +74,7 @@ This repository contains a collection of common useful scripts.
 | [`setup/unix/runtimes/install-user-rust.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-rust.sh) | Install Rust toolchain and runtime | Unix/Linux/macOS | ❌ |
 | [`setup/unix/runtimes/install-user-go.sh`](https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/runtimes/install-user-go.sh) | Install Go runtime | Unix/Linux/macOS | ❌ |
 
-### ⚙️ Account management (Linux)
+### 👥 Account management (Linux)
 
 | Script | Description | OS | Sudo |
 |--------|--------------|----|------|

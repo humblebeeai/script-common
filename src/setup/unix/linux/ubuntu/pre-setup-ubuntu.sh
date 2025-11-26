@@ -205,6 +205,10 @@ main()
 	fi
 	echo "[OK]: Done."
 
+	echo "[INFO]: Disabling sleep, suspend, hibernate, and hybrid-sleep targets..."
+	${_SUDO} systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+	echo "[OK]: Done."
+
 	echo "[OK]: Successfully run pre-setup for Ubuntu/Debian."
 	echo ""
 }

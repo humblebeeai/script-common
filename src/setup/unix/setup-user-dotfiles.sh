@@ -263,7 +263,7 @@ main()
 
 	if [ "$(id -u)" -ne 0 ]; then
 		mkdir -pv "${HOME}/.ssh" || exit 2
-		chmod -c 700 "${HOME}/.ssh" || exit 2
+		chmod 700 "${HOME}/.ssh" || exit 2
 
 		if command -v ssh-keygen >/dev/null 2>&1 && \
 			[ ! -f "${HOME}/.ssh/id_rsa" ] && \

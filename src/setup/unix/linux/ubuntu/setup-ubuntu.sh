@@ -91,7 +91,7 @@ OPTIONS:
     -g, --gid, --primary-gid [GID]            Specify the primary GID to set for the users. Default 11000
     -u, --upgrade, --enable-apt-upgrade       Upgrade APT packages during setup. Default: false
     -U, --disable-user-setup                  Disable user setup process. Default: false
-	-d, --disable-docker-install              Disable Docker installation. Default: false
+    -d, --disable-docker-install              Disable Docker installation. Default: false
     -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
     -R, --disable-restart                     Disable automatic system restart after setup. Default: false
     -h, --help                                Show help.
@@ -222,7 +222,7 @@ main()
 			exit 2
 		}
 
-	if [ "${SETUP_USER}" = true ]; then
+	if [ "${SETUP_USER}" = true ] && [ -n "${_SUDO}" ]; then
 		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-user.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" -r="${RUNTIMES}" || {
 				echo "[ERROR]: Failed to setup current user!" >&2

@@ -72,8 +72,10 @@ NEW_HOSTNAME=${NEW_HOSTNAME:-}
 PRIMARY_GID=${PRIMARY_GID:-11000}
 UPGRADE_APT_PACKAGES=${UPGRADE_APT_PACKAGES:-false}
 SETUP_USER=${SETUP_USER:-true}
+SETUP_DOCKER=${SETUP_DOCKER:-true}
 RUNTIMES=${RUNTIMES:-conda,nvm}
 RESTART_AFTER=${RESTART_AFTER:-true}
+
 SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
 ## --- Variables --- ##
 
@@ -89,6 +91,7 @@ OPTIONS:
     -g, --gid, --primary-gid [GID]            Specify the primary GID to set for the users. Default 11000
     -u, --upgrade, --enable-apt-upgrade       Upgrade APT packages during setup. Default: false
     -U, --disable-user-setup                  Disable user setup process. Default: false
+	-d, --disable-docker-install              Disable Docker installation. Default: false
     -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
     -R, --disable-restart                     Disable automatic system restart after setup. Default: false
     -h, --help                                Show help.
@@ -127,6 +130,9 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-U | --disable-user-setup)
 			SETUP_USER=false
+			shift;;
+		-d | --disable-docker-install)
+			SETUP_DOCKER=false
 			shift;;
 		-r | --runtimes)
 			[ $# -ge 2 ] || { echo "[ERROR]: ${1} requires a value!" >&2; exit 1; }
@@ -189,15 +195,17 @@ main()
 			exit 2
 		}
 
-	if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_IS_WSL}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
-		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-docker.sh" | \
-			bash || {
-				echo "[ERROR]: Failed to setup Docker!" >&2
-				exit 2
-			}
-	else
-		echo "[WARN]: OS version does not support Docker installation script, skipping!" >&2
-		echo "[WARN]: If you need to use Docker, install it manually: https://docs.docker.com/engine/install/ubuntu" >&2
+	if [ "${SETUP_DOCKER}" = true ]; then
+		if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_IS_WSL}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
+			_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-docker.sh" | \
+				bash || {
+					echo "[ERROR]: Failed to setup Docker!" >&2
+					exit 2
+				}
+		else
+			echo "[WARN]: OS version does not support Docker installation script, skipping!" >&2
+			echo "[WARN]: If you need to use Docker, install it manually: https://docs.docker.com/engine/install/ubuntu" >&2
+		fi
 	fi
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then

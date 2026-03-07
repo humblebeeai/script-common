@@ -14,7 +14,7 @@ cd "${_PROJECT_DIR}" || exit 2
 
 
 ## --- Variables --- ##
-# Load from envrionment variables:
+# Load from environment variables:
 VERSION_FILE_PATH="${VERSION_FILE_PATH:-VERSION.txt}"
 
 _BUMP_TYPE=""

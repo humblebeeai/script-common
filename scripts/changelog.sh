@@ -25,7 +25,7 @@ fi
 
 
 ## --- Variables --- ##
-# Load from envrionment variables:
+# Load from environment variables:
 CHANGELOG_FILE_PATH="${CHANGELOG_FILE_PATH:-./CHANGELOG.md}"
 RELEASE_NOTES_FILE_PATH="${RELEASE_NOTES_FILE_PATH:-./docs/release-notes.md}"
 

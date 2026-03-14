@@ -103,7 +103,7 @@ main()
 
 
 	echo "[INFO]: Updating release notes..."
-	local _release_notes_header="---\ntitle: Release Notes\nhide:\n  - navigation\n---\n\n# 📌 Release Notes"
+	local _release_notes_header="---\ntitle: \"Release Notes\"\nhide:\n  - navigation\n---\n\n# 📌 Release Notes"
 	if ! grep -q "^# 📌 Release Notes" "${RELEASE_NOTES_FILE_PATH}"; then
 		echo -e "${_release_notes_header}\n\n" > "${RELEASE_NOTES_FILE_PATH}"
 	fi

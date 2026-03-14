@@ -93,6 +93,16 @@ repos:
         name: "🐚 shellcheck - Lint shell scripts"
         files: \.sh$
 
+  # --- Markdown ---
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.48.0
+    hooks:
+      - id: markdownlint
+        name: "📝 markdownlint - Lint markdown files"
+        args: ["--fix"]
+        exclude: |
+          (?x)^(docs/release-notes.md|CHANGELOG.md|docs/api-docs/api-reference.md)$
+
   # --- Cleanup ---
   # - repo: local
   #   hooks:

@@ -4,11 +4,20 @@ set -euo pipefail
 
 ## --- Base --- ##
 _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
-cd "${_SCRIPT_DIR}" || exit 2
-
 
 # shellcheck disable=SC1091
 [ -f .env ] && . .env
+
+IS_REMOTE=${IS_REMOTE:-true}
+cd "${_SCRIPT_DIR}" || exit 2
+if [ "${IS_REMOTE}" = true ]; then
+	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
+else
+	echo "[INFO]: Running in LOCAL mode, using local scripts..."
+	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_SOURCE_DIR}" || exit 2
+	echo "[INFO]: Current directory: $(pwd)"
+fi
 
 
 _OS="$(uname)"
@@ -121,11 +130,31 @@ done
 _fetch()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: URL is empty!" >&2
+		echo "[ERROR]: No script path provided to fetch!" >&2
 		exit 1
 	fi
 
-	curl -H 'Cache-Control: no-cache' -fsSL "${1}";
+	if [ "${IS_REMOTE}" = true ]; then
+		curl -H 'Cache-Control: no-cache' \
+			--retry 3 \
+			--retry-delay 2 \
+			--connect-timeout 10 \
+			-fsSL \
+			"${SCRIPT_BASE_URL}/${1}" || {
+				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+				exit 1
+			}
+	else
+		if [ ! -r "./${1}" ]; then
+			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+			exit 1
+		fi
+
+		cat "./${1}" || {
+			echo "[ERROR]: Failed to read './${1}' file!" >&2
+			exit 1
+		}
+	fi
 }
 
 main()
@@ -160,7 +189,7 @@ main()
 
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/create-group.sh" | \
+		_fetch "account/unix/linux/create-group.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" || {
 				echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!" >&2
 				exit 2
@@ -174,7 +203,7 @@ main()
 		if [ "${WITH_SUDO}" = true ]; then
 			_arg_sudo="-s"
 		fi
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/create-user.sh" | \
+		_fetch "account/unix/linux/create-user.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" -n="${USERNAME}" ${_arg_sudo} || {
 				echo "[ERROR]: Failed to create user '${USERNAME}'!" >&2
 				exit 2
@@ -193,7 +222,7 @@ main()
 		if [ "${IS_HASHED}" = true ]; then
 			_arg_hashed="-H"
 		fi
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-user-password.sh" | \
+		_fetch "account/unix/linux/change-user-password.sh" | \
 			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_hashed} || {
 				echo "[ERROR]: Failed to set password for user '${USERNAME}'!" >&2
 				exit 2
@@ -201,7 +230,7 @@ main()
 	fi
 
 	if [ "$(id -g "${USERNAME}")" != "${PRIMARY_GID}" ]; then
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-users-pgroup.sh" | \
+		_fetch "account/unix/linux/change-users-pgroup.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!" >&2
 				exit 2
@@ -209,18 +238,27 @@ main()
 	fi
 
 	if getent group docker >/dev/null 2>&1 && ! id -nG "${USERNAME}" | grep -wq docker; then
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/add-users-group.sh" | \
+		_fetch "account/unix/linux/add-users-group.sh" | \
 			bash -s -- -g=docker -u="${USERNAME}" || {
 				echo "[ERROR]: Failed to add user '${USERNAME}' to 'docker' group!" >&2
 				exit 2
 			}
 	fi
 
-	${_SUDO} su - "${USERNAME}" -c "curl -H 'Cache-Control: no-cache' -fsSL ${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh | \
-		bash -s -- -r=${RUNTIMES}" || {
-			echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!" >&2
-			exit 2
-		}
+	if [ "${IS_REMOTE}" = true ]; then
+		${_SUDO} su - "${USERNAME}" -c \
+			"curl -H 'Cache-Control: no-cache' -fsSL ${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh | \
+				bash -s -- -r=${RUNTIMES}" || {
+					echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!" >&2
+					exit 2
+				}
+	else
+		${_SUDO} su - "${USERNAME}" -c \
+			"bash ${_SOURCE_DIR}/setup/unix/setup-user-env.sh -r=${RUNTIMES}" || {
+				echo "[ERROR]: Failed to setup user environment for '${USERNAME}'!" >&2
+				exit 2
+			}
+	fi
 
 	${_SUDO} chmod -c 755 "/home/${USERNAME}" || exit 2
 

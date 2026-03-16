@@ -4,11 +4,20 @@ set -euo pipefail
 
 ## --- Base --- ##
 _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
-cd "${_SCRIPT_DIR}" || exit 2
-
 
 # shellcheck disable=SC1091
 [ -f .env ] && . .env
+
+IS_REMOTE=${IS_REMOTE:-true}
+cd "${_SCRIPT_DIR}" || exit 2
+if [ "${IS_REMOTE}" = true ]; then
+	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
+else
+	echo "[INFO]: Running in LOCAL mode, using local scripts..."
+	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_SOURCE_DIR}" || exit 2
+	echo "[INFO]: Current directory: $(pwd)"
+fi
 
 
 _OS="$(uname)"
@@ -17,9 +26,11 @@ if [ "${_OS}" != "Darwin" ]; then
 	exit 1
 fi
 
-if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' command not found or not installed!" >&2
-	exit 1
+if [ "${IS_REMOTE}" = true ]; then
+	if ! command -v curl >/dev/null 2>&1; then
+		echo "[ERROR]: 'curl' command not found or not installed!" >&2
+		exit 1
+	fi
 fi
 
 if [ "$(id -u)" -eq 0 ]; then
@@ -74,11 +85,31 @@ done
 _fetch()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: URL is empty!" >&2
+		echo "[ERROR]: No script path provided to fetch!" >&2
 		exit 1
 	fi
 
-	curl -H 'Cache-Control: no-cache' -fsSL "${1}";
+	if [ "${IS_REMOTE}" = true ]; then
+		curl -H 'Cache-Control: no-cache' \
+			--retry 3 \
+			--retry-delay 2 \
+			--connect-timeout 10 \
+			-fsSL \
+			"${SCRIPT_BASE_URL}/${1}" || {
+				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+				exit 1
+			}
+	else
+		if [ ! -r "./${1}" ]; then
+			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+			exit 1
+		fi
+
+		cat "./${1}" || {
+			echo "[ERROR]: Failed to read './${1}' file!" >&2
+			exit 1
+		}
+	fi
 }
 
 main()
@@ -92,12 +123,12 @@ main()
 	fi
 
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/macos/install-essentials.sh" | bash || {
+	_fetch "setup/unix/macos/install-essentials.sh" | bash || {
 		echo "[ERROR]: Failed to install essential packages!" >&2
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh" | \
+	_fetch "setup/unix/setup-user-env.sh" | \
 		bash -s -- -r="${RUNTIMES}" || {
 			echo "[ERROR]: Failed to setup user environment!" >&2
 			exit 2

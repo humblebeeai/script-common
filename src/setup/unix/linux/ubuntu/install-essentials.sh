@@ -102,10 +102,11 @@ _install_packages()
 
 	if [ "${UPGRADE_APT_PACKAGES}" = true ]; then
 		echo "[INFO]: Upgrading packages..."
-		${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get upgrade -y \
-			-o Dpkg::Options::="--force-confdef" \
-			-o Dpkg::Options::="--force-confold" \
-			-o Acquire::Retries=3 || true
+		${_SUDO} env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a APT_LISTCHANGES_FRONTEND=none \
+			apt-get upgrade -y \
+				-o Dpkg::Options::="--force-confdef" \
+				-o Dpkg::Options::="--force-confold" \
+				-o Acquire::Retries=3 || true
 		echo "[OK]: Done."
 	fi
 
@@ -146,7 +147,7 @@ _install_packages()
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing additional packages..."
-	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 		-o Acquire::Retries=3 \
 		-o Dpkg::Options::="--force-confdef" \
 		-o Dpkg::Options::="--force-confold" \
@@ -161,7 +162,7 @@ _install_packages()
 		fzf \
 		httpie || true
 
-	${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
 		-o Dpkg::Options::="--force-confdef" \
 		-o Dpkg::Options::="--force-confold" \
 		btop || true

@@ -30,19 +30,27 @@ main()
 	echo "[INFO]: Installing Nerd Fonts..."
 
 	echo "[INFO]: Installing Ubuntu Mono Nerd Font..."
-	brew install font-ubuntu-mono-nerd-font || exit 2
+	brew install font-ubuntu-mono-nerd-font || {
+		echo "[WARN]: Failed to install 'Ubuntu Mono Nerd Font', skipping!" >&2
+	}
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing Ubuntu Nerd Font..."
-	brew install font-ubuntu-nerd-font || exit 2
+	brew install font-ubuntu-nerd-font || {
+		echo "[WARN]: Failed to install 'Ubuntu Nerd Font', skipping!" >&2
+	}
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing Roboto Mono Nerd Font..."
-	brew install font-roboto-mono-nerd-font || exit 2
+	brew install font-roboto-mono-nerd-font || {
+		echo "[WARN]: Failed to install 'Roboto Mono Nerd Font', skipping!" >&2
+	}
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing Terminess Nerd Font..."
-	brew install font-terminess-ttf-nerd-font || exit 2
+	brew install font-terminess-ttf-nerd-font || {
+		echo "[WARN]: Failed to install 'Terminess Nerd Font', skipping!" >&2
+	}
 	echo "[OK]: Done."
 
 	echo "[OK]: Successfully installed Nerd Fonts."

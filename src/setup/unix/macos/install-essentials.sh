@@ -27,6 +27,11 @@ if ! command -v curl >/dev/null 2>&1; then
 	echo "[ERROR]: 'curl' command not found or not installed!" >&2
 	exit 1
 fi
+
+if [ -z "${HOME:-}" ]; then
+	echo "[ERROR]: HOME environment variable is not set!" >&2
+	exit 1
+fi
 ## --- Base --- ##
 
 
@@ -41,15 +46,15 @@ main()
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
 		if [ -x /opt/homebrew/bin/brew ]; then
 			# shellcheck disable=SC2016
-			echo 'eval "$(/opt/homebrew/bin/brew shellenv zsh)"' >> ~/.zprofile || exit 2
+			echo 'eval "$(/opt/homebrew/bin/brew shellenv zsh)"' >> "${HOME}/.zprofile" || exit 2
 			# shellcheck disable=SC2016
-			echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.bash_profile || exit 2
+			echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "${HOME}/.bash_profile" || exit 2
 			eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
 		elif [ -x /usr/local/bin/brew ]; then
 			# shellcheck disable=SC2016
-			echo 'eval "$(/usr/local/bin/brew shellenv zsh)"' >> ~/.zprofile || exit 2
+			echo 'eval "$(/usr/local/bin/brew shellenv zsh)"' >> "${HOME}/.zprofile" || exit 2
 			# shellcheck disable=SC2016
-			echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.bash_profile || exit 2
+			echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "${HOME}/.bash_profile" || exit 2
 			eval "$(/usr/local/bin/brew shellenv)" || exit 2
 		fi
 		echo "[OK]: Done."

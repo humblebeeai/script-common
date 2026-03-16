@@ -33,10 +33,10 @@ if [ "${IS_REMOTE}" = true ]; then
 	fi
 fi
 
-if [ "$(id -u)" -eq 0 ]; then
-	echo "[ERROR]: Current user is 'root', please run this script as a normal user!" >&2
-	exit 1
-fi
+# if [ "$(id -u)" -eq 0 ]; then
+# 	echo "[ERROR]: Current user is 'root', please run this script as a normal user!" >&2
+# 	exit 1
+# fi
 ## --- Base --- ##
 
 

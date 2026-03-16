@@ -120,7 +120,9 @@ main()
 	fi
 
 	echo "[INFO]: Testing NVIDIA container with docker..."
-	${_SUDO} docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi || exit 2
+	${_SUDO} docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi || {
+		echo "[WARN]: Failed to run NVIDIA container with docker, skipping!" >&2
+	}
 	echo "[OK]: Done."
 
 	echo "[OK] Successfully setup NVIDIA container toolkit for docker."

@@ -110,7 +110,7 @@ _install_packages()
 	fi
 
 	echo "[INFO]: Installing essential packages..."
-	if ! ${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install -y \
+	if ! ${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 		-o Acquire::Retries=5 \
 		-o Dpkg::Options::="--force-confdef" \
 		-o Dpkg::Options::="--force-confold" \

@@ -251,6 +251,11 @@ main()
 			}
 	fi
 
+	_fetch "setup/unix/linux/ubuntu/install-nerd-fonts.sh" | bash || {
+		echo "[ERROR]: Failed to install Nerd Fonts for user '${USERNAME}'!" >&2
+		exit 2
+	}
+
 	if [ "${IS_REMOTE}" = true ]; then
 		${_SUDO} su - "${USERNAME}" -c \
 			"curl -H 'Cache-Control: no-cache' -fsSL ${SCRIPT_BASE_URL}/setup/unix/setup-user-env.sh | \

@@ -197,7 +197,7 @@ main()
 
 	echo "[INFO]: Installing 'Tailscale'..."
 	sleep 1
-	curl -fsSL https://tailscale.com/install.sh | ${_SUDO} DEBIAN_FRONTEND=noninteractive sh || exit 2
+	curl -fsSL https://tailscale.com/install.sh | ${_SUDO} env DEBIAN_FRONTEND=noninteractive sh || exit 2
 	echo "[OK]: Done."
 
 	if [ "${_IS_OLD_VERSION_OS}" = false ]; then
@@ -233,7 +233,7 @@ main()
 
 	if [ "${INSTALL_EXTRAS}" = true ]; then
 		echo "[INFO]: Installing 'ZeroTier One'..."
-		curl -s https://install.zerotier.com | ${_SUDO} DEBIAN_FRONTEND=noninteractive bash || exit 2
+		curl -s https://install.zerotier.com | ${_SUDO} env DEBIAN_FRONTEND=noninteractive bash || exit 2
 		echo "[OK]: Done."
 	fi
 

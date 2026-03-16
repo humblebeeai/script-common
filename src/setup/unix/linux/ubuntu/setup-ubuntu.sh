@@ -267,6 +267,11 @@ main()
 	fi
 
 	echo "[INFO]: Setting up for root user..."
+	_fetch "setup/unix/linux/ubuntu/install-nerd-fonts.sh" | ${_SUDO} bash || {
+		echo "[ERROR]: Failed to install Nerd Fonts for root user!" >&2
+		exit 2
+	}
+
 	_fetch "setup/unix/setup-user-ohmyzsh.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!" >&2
 		exit 2

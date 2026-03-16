@@ -17,6 +17,14 @@ case "${_OS}" in
 	*) echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2; exit 1;;
 esac
 
+if [ "${_OS}" = "Darwin" ]; then
+	if [ -x /opt/homebrew/bin/brew ]; then
+		eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
+	elif [ -x /usr/local/bin/brew ]; then
+		eval "$(/usr/local/bin/brew shellenv)" || exit 2
+	fi
+fi
+
 if ! command -v wget >/dev/null 2>&1; then
 	echo "[ERROR]: 'wget' not found or not installed!" >&2
 	exit 1

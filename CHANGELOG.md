@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.2.0-260316 (2026-03-16)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### ✨ Features
+* feat: add installation scripts for Nerd Fonts on Ubuntu and macOS by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/11
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.1.0-260316...v1.2.0-260316
+
 ## v1.1.0-260316 (2026-03-16)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

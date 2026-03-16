@@ -55,7 +55,6 @@ main()
 	rm -vf UbuntuMonoNerdFont-*.ttf || true
 	curl -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/UbuntuMono/Regular/UbuntuMonoNerdFont-Regular.ttf || exit 2
 	curl -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/UbuntuMono/Bold/UbuntuMonoNerdFont-Bold.ttf || exit 2
-	cp -v UbuntuMonoNerdFont-*.ttf ~/.local/share/fonts/ || exit 2
 	echo "[OK]: Done."
 
 	echo "[INFO]: Downloading Ubuntu Nerd Font..."

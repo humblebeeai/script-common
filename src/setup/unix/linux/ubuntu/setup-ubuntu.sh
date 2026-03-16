@@ -107,12 +107,13 @@ OPTIONS:
     -u, --upgrade, --enable-apt-upgrade       Upgrade APT packages during setup. Default: false
     -U, --disable-user-setup                  Disable user setup process. Default: false
     -d, --disable-docker-install              Disable Docker installation. Default: false
-    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install
+                                                ('all', 'conda', 'nvm', 'rust', 'go', 'none'). Default: 'conda,nvm'.
     -R, --disable-restart                     Disable automatic system restart after setup. Default: false
     -h, --help                                Show help.
 
 EXAMPLES:
-    ${0} --upgrade --all
+    ${0} --upgrade --runtimes all
     ${0} -u -a -t="Asia/Seoul" -n="my-server"
 EOF
 }

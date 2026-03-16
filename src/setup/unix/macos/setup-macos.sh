@@ -52,11 +52,12 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install
+                                                ('all', 'conda', 'nvm', 'rust', 'go', 'none'). Default: 'conda,nvm'.
     -h, --help                                Show help.
 
 EXAMPLES:
-    ${0} --all
+    ${0} --runtimes all
 EOF
 }
 

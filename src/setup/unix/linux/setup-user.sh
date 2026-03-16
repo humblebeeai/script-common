@@ -69,7 +69,8 @@ OPTIONS:
     -p, --pass, --password [PASSWORD]         Specify the password for the new user. If new user created and password not provided, set to '<username>_PASSWORD123'
     -H, --hashed, --hashed-password           Indicate that the provided password is already hashed. Default: false
     -s, --sudo, --with-sudo                   Grant sudo privileges to the new user. Default: false
-    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install
+                                                ('all', 'conda', 'nvm', 'rust', 'go', 'none'). Default: 'conda,nvm'.
     -h, --help                                Show help.
 
 EXAMPLES:

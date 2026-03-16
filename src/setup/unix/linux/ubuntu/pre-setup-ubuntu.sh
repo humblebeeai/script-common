@@ -128,7 +128,7 @@ main()
 	local _retry_count=3
 	local _retry_delay=3
 	local _i=1
-	while ! (${_SUDO} DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get install -y debconf systemd locales tzdata); do
+	while ! DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a ${_SUDO} apt-get install -y debconf systemd locales tzdata; do
 		if [ "${_i}" -ge "${_retry_count}" ]; then
 			echo "[ERROR]: Package installation failed after ${_retry_count} attempts!" >&2
 			exit 2

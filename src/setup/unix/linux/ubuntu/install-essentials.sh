@@ -126,6 +126,7 @@ _install_packages()
 		gpg \
 		tzdata \
 		locales \
+		fontconfig \
 		iputils-ping \
 		net-tools \
 		iproute2 \

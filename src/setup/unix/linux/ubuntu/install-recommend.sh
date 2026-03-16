@@ -154,6 +154,15 @@ main()
 	rm -fv "fd_${_fd_version}_${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
+	echo "[INFO]: Installing 'witr'..."
+	local _witr_version
+	_witr_version=$(curl -s https://api.github.com/repos/pranshuparmar/witr/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -fv "witr_${_witr_version}_${_ARCH_DPKG}.deb" || exit 2
+	wget "https://github.com/pranshuparmar/witr/releases/download/v${_witr_version}/witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
+	rm -fv "witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
+	echo "[OK]: Done."
+
 	echo "[INFO]: Installing 'yq'..."
 	${_SUDO} rm -fv /usr/local/bin/yq || exit 2
 	${_SUDO} wget "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${_ARCH_DPKG}" -O /usr/local/bin/yq || exit 2

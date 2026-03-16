@@ -34,8 +34,12 @@ main()
 		echo "[INFO]: Not found 'brew' command, installing Homebrew..."
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
 		if [ -x /opt/homebrew/bin/brew ]; then
+			echo -e "eval \"$(/opt/homebrew/bin/brew shellenv zsh)\"" >> ~/.zprofile || exit 2
+			echo -e "eval \"$(/opt/homebrew/bin/brew shellenv)\"" >> ~/.bash_profile || exit 2
 			eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
 		elif [ -x /usr/local/bin/brew ]; then
+			echo -e "eval \"$(/usr/local/bin/brew shellenv zsh)\"" >> ~/.zprofile || exit 2
+			echo -e "eval \"$(/usr/local/bin/brew shellenv)\"" >> ~/.bash_profile || exit 2
 			eval "$(/usr/local/bin/brew shellenv)" || exit 2
 		fi
 		echo "[OK]: Done."

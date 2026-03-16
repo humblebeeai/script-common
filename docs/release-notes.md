@@ -1,10 +1,21 @@
 ---
-title: Release Notes
+title: "Release Notes"
 hide:
   - navigation
 ---
 
 # 📌 Release Notes
+
+## v1.1.0-260316 (2026-03-16)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### ✨ Features
+* Enhance setup scripts for remote/local execution and update NVIDIA toolkit by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/10
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.0.3-251104...v1.1.0-260316
 
 ## v1.0.3-251104 (2025-11-04)
 

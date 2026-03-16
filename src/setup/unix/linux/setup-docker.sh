@@ -4,11 +4,20 @@ set -euo pipefail
 
 ## --- Base --- ##
 _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
-cd "${_SCRIPT_DIR}" || exit 2
-
 
 # shellcheck disable=SC1091
 [ -f .env ] && . .env
+
+IS_REMOTE=${IS_REMOTE:-true}
+cd "${_SCRIPT_DIR}" || exit 2
+if [ "${IS_REMOTE}" = true ]; then
+	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
+else
+	echo "[INFO]: Running in LOCAL mode, using local scripts..."
+	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_SOURCE_DIR}" || exit 2
+	echo "[INFO]: Current directory: $(pwd)"
+fi
 
 
 _OS="$(uname)"
@@ -103,6 +112,36 @@ done
 
 
 ## --- Main --- ##
+_fetch()
+{
+	if [ -z "${1:-}" ]; then
+		echo "[ERROR]: No script path provided to fetch!" >&2
+		exit 1
+	fi
+
+	if [ "${IS_REMOTE}" = true ]; then
+		curl -H 'Cache-Control: no-cache' \
+			--retry 3 \
+			--retry-delay 2 \
+			--connect-timeout 10 \
+			-fsSL \
+			"${SCRIPT_BASE_URL}/${1}" || {
+				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+				exit 1
+			}
+	else
+		if [ ! -r "./${1}" ]; then
+			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+			exit 1
+		fi
+
+		cat "./${1}" || {
+			echo "[ERROR]: Failed to read './${1}' file!" >&2
+			exit 1
+		}
+	fi
+}
+
 main()
 {
 	echo ""
@@ -129,7 +168,7 @@ main()
 	echo "[OK]: Done."
 
 	if [ "${_INSTALL_NVIDIA_CONTAINER}" = true ]; then
-		curl -H 'Cache-Control: no-cache' -fsSL "${SCRIPT_BASE_URL}/setup/unix/linux/ubuntu/setup-nvidia-container.sh" | \
+		_fetch "setup/unix/linux/ubuntu/setup-nvidia-container.sh" | \
 			bash || {
 				echo "[ERROR]: Failed to setup NVIDIA container toolkit!" >&2
 				exit 2
@@ -137,7 +176,7 @@ main()
 	fi
 
 	local _docker_config_path="/etc/docker/daemon.json"
-	local _log_opts_json='{"log-opts": {"max-size": "10m", "max-file": "10"}}'
+	local _log_opts_json='{"log-opts": {"max-size": "10m", "max-file": "90"}}'
 	local _is_config_updated=false
 	if [ ! -f "${_docker_config_path}" ]; then
 		echo "[INFO]: Creating docker config file with log rotation settings..."

@@ -4,11 +4,20 @@ set -euo pipefail
 
 ## --- Base --- ##
 _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
-cd "${_SCRIPT_DIR}" || exit 2
-
 
 # shellcheck disable=SC1091
 [ -f .env ] && . .env
+
+IS_REMOTE=${IS_REMOTE:-true}
+cd "${_SCRIPT_DIR}" || exit 2
+if [ "${IS_REMOTE}" = true ]; then
+	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
+else
+	echo "[INFO]: Running in LOCAL mode, using local scripts..."
+	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_SOURCE_DIR}" || exit 2
+	echo "[INFO]: Current directory: $(pwd)"
+fi
 
 
 _OS="$(uname)"
@@ -17,9 +26,11 @@ case "${_OS}" in
 	*) echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2; exit 1;;
 esac
 
-if ! command -v curl >/dev/null 2>&1; then
-	echo "[ERROR]: 'curl' command not found or not installed!" >&2
-	exit 1
+if [ "${IS_REMOTE}" = true ]; then
+	if ! command -v curl >/dev/null 2>&1; then
+		echo "[ERROR]: 'curl' command not found or not installed!" >&2
+		exit 1
+	fi
 fi
 
 if [ "$(id -u)" -eq 0 ]; then
@@ -46,7 +57,8 @@ _usage_help() {
 USAGE: ${0} [options]
 
 OPTIONS:
-    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install
+                                                ('all', 'conda', 'nvm', 'rust', 'go', 'none'). Default: 'conda,nvm'.
     -h, --help                                Show help.
 
 EXAMPLES:
@@ -79,11 +91,31 @@ done
 _fetch()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: URL is empty!" >&2
+		echo "[ERROR]: No script path provided to fetch!" >&2
 		exit 1
 	fi
 
-	curl -H 'Cache-Control: no-cache' -fsSL "${1}";
+	if [ "${IS_REMOTE}" = true ]; then
+		curl -H 'Cache-Control: no-cache' \
+			--retry 3 \
+			--retry-delay 2 \
+			--connect-timeout 10 \
+			-fsSL \
+			"${SCRIPT_BASE_URL}/${1}" || {
+				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+				exit 1
+			}
+	else
+		if [ ! -r "./${1}" ]; then
+			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+			exit 1
+		fi
+
+		cat "./${1}" || {
+			echo "[ERROR]: Failed to read './${1}' file!" >&2
+			exit 1
+		}
+	fi
 }
 
 main()
@@ -97,17 +129,17 @@ main()
 	fi
 
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-workspaces.sh" | bash || {
+	_fetch "setup/unix/setup-user-workspaces.sh" | bash || {
 		echo "[ERROR]: Failed to create workspaces!" >&2
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-ohmyzsh.sh" | bash || {
+	_fetch "setup/unix/setup-user-ohmyzsh.sh" | bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh'!" >&2
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-dotfiles.sh" | bash || {
+	_fetch "setup/unix/setup-user-dotfiles.sh" | bash || {
 		echo "[ERROR]: Failed to setup configs!" >&2
 		exit 2
 	}
@@ -128,22 +160,22 @@ main()
 		for _runtime in "${_runtimes_arr[@]}"; do
 			case "${_runtime}" in
 				conda)
-					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
+					_fetch "setup/unix/runtimes/install-user-miniconda.sh" | bash || {
 						echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
 					}
 					continue;;
 				nvm)
-					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-nvm.sh" | bash || {
+					_fetch "setup/unix/runtimes/install-user-nvm.sh" | bash || {
 						echo "[WARN]: Failed to install 'NVM', skipping!" >&2
 					}
 					continue;;
 				rust)
-					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-rust.sh" | bash || {
+					_fetch "setup/unix/runtimes/install-user-rust.sh" | bash || {
 						echo "[WARN]: Failed to install 'Rust', skipping!" >&2
 					}
 					continue;;
 				go)
-					_fetch "${SCRIPT_BASE_URL}/setup/unix/runtimes/install-user-go.sh" | bash || {
+					_fetch "setup/unix/runtimes/install-user-go.sh" | bash || {
 						echo "[WARN]: Failed to install 'Go', skipping!" >&2
 					}
 					continue;;
@@ -155,7 +187,7 @@ main()
 		echo "[OK]: Done."
 	fi
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-nvchad.sh" | bash || {
+	_fetch "setup/unix/setup-user-nvchad.sh" | bash || {
 		echo "[WARN]: Failed to setup 'NvChad', skipping!" >&2
 	}
 

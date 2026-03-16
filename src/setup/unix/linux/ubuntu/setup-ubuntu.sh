@@ -4,11 +4,20 @@ set -euo pipefail
 
 ## --- Base --- ##
 _SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-"$0"}")" >/dev/null 2>&1 && pwd -P)"
-cd "${_SCRIPT_DIR}" || exit 2
-
 
 # shellcheck disable=SC1091
 [ -f .env ] && . .env
+
+IS_REMOTE=${IS_REMOTE:-true}
+cd "${_SCRIPT_DIR}" || exit 2
+if [ "${IS_REMOTE}" = true ]; then
+	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
+else
+	echo "[INFO]: Running in LOCAL mode, using local scripts..."
+	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_SOURCE_DIR}" || exit 2
+	echo "[INFO]: Current directory: $(pwd)"
+fi
 
 
 _OS="$(uname)"
@@ -48,7 +57,13 @@ case "${_ARCH}" in
 		exit 1;;
 esac
 
-for _cmd in curl getent; do
+
+_REQUIRED_CMDS="getent"
+if [ "${IS_REMOTE}" = true ]; then
+	_REQUIRED_CMDS="${_REQUIRED_CMDS} curl"
+fi
+
+for _cmd in ${_REQUIRED_CMDS}; do
 	if ! command -v "${_cmd}" >/dev/null 2>&1; then
 		echo "[ERROR]: Not found '${_cmd}' command, please install it first!" >&2
 		exit 1
@@ -92,12 +107,13 @@ OPTIONS:
     -u, --upgrade, --enable-apt-upgrade       Upgrade APT packages during setup. Default: false
     -U, --disable-user-setup                  Disable user setup process. Default: false
     -d, --disable-docker-install              Disable Docker installation. Default: false
-    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install ('conda', 'nvm', 'rust', 'go'). Default: 'conda,nvm'.
+    -r, --runtimes [RUNTIME1,RUNTIME2,...]    Comma-separated list of runtimes to install
+                                                ('all', 'conda', 'nvm', 'rust', 'go', 'none'). Default: 'conda,nvm'.
     -R, --disable-restart                     Disable automatic system restart after setup. Default: false
     -h, --help                                Show help.
 
 EXAMPLES:
-    ${0} --upgrade --all
+    ${0} --upgrade --runtimes all
     ${0} -u -a -t="Asia/Seoul" -n="my-server"
 EOF
 }
@@ -160,11 +176,31 @@ done
 _fetch()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: URL is empty!" >&2
+		echo "[ERROR]: No script path provided to fetch!" >&2
 		exit 1
 	fi
 
-	curl -H 'Cache-Control: no-cache' -fsSL "${1}";
+	if [ "${IS_REMOTE}" = true ]; then
+		curl -H 'Cache-Control: no-cache' \
+			--retry 3 \
+			--retry-delay 2 \
+			--connect-timeout 10 \
+			-fsSL \
+			"${SCRIPT_BASE_URL}/${1}" || {
+				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+				exit 1
+			}
+	else
+		if [ ! -r "./${1}" ]; then
+			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+			exit 1
+		fi
+
+		cat "./${1}" || {
+			echo "[ERROR]: Failed to read './${1}' file!" >&2
+			exit 1
+		}
+	fi
 }
 
 main()
@@ -172,7 +208,7 @@ main()
 	echo ""
 	echo "[INFO]: Setting up Ubuntu/Debian..."
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh" | \
+	_fetch "setup/unix/linux/ubuntu/pre-setup-ubuntu.sh" | \
 		bash -s -- -t="${TZ_NAME}" -n="${NEW_HOSTNAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!" >&2
 			exit 2
@@ -183,13 +219,13 @@ main()
 		_arg_upgrade="-s -- -u"
 	fi
 	#shellcheck disable=SC2086
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/ubuntu/install-essentials.sh" | \
+	_fetch "setup/unix/linux/ubuntu/install-essentials.sh" | \
 		bash ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install essential packages!" >&2
 			exit 2
 		}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/ubuntu/install-recommend.sh" | \
+	_fetch "setup/unix/linux/ubuntu/install-recommend.sh" | \
 		bash || {
 			echo "[ERROR]: Failed to install development tools!" >&2
 			exit 2
@@ -197,7 +233,7 @@ main()
 
 	if [ "${SETUP_DOCKER}" = true ]; then
 		if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_IS_WSL}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
-			_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-docker.sh" | \
+			_fetch "setup/unix/linux/setup-docker.sh" | \
 				bash || {
 					echo "[ERROR]: Failed to setup Docker!" >&2
 					exit 2
@@ -209,21 +245,21 @@ main()
 	fi
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		_fetch "${SCRIPT_BASE_URL}/account/unix/linux/create-group.sh" | \
+		_fetch "account/unix/linux/create-group.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" || {
 				echo "[ERROR]: Failed to create new group!" >&2
 				exit 2
 			}
 	fi
 
-	_fetch "${SCRIPT_BASE_URL}/account/unix/linux/change-users-pgroup.sh" | \
+	_fetch "account/unix/linux/change-users-pgroup.sh" | \
 		bash -s -- -a -g="${PRIMARY_GID}" || {
 			echo "[ERROR]: Failed to change primary group!" >&2
 			exit 2
 		}
 
 	if [ "${SETUP_USER}" = true ] && [ -n "${_SUDO}" ]; then
-		_fetch "${SCRIPT_BASE_URL}/setup/unix/linux/setup-user.sh" | \
+		_fetch "setup/unix/linux/setup-user.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" -r="${RUNTIMES}" || {
 				echo "[ERROR]: Failed to setup current user!" >&2
 				exit 2
@@ -231,17 +267,17 @@ main()
 	fi
 
 	echo "[INFO]: Setting up for root user..."
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-ohmyzsh.sh" | ${_SUDO} bash || {
+	_fetch "setup/unix/setup-user-ohmyzsh.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!" >&2
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-dotfiles.sh" | ${_SUDO} bash || {
+	_fetch "setup/unix/setup-user-dotfiles.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup configs for root user!" >&2
 		exit 2
 	}
 
-	_fetch "${SCRIPT_BASE_URL}/setup/unix/setup-user-nvchad.sh" | ${_SUDO} bash || {
+	_fetch "setup/unix/setup-user-nvchad.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup 'NvChad' for root user!" >&2
 		exit 2
 	}

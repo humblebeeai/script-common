@@ -74,6 +74,8 @@ main()
 		lsd \
 		bat \
 		duf \
+		witr \
+		tlrc \
 		xh \
 		httpie \
 		neovim \

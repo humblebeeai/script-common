@@ -114,7 +114,7 @@ main()
 	_lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	rm -fv "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
 	wget "https://github.com/lsd-rs/lsd/releases/download/v${_lsd_version}/lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
 	rm -fv "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
@@ -123,7 +123,7 @@ main()
 	_duf_version=$(curl -s https://api.github.com/repos/muesli/duf/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	rm -fv "duf_${_duf_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	wget "https://github.com/muesli/duf/releases/download/v${_duf_version}/duf_${_duf_version}_linux_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "duf_${_duf_version}_linux_${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "duf_${_duf_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	rm -fv "duf_${_duf_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
@@ -132,7 +132,7 @@ main()
 	_q_version=$(curl -s https://api.github.com/repos/natesales/q/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	rm -fv "q_${_q_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	wget "https://github.com/natesales/q/releases/download/v${_q_version}/q_${_q_version}_linux_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "q_${_q_version}_linux_${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "q_${_q_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	rm -fv "q_${_q_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
@@ -141,7 +141,7 @@ main()
 	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	rm -fv "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
 	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
 	rm -fv "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
@@ -150,8 +150,17 @@ main()
 	_fd_version=$(curl -s https://api.github.com/repos/sharkdp/fd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 	rm -fv "fd_${_fd_version}_${_ARCH_DPKG}.deb" || exit 2
 	wget "https://github.com/sharkdp/fd/releases/download/v${_fd_version}/fd_${_fd_version}_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "fd_${_fd_version}_${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "fd_${_fd_version}_${_ARCH_DPKG}.deb" || exit 2
 	rm -fv "fd_${_fd_version}_${_ARCH_DPKG}.deb" || exit 2
+	echo "[OK]: Done."
+
+	echo "[INFO]: Installing 'witr'..."
+	local _witr_version
+	_witr_version=$(curl -s https://api.github.com/repos/pranshuparmar/witr/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	rm -fv "witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
+	wget "https://github.com/pranshuparmar/witr/releases/download/v${_witr_version}/witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
+	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
+	rm -fv "witr-${_witr_version}-linux-${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing 'yq'..."
@@ -191,13 +200,13 @@ main()
 		echo "deb [arch=${_ARCH_DPKG} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
 			${_SUDO} tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
 		${_SUDO} apt-get update && \
-		${_SUDO} DEBIAN_FRONTEND=noninteractive apt-get install gh -y && \
+		${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install gh -y && \
 		rm -fv "${_tmp_file}" || exit 2
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing 'Tailscale'..."
 	sleep 1
-	curl -fsSL https://tailscale.com/install.sh | ${_SUDO} DEBIAN_FRONTEND=noninteractive sh || exit 2
+	curl -fsSL https://tailscale.com/install.sh | ${_SUDO} env DEBIAN_FRONTEND=noninteractive sh || exit 2
 	echo "[OK]: Done."
 
 	if [ "${_IS_OLD_VERSION_OS}" = false ]; then
@@ -210,7 +219,7 @@ main()
 		_fastfetch_version=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 		rm -fv "fastfetch-linux-${_arch}.deb" || exit 2
 		wget "https://github.com/fastfetch-cli/fastfetch/releases/download/${_fastfetch_version}/fastfetch-linux-${_arch}.deb" || exit 2
-		${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "fastfetch-linux-${_arch}.deb" || exit 2
+		${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "fastfetch-linux-${_arch}.deb" || exit 2
 		rm -fv "fastfetch-linux-${_arch}.deb" || exit 2
 		echo "[OK]: Done."
 	else
@@ -224,7 +233,7 @@ main()
 		_xh_version=$(curl -s https://api.github.com/repos/ducaale/xh/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
 		rm -fv "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
 		wget "https://github.com/ducaale/xh/releases/download/v${_xh_version}/xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
-		${_SUDO} DEBIAN_FRONTEND=noninteractive dpkg -i "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
+		${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
 		rm -fv "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
 		echo "[OK]: Done."
 	else
@@ -233,7 +242,7 @@ main()
 
 	if [ "${INSTALL_EXTRAS}" = true ]; then
 		echo "[INFO]: Installing 'ZeroTier One'..."
-		curl -s https://install.zerotier.com | ${_SUDO} DEBIAN_FRONTEND=noninteractive bash || exit 2
+		curl -s https://install.zerotier.com | ${_SUDO} env DEBIAN_FRONTEND=noninteractive bash || exit 2
 		echo "[OK]: Done."
 	fi
 

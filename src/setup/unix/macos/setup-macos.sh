@@ -129,10 +129,6 @@ main()
 		exit 2
 	}
 
-	_fetch "setup/unix/macos/install-nerd-fonts.sh" | bash || {
-		echo "[WARN]: Failed to install Nerd Fonts, skipping!" >&2
-	}
-
 	_fetch "setup/unix/setup-user-env.sh" | \
 		bash -s -- -r="${RUNTIMES}" || {
 			echo "[ERROR]: Failed to setup user environment!" >&2

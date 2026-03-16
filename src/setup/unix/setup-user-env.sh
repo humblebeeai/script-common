@@ -134,6 +134,10 @@ main()
 		exit 2
 	}
 
+	_fetch "setup/unix/install-nerd-fonts.sh" | bash || {
+		echo "[WARN]: Failed to install Nerd Fonts, skipping!" >&2
+	}
+
 	_fetch "setup/unix/setup-user-ohmyzsh.sh" | bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh'!" >&2
 		exit 2

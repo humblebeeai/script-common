@@ -26,7 +26,12 @@ if [ "${_OS}" != "Linux" ]; then
 	exit 1
 fi
 
-for _cmd in getent curl chmod; do
+_REQUIRED_CMDS="getent chmod"
+if [ "${IS_REMOTE}" = true ]; then
+	_REQUIRED_CMDS="${_REQUIRED_CMDS} curl"
+fi
+
+for _cmd in ${_REQUIRED_CMDS}; do
 	if ! command -v "${_cmd}" >/dev/null 2>&1; then
 		echo "[ERROR]: Not found '${_cmd}' command, please install it first." >&2
 		exit 1

@@ -60,7 +60,7 @@ esac
 
 _REQUIRED_CMDS="getent"
 if [ "${IS_REMOTE}" = true ]; then
-	_REQUIRED_CMDS="curl ${_REQUIRED_CMDS}"
+	_REQUIRED_CMDS="${_REQUIRED_CMDS} curl"
 fi
 
 for _cmd in ${_REQUIRED_CMDS}; do

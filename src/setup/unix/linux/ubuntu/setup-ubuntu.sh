@@ -282,21 +282,21 @@ main()
 	fi
 
 	echo "[INFO]: Setting up for root user..."
-	_run_script --sudo "src/setup/unix/install-nerd-fonts.sh" || {
+	_run_script -s "src/setup/unix/install-nerd-fonts.sh" || {
 		echo "[WARN]: Failed to install Nerd Fonts for root user, skipping!" >&2
 	}
 
-	_run_script --sudo "src/setup/unix/setup-user-ohmyzsh.sh" || {
+	_run_script -s "src/setup/unix/setup-user-ohmyzsh.sh" || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!" >&2
 		exit 2
 	}
 
-	_run_script --sudo "src/setup/unix/setup-user-dotfiles.sh" || {
+	_run_script -s "src/setup/unix/setup-user-dotfiles.sh" || {
 		echo "[ERROR]: Failed to setup configs for root user!" >&2
 		exit 2
 	}
 
-	_run_script --sudo "src/setup/unix/setup-user-nvchad.sh" || {
+	_run_script -s "src/setup/unix/setup-user-nvchad.sh" || {
 		echo "[ERROR]: Failed to setup 'NvChad' for root user!" >&2
 		exit 2
 	}

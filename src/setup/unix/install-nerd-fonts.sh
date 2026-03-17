@@ -85,7 +85,7 @@ _install_on_linux()
 			continue
 		}
 
-		tar -xfv "${_archive}" || {
+		tar -xvf "${_archive}" || {
 			echo "[WARN]: Failed to extract ${_font}, skipping!" >&2
 			rm -rfv "${_archive}"
 			continue

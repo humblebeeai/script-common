@@ -120,16 +120,24 @@ _run_script()
 	fi
 
 	local _sudo=""
-	if [ "${1:-}" = "--sudo" ]; then
-		_sudo="${_SUDO}"
-		shift
-	fi
+	case "${1:-}" in
+		-s | --sudo)
+			if [ "$(id -u)" -ne 0 ]; then
+				if command -v sudo >/dev/null 2>&1; then
+					_sudo="sudo"
+				else
+					echo "[ERROR]: 'sudo' is required when not running as root!" >&2
+					exit 1
+				fi
+			fi
+			shift;;
+	esac
 
 	local _script_path="${1}"
 	shift
 
-	if [ "${IS_REMOTE}" = true ]; then
-		if [ -z "${SCRIPT_BASE_URL}" ]; then
+	if [ "${IS_REMOTE:-true}" = true ]; then
+		if [ -z "${SCRIPT_BASE_URL:-}" ]; then
 			echo "[ERROR]: SCRIPT_BASE_URL is empty!" >&2
 			exit 1
 		fi

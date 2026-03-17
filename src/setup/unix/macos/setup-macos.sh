@@ -90,11 +90,25 @@ _run_script()
 		exit 1
 	fi
 
+	local _sudo=""
+	case "${1:-}" in
+		-s | --sudo)
+			if [ "$(id -u)" -ne 0 ]; then
+				if command -v sudo >/dev/null 2>&1; then
+					_sudo="sudo"
+				else
+					echo "[ERROR]: 'sudo' is required when not running as root!" >&2
+					exit 1
+				fi
+			fi
+			shift;;
+	esac
+
 	local _script_path="${1}"
 	shift
 
-	if [ "${IS_REMOTE}" = true ]; then
-		if [ -z "${SCRIPT_BASE_URL}" ]; then
+	if [ "${IS_REMOTE:-true}" = true ]; then
+		if [ -z "${SCRIPT_BASE_URL:-}" ]; then
 			echo "[ERROR]: SCRIPT_BASE_URL is empty!" >&2
 			exit 1
 		fi
@@ -104,7 +118,7 @@ _run_script()
 			--retry-delay 2 \
 			--connect-timeout 10 \
 			-fsSL \
-			"${SCRIPT_BASE_URL}/${_script_path}" | bash -s -- "${@}" || {
+			"${SCRIPT_BASE_URL}/${_script_path}" | ${_sudo} bash -s -- "${@}" || {
 				echo "[ERROR]: Failed to fetch or execute '${SCRIPT_BASE_URL}/${_script_path}' script file!" >&2
 				exit 1
 			}
@@ -114,7 +128,7 @@ _run_script()
 			exit 1
 		fi
 
-		bash "./${_script_path}" "${@}" || {
+		${_sudo} bash "./${_script_path}" "${@}" || {
 			echo "[ERROR]: Failed to execute './${_script_path}' script file!" >&2
 			exit 1
 		}

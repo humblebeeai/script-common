@@ -118,7 +118,7 @@ _run_script()
 			--retry-delay 2 \
 			--connect-timeout 10 \
 			-fsSL \
-			"${SCRIPT_BASE_URL}/${_script_path}" | ${_sudo} bash -s -- "${@}" || {
+			"${SCRIPT_BASE_URL}/${_script_path}" | ${_sudo} bash -s -- "$@" || {
 				echo "[ERROR]: Failed to fetch or execute '${SCRIPT_BASE_URL}/${_script_path}' script file!" >&2
 				exit 1
 			}
@@ -128,7 +128,7 @@ _run_script()
 			exit 1
 		fi
 
-		${_sudo} bash "./${_script_path}" "${@}" || {
+		${_sudo} bash "./${_script_path}" "$@" || {
 			echo "[ERROR]: Failed to execute './${_script_path}' script file!" >&2
 			exit 1
 		}

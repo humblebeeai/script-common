@@ -31,7 +31,7 @@ if [ "${_OS}" == "Linux" ]; then
 		*) echo "[ERROR]: Unsupported Linux distro '${_OS_DISTRO}', only Ubuntu/Debian are supported!" >&2; exit 1;;
 	esac
 
-	for _cmd in curl fc-cache; do
+	for _cmd in curl tar fc-cache; do
 		if ! command -v "${_cmd}" >/dev/null 2>&1; then
 			echo "[ERROR]: Not found '${_cmd}' command, please install it first!" >&2
 			exit 1

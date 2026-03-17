@@ -43,7 +43,12 @@ main()
 
 	if ! command -v brew >/dev/null 2>&1; then
 		echo "[INFO]: Not found 'brew' command, installing Homebrew..."
-		sudo echo "This script requires 'sudo' privileges to install Homebrew. Please enter your password if prompted." || exit 2
+		if ! command -v sudo >/dev/null 2>&1; then
+			echo "[ERROR]: Not found 'sudo' command, which is required to install Homebrew on macOS!" >&2
+			exit 1
+		fi
+
+		sudo echo "Homebrew requires 'sudo' privileges to install, please enter your password if prompted..." || exit 2
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
 		if [ -x /opt/homebrew/bin/brew ]; then
 			# shellcheck disable=SC2016

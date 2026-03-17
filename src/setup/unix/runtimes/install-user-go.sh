@@ -17,17 +17,7 @@ case "${_OS}" in
 	*) echo "[ERROR]: Unsupported OS '${_OS}', only 'Linux' and 'macOS' are supported!" >&2; exit 1;;
 esac
 
-if [ "${_OS}" = "Darwin" ]; then
-	if ! command -v brew >/dev/null 2>&1; then
-		if [ -x /opt/homebrew/bin/brew ]; then
-			eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
-		elif [ -x /usr/local/bin/brew ]; then
-			eval "$(/usr/local/bin/brew shellenv)" || exit 2
-		fi
-	fi
-fi
-
-for _cmd in wget tar; do
+for _cmd in curl tar; do
 	if ! command -v "${_cmd}" >/dev/null 2>&1; then
 		echo "[ERROR]: Not found '${_cmd}' command, please install it first!" >&2
 		exit 1
@@ -157,7 +147,7 @@ main()
 		aarch64) _arch="arm64";;
 		*) _arch="$(uname -m)";;
 	esac
-	wget "https://go.dev/dl/go${GO_VERSION}.${_os}-${_arch}.tar.gz" -O go.tar.gz || exit 2
+	curl -fSL --progress-bar "https://go.dev/dl/go${GO_VERSION}.${_os}-${_arch}.tar.gz" -o go.tar.gz || exit 2
 	echo "[OK]: Done."
 
 	echo "[INFO]: Setting up Go..."

@@ -14,8 +14,8 @@ if [ "${IS_REMOTE}" = true ]; then
 	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
 else
 	echo "[INFO]: Running in LOCAL mode, using local scripts..."
-	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
-	cd "${_SOURCE_DIR}" || exit 2
+	_PROJECT_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_PROJECT_DIR}" || exit 2
 	echo "[INFO]: Current directory: $(pwd)"
 fi
 
@@ -72,7 +72,7 @@ fi
 
 ## --- Variables --- ##
 DOCKER_DATA_DIR="${DOCKER_DATA_DIR:-}"
-SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
+SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main}"
 ## --- Variables --- ##
 
 
@@ -168,7 +168,7 @@ main()
 	echo "[OK]: Done."
 
 	if [ "${_INSTALL_NVIDIA_CONTAINER}" = true ]; then
-		_fetch "setup/unix/linux/ubuntu/setup-nvidia-container.sh" | \
+		_fetch "src/setup/unix/linux/ubuntu/setup-nvidia-container.sh" | \
 			bash || {
 				echo "[ERROR]: Failed to setup NVIDIA container toolkit!" >&2
 				exit 2

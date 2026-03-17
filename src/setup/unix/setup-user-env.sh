@@ -14,8 +14,8 @@ if [ "${IS_REMOTE}" = true ]; then
 	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
 else
 	echo "[INFO]: Running in LOCAL mode, using local scripts..."
-	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
-	cd "${_SOURCE_DIR}" || exit 2
+	_PROJECT_DIR="$(cd "${_SCRIPT_DIR}/../../.." && pwd -P)"
+	cd "${_PROJECT_DIR}" || exit 2
 	echo "[INFO]: Current directory: $(pwd)"
 fi
 
@@ -47,7 +47,7 @@ fi
 
 ## --- Variables --- ##
 RUNTIMES=${RUNTIMES:-conda,nvm}
-SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
+SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main}"
 ## --- Variables --- ##
 
 
@@ -129,21 +129,21 @@ main()
 	fi
 
 
-	_fetch "setup/unix/setup-user-workspaces.sh" | bash || {
+	_fetch "src/setup/unix/setup-user-workspaces.sh" | bash || {
 		echo "[ERROR]: Failed to create workspaces!" >&2
 		exit 2
 	}
 
-	_fetch "setup/unix/install-nerd-fonts.sh" | bash || {
+	_fetch "src/setup/unix/install-nerd-fonts.sh" | bash || {
 		echo "[WARN]: Failed to install Nerd Fonts, skipping!" >&2
 	}
 
-	_fetch "setup/unix/setup-user-ohmyzsh.sh" | bash || {
+	_fetch "src/setup/unix/setup-user-ohmyzsh.sh" | bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh'!" >&2
 		exit 2
 	}
 
-	_fetch "setup/unix/setup-user-dotfiles.sh" | bash || {
+	_fetch "src/setup/unix/setup-user-dotfiles.sh" | bash || {
 		echo "[ERROR]: Failed to setup configs!" >&2
 		exit 2
 	}
@@ -164,22 +164,22 @@ main()
 		for _runtime in "${_runtimes_arr[@]}"; do
 			case "${_runtime}" in
 				conda)
-					_fetch "setup/unix/runtimes/install-user-miniconda.sh" | bash || {
+					_fetch "src/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
 						echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
 					}
 					continue;;
 				nvm)
-					_fetch "setup/unix/runtimes/install-user-nvm.sh" | bash || {
+					_fetch "src/setup/unix/runtimes/install-user-nvm.sh" | bash || {
 						echo "[WARN]: Failed to install 'NVM', skipping!" >&2
 					}
 					continue;;
 				rust)
-					_fetch "setup/unix/runtimes/install-user-rust.sh" | bash || {
+					_fetch "src/setup/unix/runtimes/install-user-rust.sh" | bash || {
 						echo "[WARN]: Failed to install 'Rust', skipping!" >&2
 					}
 					continue;;
 				go)
-					_fetch "setup/unix/runtimes/install-user-go.sh" | bash || {
+					_fetch "src/setup/unix/runtimes/install-user-go.sh" | bash || {
 						echo "[WARN]: Failed to install 'Go', skipping!" >&2
 					}
 					continue;;
@@ -191,7 +191,7 @@ main()
 		echo "[OK]: Done."
 	fi
 
-	_fetch "setup/unix/setup-user-nvchad.sh" | bash || {
+	_fetch "src/setup/unix/setup-user-nvchad.sh" | bash || {
 		echo "[WARN]: Failed to setup 'NvChad', skipping!" >&2
 	}
 

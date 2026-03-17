@@ -14,8 +14,8 @@ if [ "${IS_REMOTE}" = true ]; then
 	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
 else
 	echo "[INFO]: Running in LOCAL mode, using local scripts..."
-	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
-	cd "${_SOURCE_DIR}" || exit 2
+	_PROJECT_DIR="$(cd "${_SCRIPT_DIR}/../../../../.." && pwd -P)"
+	cd "${_PROJECT_DIR}" || exit 2
 	echo "[INFO]: Current directory: $(pwd)"
 fi
 
@@ -91,7 +91,7 @@ SETUP_DOCKER=${SETUP_DOCKER:-true}
 RUNTIMES=${RUNTIMES:-conda,nvm}
 RESTART_AFTER=${RESTART_AFTER:-true}
 
-SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
+SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main}"
 ## --- Variables --- ##
 
 
@@ -208,7 +208,7 @@ main()
 	echo ""
 	echo "[INFO]: Setting up Ubuntu/Debian..."
 
-	_fetch "setup/unix/linux/ubuntu/pre-setup-ubuntu.sh" | \
+	_fetch "src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh" | \
 		bash -s -- -t="${TZ_NAME}" -n="${NEW_HOSTNAME}" || {
 			echo "[ERROR]: Failed to setup timezone and locales!" >&2
 			exit 2
@@ -219,13 +219,13 @@ main()
 		_arg_upgrade="-s -- -u"
 	fi
 	#shellcheck disable=SC2086
-	_fetch "setup/unix/linux/ubuntu/install-essentials.sh" | \
+	_fetch "src/setup/unix/linux/ubuntu/install-essentials.sh" | \
 		bash ${_arg_upgrade} || {
 			echo "[ERROR]: Failed to install essential packages!" >&2
 			exit 2
 		}
 
-	_fetch "setup/unix/linux/ubuntu/install-recommend.sh" | \
+	_fetch "src/setup/unix/linux/ubuntu/install-recommend.sh" | \
 		bash || {
 			echo "[ERROR]: Failed to install development tools!" >&2
 			exit 2
@@ -233,7 +233,7 @@ main()
 
 	if [ "${SETUP_DOCKER}" = true ]; then
 		if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_IS_WSL}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
-			_fetch "setup/unix/linux/setup-docker.sh" | \
+			_fetch "src/setup/unix/linux/setup-docker.sh" | \
 				bash || {
 					echo "[ERROR]: Failed to setup Docker!" >&2
 					exit 2
@@ -245,21 +245,21 @@ main()
 	fi
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		_fetch "account/unix/linux/create-group.sh" | \
+		_fetch "src/account/unix/linux/create-group.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" || {
 				echo "[ERROR]: Failed to create new group!" >&2
 				exit 2
 			}
 	fi
 
-	_fetch "account/unix/linux/change-users-pgroup.sh" | \
+	_fetch "src/account/unix/linux/change-users-pgroup.sh" | \
 		bash -s -- -a -g="${PRIMARY_GID}" || {
 			echo "[ERROR]: Failed to change primary group!" >&2
 			exit 2
 		}
 
 	if [ "${SETUP_USER}" = true ] && [ -n "${_SUDO}" ]; then
-		_fetch "setup/unix/linux/setup-user.sh" | \
+		_fetch "src/setup/unix/linux/setup-user.sh" | \
 			bash -s -- -g="${PRIMARY_GID}" -r="${RUNTIMES}" || {
 				echo "[ERROR]: Failed to setup current user!" >&2
 				exit 2
@@ -267,21 +267,21 @@ main()
 	fi
 
 	echo "[INFO]: Setting up for root user..."
-	_fetch "setup/unix/install-nerd-fonts.sh" | ${_SUDO} bash || {
+	_fetch "src/setup/unix/install-nerd-fonts.sh" | ${_SUDO} bash || {
 		echo "[WARN]: Failed to install Nerd Fonts for root user, skipping!" >&2
 	}
 
-	_fetch "setup/unix/setup-user-ohmyzsh.sh" | ${_SUDO} bash || {
+	_fetch "src/setup/unix/setup-user-ohmyzsh.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!" >&2
 		exit 2
 	}
 
-	_fetch "setup/unix/setup-user-dotfiles.sh" | ${_SUDO} bash || {
+	_fetch "src/setup/unix/setup-user-dotfiles.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup configs for root user!" >&2
 		exit 2
 	}
 
-	_fetch "setup/unix/setup-user-nvchad.sh" | ${_SUDO} bash || {
+	_fetch "src/setup/unix/setup-user-nvchad.sh" | ${_SUDO} bash || {
 		echo "[ERROR]: Failed to setup 'NvChad' for root user!" >&2
 		exit 2
 	}

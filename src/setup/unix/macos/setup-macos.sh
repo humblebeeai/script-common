@@ -14,8 +14,8 @@ if [ "${IS_REMOTE}" = true ]; then
 	echo "[INFO]: Running in REMOTE mode, fetching scripts from remote..."
 else
 	echo "[INFO]: Running in LOCAL mode, using local scripts..."
-	_SOURCE_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
-	cd "${_SOURCE_DIR}" || exit 2
+	_PROJECT_DIR="$(cd "${_SCRIPT_DIR}/../../../.." && pwd -P)"
+	cd "${_PROJECT_DIR}" || exit 2
 	echo "[INFO]: Current directory: $(pwd)"
 fi
 
@@ -42,7 +42,7 @@ fi
 
 ## --- Variables --- ##
 RUNTIMES=${RUNTIMES:-conda,nvm}
-SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main/src}"
+SCRIPT_BASE_URL="${SCRIPT_BASE_URL:-https://github.com/humblebeeai/script-common/raw/main}"
 ## --- Variables --- ##
 
 
@@ -124,12 +124,12 @@ main()
 	fi
 
 
-	_fetch "setup/unix/macos/install-essentials.sh" | bash || {
+	_fetch "src/setup/unix/macos/install-essentials.sh" | bash || {
 		echo "[ERROR]: Failed to install essential packages!" >&2
 		exit 2
 	}
 
-	_fetch "setup/unix/setup-user-env.sh" | \
+	_fetch "src/setup/unix/setup-user-env.sh" | \
 		bash -s -- -r="${RUNTIMES}" || {
 			echo "[ERROR]: Failed to setup user environment!" >&2
 			exit 2

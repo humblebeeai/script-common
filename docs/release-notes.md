@@ -6,6 +6,14 @@ hide:
 
 # 📌 Release Notes
 
+## v1.3.0-260317 (2026-03-17)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.2.0-260316...v1.3.0-260317
+
 ## v1.2.0-260316 (2026-03-16)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

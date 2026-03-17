@@ -62,44 +62,37 @@ fi
 ## --- Main --- ##
 _install_on_linux()
 {
-	echo "[INFO]: Creating font directories..."
-	if [ ! -d "${HOME}/.fonts" ]; then
-		mkdir -vp "${HOME}/.fonts" || exit 2
-	fi
-	cd "${HOME}/.fonts" || exit 2
+	local _font_dir="${HOME}/.local/share/fonts"
+	local _fonts=(
+		"Ubuntu"
+		"UbuntuMono"
+		"RobotoMono"
+		"Terminus"
+	)
+
+	echo "[INFO]: Creating font directory..."
+	mkdir -pv "${_font_dir}" || exit 2
+	cd "${_font_dir}" || exit 2
 	echo "[OK]: Done."
 
-	echo "[INFO]: Downloading Ubuntu Mono Nerd Font..."
-	rm -vf UbuntuMonoNerdFont-*.ttf || true
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/UbuntuMono/Regular/UbuntuMonoNerdFont-Regular.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/UbuntuMono/Bold/UbuntuMonoNerdFont-Bold.ttf || exit 2
-	echo "[OK]: Done."
+	for _font in "${_fonts[@]}"; do
+		echo "[INFO]: Installing ${_font} Nerd Font..."
+		rm -rfv "${_font}"* || true
+		local _archive="${_font}.tar.xz"
+		local _url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${_archive}"
+		curl -fSLO --progress-bar "${_url}" || {
+			echo "[WARN]: Failed to download ${_font}, skipping!" >&2
+			continue
+		}
 
-	echo "[INFO]: Downloading Ubuntu Nerd Font..."
-	rm -vf UbuntuNerdFont-*.ttf || true
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Ubuntu/Regular/UbuntuNerdFont-Regular.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Ubuntu/Medium/UbuntuNerdFont-Medium.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Ubuntu/Bold/UbuntuNerdFont-Bold.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Ubuntu/Light/UbuntuNerdFont-Light.ttf || exit 2
-	echo "[OK]: Done."
-
-	echo "[INFO]: Downloading Roboto Mono Nerd Font..."
-	rm -vf RobotoMonoNerdFont-*.ttf || true
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/RobotoMono/Bold/RobotoMonoNerdFont-Bold.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/RobotoMono/Light/RobotoMonoNerdFont-Light.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/RobotoMono/Medium/RobotoMonoNerdFont-Medium.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/RobotoMono/Regular/RobotoMonoNerdFont-Regular.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/RobotoMono/SemiBold/RobotoMonoNerdFont-SemiBold.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/RobotoMono/Thin/RobotoMonoNerdFont-Thin.ttf || exit 2
-	echo "[OK]: Done."
-
-	echo "[INFO]: Downloading Terminess Nerd Font..."
-	rm -vf TerminessNerdFont-*.ttf || true
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Terminus/TerminessNerdFont-Bold.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Terminus/TerminessNerdFont-Regular.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Terminus/TerminessNerdFontMono-Bold.ttf || exit 2
-	curl -fSLO --progress-bar https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Terminus/TerminessNerdFontMono-Regular.ttf || exit 2
-	echo "[OK]: Done."
+		tar -xfv "${_archive}" || {
+			echo "[WARN]: Failed to extract ${_font}, skipping!" >&2
+			rm -rfv "${_archive}"
+			continue
+		}
+		rm -rfv "${_archive}"
+		echo "[OK]: ${_font} installed."
+	done
 
 	echo "[INFO]: Updating font cache..."
 	fc-cache -f -v || exit 2

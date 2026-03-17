@@ -112,31 +112,45 @@ done
 
 
 ## --- Main --- ##
-_fetch()
+_run_script()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: No script path provided to fetch!" >&2
+		echo "[ERROR]: No arguments provided!" >&2
 		exit 1
 	fi
 
+	local _sudo=""
+	if [ "${1:-}" = "--sudo" ]; then
+		_sudo="${_SUDO}"
+		shift
+	fi
+
+	local _script_path="${1}"
+	shift
+
 	if [ "${IS_REMOTE}" = true ]; then
+		if [ -z "${SCRIPT_BASE_URL}" ]; then
+			echo "[ERROR]: SCRIPT_BASE_URL is empty!" >&2
+			exit 1
+		fi
+
 		curl -H 'Cache-Control: no-cache' \
 			--retry 3 \
 			--retry-delay 2 \
 			--connect-timeout 10 \
 			-fsSL \
-			"${SCRIPT_BASE_URL}/${1}" || {
-				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+			"${SCRIPT_BASE_URL}/${_script_path}" | ${_sudo} bash -s -- "${@}" || {
+				echo "[ERROR]: Failed to fetch or execute '${SCRIPT_BASE_URL}/${_script_path}' script file!" >&2
 				exit 1
 			}
 	else
-		if [ ! -r "./${1}" ]; then
-			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+		if [ ! -r "./${_script_path}" ]; then
+			echo "[ERROR]: Not found or not readable './${_script_path}' script file!" >&2
 			exit 1
 		fi
 
-		cat "./${1}" || {
-			echo "[ERROR]: Failed to read './${1}' file!" >&2
+		${_sudo} bash "./${_script_path}" "${@}" || {
+			echo "[ERROR]: Failed to execute './${_script_path}' script file!" >&2
 			exit 1
 		}
 	fi
@@ -168,11 +182,10 @@ main()
 	echo "[OK]: Done."
 
 	if [ "${_INSTALL_NVIDIA_CONTAINER}" = true ]; then
-		_fetch "src/setup/unix/linux/ubuntu/setup-nvidia-container.sh" | \
-			bash || {
-				echo "[ERROR]: Failed to setup NVIDIA container toolkit!" >&2
-				exit 2
-			}
+		_run_script "src/setup/unix/linux/ubuntu/setup-nvidia-container.sh" || {
+			echo "[ERROR]: Failed to setup NVIDIA container toolkit!" >&2
+			exit 2
+		}
 	fi
 
 	local _docker_config_path="/etc/docker/daemon.json"

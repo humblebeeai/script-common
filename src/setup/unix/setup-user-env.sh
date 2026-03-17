@@ -88,31 +88,39 @@ done
 
 
 ## --- Main --- ##
-_fetch()
+_run_script()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: No script path provided to fetch!" >&2
+		echo "[ERROR]: No arguments provided!" >&2
 		exit 1
 	fi
 
+	local _script_path="${1}"
+	shift
+
 	if [ "${IS_REMOTE}" = true ]; then
+		if [ -z "${SCRIPT_BASE_URL}" ]; then
+			echo "[ERROR]: SCRIPT_BASE_URL is empty!" >&2
+			exit 1
+		fi
+
 		curl -H 'Cache-Control: no-cache' \
 			--retry 3 \
 			--retry-delay 2 \
 			--connect-timeout 10 \
 			-fsSL \
-			"${SCRIPT_BASE_URL}/${1}" || {
-				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+			"${SCRIPT_BASE_URL}/${_script_path}" | bash -s -- "${@}" || {
+				echo "[ERROR]: Failed to fetch or execute '${SCRIPT_BASE_URL}/${_script_path}' script file!" >&2
 				exit 1
 			}
 	else
-		if [ ! -r "./${1}" ]; then
-			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+		if [ ! -r "./${_script_path}" ]; then
+			echo "[ERROR]: Not found or not readable './${_script_path}' script file!" >&2
 			exit 1
 		fi
 
-		cat "./${1}" || {
-			echo "[ERROR]: Failed to read './${1}' file!" >&2
+		bash "./${_script_path}" "${@}" || {
+			echo "[ERROR]: Failed to execute './${_script_path}' script file!" >&2
 			exit 1
 		}
 	fi
@@ -129,21 +137,21 @@ main()
 	fi
 
 
-	_fetch "src/setup/unix/setup-user-workspaces.sh" | bash || {
+	_run_script "src/setup/unix/setup-user-workspaces.sh" || {
 		echo "[ERROR]: Failed to create workspaces!" >&2
 		exit 2
 	}
 
-	_fetch "src/setup/unix/install-nerd-fonts.sh" | bash || {
+	_run_script "src/setup/unix/install-nerd-fonts.sh" || {
 		echo "[WARN]: Failed to install Nerd Fonts, skipping!" >&2
 	}
 
-	_fetch "src/setup/unix/setup-user-ohmyzsh.sh" | bash || {
+	_run_script "src/setup/unix/setup-user-ohmyzsh.sh" || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh'!" >&2
 		exit 2
 	}
 
-	_fetch "src/setup/unix/setup-user-dotfiles.sh" | bash || {
+	_run_script "src/setup/unix/setup-user-dotfiles.sh" || {
 		echo "[ERROR]: Failed to setup configs!" >&2
 		exit 2
 	}
@@ -164,22 +172,22 @@ main()
 		for _runtime in "${_runtimes_arr[@]}"; do
 			case "${_runtime}" in
 				conda)
-					_fetch "src/setup/unix/runtimes/install-user-miniconda.sh" | bash || {
+					_run_script "src/setup/unix/runtimes/install-user-miniconda.sh" || {
 						echo "[WARN]: Failed to install 'Miniconda', skipping!" >&2
 					}
 					continue;;
 				nvm)
-					_fetch "src/setup/unix/runtimes/install-user-nvm.sh" | bash || {
+					_run_script "src/setup/unix/runtimes/install-user-nvm.sh" || {
 						echo "[WARN]: Failed to install 'NVM', skipping!" >&2
 					}
 					continue;;
 				rust)
-					_fetch "src/setup/unix/runtimes/install-user-rust.sh" | bash || {
+					_run_script "src/setup/unix/runtimes/install-user-rust.sh" || {
 						echo "[WARN]: Failed to install 'Rust', skipping!" >&2
 					}
 					continue;;
 				go)
-					_fetch "src/setup/unix/runtimes/install-user-go.sh" | bash || {
+					_run_script "src/setup/unix/runtimes/install-user-go.sh" || {
 						echo "[WARN]: Failed to install 'Go', skipping!" >&2
 					}
 					continue;;
@@ -191,7 +199,7 @@ main()
 		echo "[OK]: Done."
 	fi
 
-	_fetch "src/setup/unix/setup-user-nvchad.sh" | bash || {
+	_run_script "src/setup/unix/setup-user-nvchad.sh" || {
 		echo "[WARN]: Failed to setup 'NvChad', skipping!" >&2
 	}
 

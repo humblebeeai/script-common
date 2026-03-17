@@ -38,10 +38,12 @@ if [ "${_OS}" == "Linux" ]; then
 		fi
 	done
 else
-	if [ -x /opt/homebrew/bin/brew ]; then
-		eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
-	elif [ -x /usr/local/bin/brew ]; then
-		eval "$(/usr/local/bin/brew shellenv)" || exit 2
+	if ! command -v brew >/dev/null 2>&1; then
+		if [ -x /opt/homebrew/bin/brew ]; then
+			eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
+		elif [ -x /usr/local/bin/brew ]; then
+			eval "$(/usr/local/bin/brew shellenv)" || exit 2
+		fi
 	fi
 
 	if ! command -v brew >/dev/null 2>&1; then

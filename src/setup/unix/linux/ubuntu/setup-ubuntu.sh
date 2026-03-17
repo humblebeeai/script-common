@@ -173,31 +173,45 @@ done
 
 
 ## --- Main --- ##
-_fetch()
+_run_script()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: No script path provided to fetch!" >&2
+		echo "[ERROR]: No arguments provided!" >&2
 		exit 1
 	fi
 
+	local _sudo=""
+	if [ "${1:-}" = "--sudo" ]; then
+		_sudo="${_SUDO}"
+		shift
+	fi
+
+	local _script_path="${1}"
+	shift
+
 	if [ "${IS_REMOTE}" = true ]; then
+		if [ -z "${SCRIPT_BASE_URL}" ]; then
+			echo "[ERROR]: SCRIPT_BASE_URL is empty!" >&2
+			exit 1
+		fi
+
 		curl -H 'Cache-Control: no-cache' \
 			--retry 3 \
 			--retry-delay 2 \
 			--connect-timeout 10 \
 			-fsSL \
-			"${SCRIPT_BASE_URL}/${1}" || {
-				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+			"${SCRIPT_BASE_URL}/${_script_path}" | ${_sudo} bash -s -- "${@}" || {
+				echo "[ERROR]: Failed to fetch or execute '${SCRIPT_BASE_URL}/${_script_path}' script file!" >&2
 				exit 1
 			}
 	else
-		if [ ! -r "./${1}" ]; then
-			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+		if [ ! -r "./${_script_path}" ]; then
+			echo "[ERROR]: Not found or not readable './${_script_path}' script file!" >&2
 			exit 1
 		fi
 
-		cat "./${1}" || {
-			echo "[ERROR]: Failed to read './${1}' file!" >&2
+		${_sudo} bash "./${_script_path}" "${@}" || {
+			echo "[ERROR]: Failed to execute './${_script_path}' script file!" >&2
 			exit 1
 		}
 	fi
@@ -208,36 +222,32 @@ main()
 	echo ""
 	echo "[INFO]: Setting up Ubuntu/Debian..."
 
-	_fetch "src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh" | \
-		bash -s -- -t="${TZ_NAME}" -n="${NEW_HOSTNAME}" || {
-			echo "[ERROR]: Failed to setup timezone and locales!" >&2
-			exit 2
-		}
+	_run_script "src/setup/unix/linux/ubuntu/pre-setup-ubuntu.sh" -t="${TZ_NAME}" -n="${NEW_HOSTNAME}" || {
+		echo "[ERROR]: Failed to setup timezone and locales!" >&2
+		exit 2
+	}
 
 	local _arg_upgrade=""
 	if [ "${UPGRADE_APT_PACKAGES}" = true ]; then
-		_arg_upgrade="-s -- -u"
+		_arg_upgrade="-u"
 	fi
 	#shellcheck disable=SC2086
-	_fetch "src/setup/unix/linux/ubuntu/install-essentials.sh" | \
-		bash ${_arg_upgrade} || {
-			echo "[ERROR]: Failed to install essential packages!" >&2
-			exit 2
+	_run_script "src/setup/unix/linux/ubuntu/install-essentials.sh" ${_arg_upgrade} || {
+		echo "[ERROR]: Failed to install essential packages!" >&2
+		exit 2
 		}
 
-	_fetch "src/setup/unix/linux/ubuntu/install-recommend.sh" | \
-		bash || {
-			echo "[ERROR]: Failed to install development tools!" >&2
-			exit 2
-		}
+	_run_script "src/setup/unix/linux/ubuntu/install-recommend.sh" || {
+		echo "[ERROR]: Failed to install development tools!" >&2
+		exit 2
+	}
 
 	if [ "${SETUP_DOCKER}" = true ]; then
 		if [ "${_IS_OLD_VERSION_OS}" = false ] && [ "${_IS_WSL}" = false ] && [ "${_OS_DISTRO}" != "kali" ]; then
-			_fetch "src/setup/unix/linux/setup-docker.sh" | \
-				bash || {
-					echo "[ERROR]: Failed to setup Docker!" >&2
-					exit 2
-				}
+			_run_script "src/setup/unix/linux/setup-docker.sh" || {
+				echo "[ERROR]: Failed to setup Docker!" >&2
+				exit 2
+			}
 		else
 			echo "[WARN]: OS version does not support Docker installation script, skipping!" >&2
 			echo "[WARN]: If you need to use Docker, install it manually: https://docs.docker.com/engine/install/ubuntu" >&2
@@ -245,43 +255,40 @@ main()
 	fi
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		_fetch "src/account/unix/linux/create-group.sh" | \
-			bash -s -- -g="${PRIMARY_GID}" || {
-				echo "[ERROR]: Failed to create new group!" >&2
+		_run_script "src/account/unix/linux/create-group.sh" -g="${PRIMARY_GID}" || {
+			echo "[ERROR]: Failed to create new group!" >&2
 				exit 2
 			}
 	fi
 
-	_fetch "src/account/unix/linux/change-users-pgroup.sh" | \
-		bash -s -- -a -g="${PRIMARY_GID}" || {
-			echo "[ERROR]: Failed to change primary group!" >&2
-			exit 2
-		}
+	_run_script "src/account/unix/linux/change-users-pgroup.sh" -a -g="${PRIMARY_GID}" || {
+		echo "[ERROR]: Failed to change primary group!" >&2
+		exit 2
+	}
 
 	if [ "${SETUP_USER}" = true ] && [ -n "${_SUDO}" ]; then
-		_fetch "src/setup/unix/linux/setup-user.sh" | \
-			bash -s -- -g="${PRIMARY_GID}" -r="${RUNTIMES}" || {
-				echo "[ERROR]: Failed to setup current user!" >&2
-				exit 2
-			}
+		_run_script "src/setup/unix/linux/setup-user.sh" -g="${PRIMARY_GID}" -r="${RUNTIMES}" || {
+			echo "[ERROR]: Failed to setup current user!" >&2
+			exit 2
+		}
 	fi
 
 	echo "[INFO]: Setting up for root user..."
-	_fetch "src/setup/unix/install-nerd-fonts.sh" | ${_SUDO} bash || {
+	_run_script --sudo "src/setup/unix/install-nerd-fonts.sh" || {
 		echo "[WARN]: Failed to install Nerd Fonts for root user, skipping!" >&2
 	}
 
-	_fetch "src/setup/unix/setup-user-ohmyzsh.sh" | ${_SUDO} bash || {
+	_run_script --sudo "src/setup/unix/setup-user-ohmyzsh.sh" || {
 		echo "[ERROR]: Failed to install 'oh-my-zsh' for root user!" >&2
 		exit 2
 	}
 
-	_fetch "src/setup/unix/setup-user-dotfiles.sh" | ${_SUDO} bash || {
+	_run_script --sudo "src/setup/unix/setup-user-dotfiles.sh" || {
 		echo "[ERROR]: Failed to setup configs for root user!" >&2
 		exit 2
 	}
 
-	_fetch "src/setup/unix/setup-user-nvchad.sh" | ${_SUDO} bash || {
+	_run_script --sudo "src/setup/unix/setup-user-nvchad.sh" || {
 		echo "[ERROR]: Failed to setup 'NvChad' for root user!" >&2
 		exit 2
 	}

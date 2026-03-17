@@ -133,31 +133,45 @@ done
 
 
 ## --- Main --- ##
-_fetch()
+_run_script()
 {
 	if [ -z "${1:-}" ]; then
-		echo "[ERROR]: No script path provided to fetch!" >&2
+		echo "[ERROR]: No arguments provided!" >&2
 		exit 1
 	fi
 
+	local _sudo=""
+	if [ "${1:-}" = "--sudo" ]; then
+		_sudo="${_SUDO}"
+		shift
+	fi
+
+	local _script_path="${1}"
+	shift
+
 	if [ "${IS_REMOTE}" = true ]; then
+		if [ -z "${SCRIPT_BASE_URL}" ]; then
+			echo "[ERROR]: SCRIPT_BASE_URL is empty!" >&2
+			exit 1
+		fi
+
 		curl -H 'Cache-Control: no-cache' \
 			--retry 3 \
 			--retry-delay 2 \
 			--connect-timeout 10 \
 			-fsSL \
-			"${SCRIPT_BASE_URL}/${1}" || {
-				echo "[ERROR]: Failed to fetch '${SCRIPT_BASE_URL}/${1}'!" >&2
+			"${SCRIPT_BASE_URL}/${_script_path}" | ${_sudo} bash -s -- "${@}" || {
+				echo "[ERROR]: Failed to fetch or execute '${SCRIPT_BASE_URL}/${_script_path}' script file!" >&2
 				exit 1
 			}
 	else
-		if [ ! -r "./${1}" ]; then
-			echo "[ERROR]: Not found or not readable './${1}' file!" >&2
+		if [ ! -r "./${_script_path}" ]; then
+			echo "[ERROR]: Not found or not readable './${_script_path}' script file!" >&2
 			exit 1
 		fi
 
-		cat "./${1}" || {
-			echo "[ERROR]: Failed to read './${1}' file!" >&2
+		${_sudo} bash "./${_script_path}" "${@}" || {
+			echo "[ERROR]: Failed to execute './${_script_path}' script file!" >&2
 			exit 1
 		}
 	fi
@@ -195,11 +209,10 @@ main()
 
 
 	if ! getent group "${PRIMARY_GID}" >/dev/null 2>&1; then
-		_fetch "src/account/unix/linux/create-group.sh" | \
-			bash -s -- -g="${PRIMARY_GID}" || {
-				echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!" >&2
-				exit 2
-			}
+		_run_script "src/account/unix/linux/create-group.sh" -g="${PRIMARY_GID}" || {
+			echo "[ERROR]: Failed to create group with GID '${PRIMARY_GID}'!" >&2
+			exit 2
+		}
 	fi
 
 	local _user_created=false
@@ -209,11 +222,10 @@ main()
 		if [ "${WITH_SUDO}" = true ]; then
 			_arg_sudo="-s"
 		fi
-		_fetch "src/account/unix/linux/create-user.sh" | \
-			bash -s -- -g="${PRIMARY_GID}" -n="${USERNAME}" ${_arg_sudo} || {
-				echo "[ERROR]: Failed to create user '${USERNAME}'!" >&2
-				exit 2
-			}
+		_run_script "src/account/unix/linux/create-user.sh" -g="${PRIMARY_GID}" -n="${USERNAME}" ${_arg_sudo} || {
+			echo "[ERROR]: Failed to create user '${USERNAME}'!" >&2
+			exit 2
+		}
 
 		_user_created=true
 	fi
@@ -228,27 +240,24 @@ main()
 		if [ "${IS_HASHED}" = true ]; then
 			_arg_hashed="-H"
 		fi
-		_fetch "src/account/unix/linux/change-user-password.sh" | \
-			bash -s -- -u="${USERNAME}" -p="${PASSWORD}" ${_arg_hashed} || {
-				echo "[ERROR]: Failed to set password for user '${USERNAME}'!" >&2
-				exit 2
-			}
+		_run_script "src/account/unix/linux/change-user-password.sh" -u="${USERNAME}" -p="${PASSWORD}" ${_arg_hashed} || {
+			echo "[ERROR]: Failed to set password for user '${USERNAME}'!" >&2
+			exit 2
+		}
 	fi
 
 	if [ "$(id -g "${USERNAME}")" != "${PRIMARY_GID}" ]; then
-		_fetch "src/account/unix/linux/change-users-pgroup.sh" | \
-			bash -s -- -g="${PRIMARY_GID}" -u="${USERNAME}" || {
-				echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!" >&2
-				exit 2
-			}
+		_run_script "src/account/unix/linux/change-users-pgroup.sh" -g="${PRIMARY_GID}" -u="${USERNAME}" || {
+			echo "[ERROR]: Failed to change primary group for user '${USERNAME}'!" >&2
+			exit 2
+		}
 	fi
 
 	if getent group docker >/dev/null 2>&1 && ! id -nG "${USERNAME}" | grep -wq docker; then
-		_fetch "src/account/unix/linux/add-users-group.sh" | \
-			bash -s -- -g=docker -u="${USERNAME}" || {
-				echo "[ERROR]: Failed to add user '${USERNAME}' to 'docker' group!" >&2
-				exit 2
-			}
+		_run_script "src/account/unix/linux/add-users-group.sh" -g=docker -u="${USERNAME}" || {
+			echo "[ERROR]: Failed to add user '${USERNAME}' to 'docker' group!" >&2
+			exit 2
+		}
 	fi
 
 	if [ "${IS_REMOTE}" = true ]; then

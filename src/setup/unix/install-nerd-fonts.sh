@@ -17,7 +17,7 @@ case "${_OS}" in
 	*) echo "[ERROR]: Unsupported OS '${_OS}', only 'Ubuntu/Debian' and 'macOS' are supported!" >&2; exit 1;;
 esac
 
-if [ "${_OS}" == "Linux" ]; then
+if [ "${_OS}" = "Linux" ]; then
 	if [ ! -r /etc/os-release ]; then
 		echo "[ERROR]: Unable to determine Linux distro (missing /etc/os-release)!" >&2
 		exit 1
@@ -129,7 +129,7 @@ _install_on_macos()
 main()
 {
 	echo "[INFO]: Installing Nerd Fonts..."
-	if [ "${_OS}" == "Linux" ]; then
+	if [ "${_OS}" = "Linux" ]; then
 		_install_on_linux
 	else
 		_install_on_macos

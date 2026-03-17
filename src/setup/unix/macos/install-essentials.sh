@@ -48,7 +48,8 @@ main()
 			exit 1
 		fi
 
-		sudo echo "Homebrew requires 'sudo' privileges to install, please enter your password if prompted..." || exit 2
+		echo "[INFO]: Homebrew installation requires 'sudo' privileges, please enter your password if prompted..."
+		sudo echo "[INFO]: If you see this message, 'sudo' privileges are working correctly." || exit 2
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || exit 2
 		if [ -x /opt/homebrew/bin/brew ]; then
 			# shellcheck disable=SC2016

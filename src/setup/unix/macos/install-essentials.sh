@@ -54,13 +54,13 @@ main()
 			# shellcheck disable=SC2016
 			echo 'eval "$(/opt/homebrew/bin/brew shellenv zsh)"' >> "${HOME}/.zprofile" || exit 2
 			# shellcheck disable=SC2016
-			echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "${HOME}/.bash_profile" || exit 2
+			echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "${HOME}/.bashrc" || exit 2
 			eval "$(/opt/homebrew/bin/brew shellenv)" || exit 2
 		elif [ -x /usr/local/bin/brew ]; then
 			# shellcheck disable=SC2016
 			echo 'eval "$(/usr/local/bin/brew shellenv zsh)"' >> "${HOME}/.zprofile" || exit 2
 			# shellcheck disable=SC2016
-			echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "${HOME}/.bash_profile" || exit 2
+			echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "${HOME}/.bashrc" || exit 2
 			eval "$(/usr/local/bin/brew shellenv)" || exit 2
 		fi
 		echo "[OK]: Done."

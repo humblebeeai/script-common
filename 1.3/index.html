@@ -827,6 +827,15 @@
 </ul>
 <hr />
 <h2 id="scripts">🔨 Scripts</h2>
+<p>Change the <code>[SCRIPT_URL]</code> to the raw URL of the script you want to run, and add any desired options.</p>
+<blockquote>
+<p>[!TIP]:<br />
+Most scripts have a <code>--help</code> or <code>-h</code> option to show usage instructions and available options.  </p>
+</blockquote>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span><span class="o">[</span>SCRIPT_URL<span class="o">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>--help
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># For example:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>--help
+</span></code></pre></div>
 <h3 id="setup-ubuntudebian">🔄 Setup - Ubuntu/Debian</h3>
 <table>
 <thead>
@@ -1051,15 +1060,6 @@
 </table>
 <hr />
 <h2 id="usageexamples">🚸 Usage/Examples</h2>
-<p>Change the <code>[SCRIPT_URL]</code> to the raw URL of the script you want to run, and add any desired options.</p>
-<blockquote>
-<p>[!TIP]:<br />
-Most scripts have a <code>--help</code> or <code>-h</code> option to show usage instructions and available options.  </p>
-</blockquote>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span><span class="o">[</span>SCRIPT_URL<span class="o">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>--help
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># For example:</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>--help
-</span></code></pre></div>
 <h3 id="setup-server-environment-on-ubuntu-2004-debian-120">Setup server environment on <strong>Ubuntu (20.04+), Debian (12.0+)</strong></h3>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-u<span class="w"> </span>-r<span class="w"> </span>all
 </span></code></pre></div>

@@ -33,8 +33,8 @@ This repository contains a collection of common useful scripts.
 
 Change the `[SCRIPT_URL]` to the raw URL of the script you want to run, and add any desired options.
 
-> [!TIP]:  
-> Most scripts have a `--help` or `-h` option to show usage instructions and available options.  
+> [!TIP]
+> Most scripts have a `--help` or `-h` option to show usage instructions and available options.
 
 ```sh
 curl -fsSL [SCRIPT_URL] | bash -s -- --help

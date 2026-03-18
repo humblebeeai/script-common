@@ -151,6 +151,5 @@ main()
 	echo ""
 }
 
-
-main "${@:-}"
+main
 ## --- Main --- ##

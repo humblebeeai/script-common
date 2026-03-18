@@ -93,6 +93,17 @@ This repository contains a collection of common useful scripts.
 
 ## 🚸 Usage/Examples
 
+Change the `[SCRIPT_URL]` to the raw URL of the script you want to run, and add any desired options.
+
+> [!TIP]:  
+> Most scripts have a `--help` or `-h` option to show usage instructions and available options.  
+
+```sh
+curl -fsSL [SCRIPT_URL] | bash -s -- --help
+# For example:
+curl -fsSL https://github.com/humblebeeai/script-common/raw/main/src/setup/unix/linux/ubuntu/setup-ubuntu.sh | bash -s -- --help
+```
+
 ### Setup server environment on **Ubuntu (20.04+), Debian (12.0+)**
 
 ```sh

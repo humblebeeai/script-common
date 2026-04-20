@@ -10,6 +10,7 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "pip"
+    target-branch: "dev"
     directory: "/"
     labels:
       - "dependency"

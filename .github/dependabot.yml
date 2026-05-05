@@ -5,7 +5,7 @@ updates:
     directory: "/"
     labels:
       - "dependency"
-    versioning-strategy: "widen"
+    versioning-strategy: "increase-if-necessary"
     open-pull-requests-limit: 10
     schedule:
       interval: "daily"

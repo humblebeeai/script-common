@@ -1,14 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    target-branch: "dev"
-    directory: "/"
-    labels:
-      - "cicd"
-    open-pull-requests-limit: 10
-    schedule:
-      interval: "daily"
-
   - package-ecosystem: "pip"
     target-branch: "dev"
     directory: "/"
@@ -18,3 +9,22 @@ updates:
     open-pull-requests-limit: 10
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    target-branch: "dev"
+    directory: "/"
+    labels:
+      - "cicd"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "pre-commit"
+    target-branch: "dev"
+    directory: "/"
+    labels:
+      - "styles"
+      - "pre-commit"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "weekly"

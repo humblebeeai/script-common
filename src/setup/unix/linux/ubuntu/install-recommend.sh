@@ -227,19 +227,6 @@ main()
 		echo "[WARN]: If you need to use 'fastfetch', build it from source and install it manually: https://github.com/fastfetch-cli/fastfetch" >&2
 	fi
 
-	if [ "${_ARCH_DPKG}" = "amd64" ]; then
-		echo "[INFO]: Installing 'xh'..."
-		local _xh_version
-		_xh_version=$(curl -s https://api.github.com/repos/ducaale/xh/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
-		rm -fv "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
-		wget "https://github.com/ducaale/xh/releases/download/v${_xh_version}/xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
-		${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
-		rm -fv "xh_${_xh_version}_${_ARCH_DPKG}.deb" || exit 2
-		echo "[OK]: Done."
-	else
-		echo "[WARN]: Skipping 'xh' installation on non-amd64 architecture!"
-	fi
-
 	if [ "${INSTALL_EXTRAS}" = true ]; then
 		echo "[INFO]: Installing 'ZeroTier One'..."
 		curl -s https://install.zerotier.com | ${_SUDO} env DEBIAN_FRONTEND=noninteractive bash || exit 2

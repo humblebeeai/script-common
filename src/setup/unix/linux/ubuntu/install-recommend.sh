@@ -109,14 +109,14 @@ main()
 	echo ""
 	echo "[INFO]: Installing recommended packages..."
 
-	echo "[INFO]: Installing 'lsd'..."
-	local _lsd_version
-	_lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
-	rm -fv "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
-	wget "https://github.com/lsd-rs/lsd/releases/download/v${_lsd_version}/lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
-	rm -fv "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
-	echo "[OK]: Done."
+	# echo "[INFO]: Installing 'lsd'..."
+	# local _lsd_version
+	# _lsd_version=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
+	# rm -fv "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
+	# wget "https://github.com/lsd-rs/lsd/releases/download/v${_lsd_version}/lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
+	# ${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
+	# rm -fv "lsd_${_lsd_version}_${_ARCH_DPKG}.deb" || exit 2
+	# echo "[OK]: Done."
 
 	echo "[INFO]: Installing 'duf'..."
 	local _duf_version

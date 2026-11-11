@@ -85,10 +85,10 @@ main()
 
 	if [ -d "${HOME}/.config/nvim" ] && [ "${FORCE_REMOVE}" = true ]; then
 		echo "[INFO]: Removing existing 'nvim' configuration..."
-		rm -rf ~/.config/nvim
-		rm -rf ~/.local/state/nvim
-		rm -rf ~/.local/share/nvim
-		rm -rf ~/.cache/nvim
+		rm -rf "${HOME}/.config/nvim"
+		rm -rf "${HOME}/.local/state/nvim"
+		rm -rf "${HOME}/.local/share/nvim"
+		rm -rf "${HOME}/.cache/nvim"
 		echo "[OK]: Done."
 	fi
 
@@ -98,11 +98,26 @@ main()
 		rm -rf "${HOME}/.config/nvim/.git" || exit 2
 		echo "[OK]: Done."
 
-		echo "[INFO]: Installing 'NvChad' plugins and updating parsers..."
-		nvim --headless "+Lazy! sync" "+MasonUpdate" "+MasonInstallAll" "+TSInstallAll" +qa || {
-			echo "[WARN]: Failed to install 'NvChad' plugins or update parsers, skipping!" >&2
+		echo "[INFO]: Installing 'NvChad' plugins..."
+		nvim --headless "+Lazy! sync" +qa || {
+			echo "[WARN]: Failed to install NvChad plugins, skipping!" >&2
 			exit 0
 		}
+		echo "[OK]: Plugins installed."
+
+		echo "[INFO]: Updating Mason registry..."
+		nvim --headless -c "MasonUpdate" -c "qa" || {
+			echo "[WARN]: Failed to update Mason registry, skipping!" >&2
+			exit 0
+		}
+		echo "[OK]: Mason registry updated."
+
+		echo "[INFO]: Installing Treesitter parsers..."
+		nvim --headless -c "TSInstallAll" -c "qa" || {
+			echo "[WARN]: Failed to install Treesitter parsers, skipping!" >&2
+			exit 0
+		}
+		echo "[OK]: Treesitter parsers installed."
 
 		# if [ -f "${HOME}/.config/nvim/lua/chadrc.lua" ]; then
 		# 	if [ "${_OS}" = "Linux" ]; then

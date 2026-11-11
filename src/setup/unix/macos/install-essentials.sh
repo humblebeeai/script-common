@@ -103,11 +103,12 @@ main()
 		witr \
 		tlrc \
 		xh \
-		httpie \
 		neovim \
 		fastfetch \
 		btop \
 		gh \
+		bitwarden-cli \
+		infisical/get-cli/infisical \
 		bash || exit 2
 
 	brew tap natesales/repo https://github.com/natesales/repo || exit 2

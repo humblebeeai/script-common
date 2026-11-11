@@ -31,7 +31,7 @@ fi
 
 ## --- Variables --- ##
 MINICONDA_DIR="${MINICONDA_DIR:-${HOME}/workspaces/runtimes/miniconda3}"
-PYTHON_VERSION=${PYTHON_VERSION:-3.10}
+PYTHON_VERSION=${PYTHON_VERSION:-3.11}
 ## --- Variables --- ##
 
 
@@ -42,11 +42,11 @@ USAGE: ${0} [options]
 
 OPTIONS:
     -d, --install-dir [PATH]                 Specify the installation directory for Miniconda. Default: '~/workspaces/runtimes/miniconda3'
-    -p, --python-version [PYTHON_VERSION]    Specify the python version to install. Default: 3.10
+    -p, --python-version [PYTHON_VERSION]    Specify the python version to install. Default: 3.11
     -h, --help                               Show help.
 
 EXAMPLES:
-    ${0} --install-dir ./workspaces/runtimes/miniconda3 --python-version 3.10
+    ${0} --install-dir ./workspaces/runtimes/miniconda3 --python-version 3.11
 EOF
 }
 

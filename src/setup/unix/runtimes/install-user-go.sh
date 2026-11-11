@@ -33,7 +33,7 @@ fi
 
 ## --- Variables --- ##
 GO_DIR="${GO_DIR:-${HOME}/workspaces/runtimes/go}"
-GO_VERSION=${GO_VERSION:-1.25.3}
+GO_VERSION=${GO_VERSION:-1.27.4}
 FORCE_INSTALL=${FORCE_INSTALL:-false}
 ## --- Variables --- ##
 
@@ -45,12 +45,12 @@ USAGE: ${0} [options]
 
 OPTIONS:
     -d, --install-dir [PATH]         Specify the installation directory for Go. Default: '~/workspaces/runtimes/go'
-    -g, --go-version [GO_VERSION]    Specify the Go version to install. Default: 1.25.3
+    -g, --go-version [GO_VERSION]    Specify the Go version to install. Default: 1.27.4
     -f, --force                      Force installation even if different version is installed. Default: false
     -h, --help                       Show help.
 
 EXAMPLES:
-    ${0} --install-dir ./workspaces/runtimes/go --go-version 1.25.3
+    ${0} --install-dir ./workspaces/runtimes/go --go-version 1.27.4
 EOF
 }
 

@@ -160,8 +160,7 @@ _install_packages()
 		htop \
 		ncdu \
 		pydf \
-		fzf \
-		httpie || true
+		fzf || true
 
 	${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
 		-o Dpkg::Options::="--force-confdef" \

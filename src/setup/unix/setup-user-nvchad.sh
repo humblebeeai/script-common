@@ -99,7 +99,7 @@ main()
 		echo "[OK]: Done."
 
 		echo "[INFO]: Installing 'NvChad' plugins and updating parsers..."
-		nvim --headless "+Lazy! sync" "+MasonUpdate" "+TSUpdateSync" +qa || {
+		nvim --headless "+Lazy! sync" "+MasonUpdate" "+MasonInstallAll" "+TSInstallAll" +qa || {
 			echo "[WARN]: Failed to install 'NvChad' plugins or update parsers, skipping!" >&2
 			exit 0
 		}

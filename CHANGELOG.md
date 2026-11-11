@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.4.0-261111 (2026-11-11)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### 💥 Breaking Changes
+* chore(deps): bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/humblebeeai/script-common/pull/17
+* chore(deps): bump actions/setup-python from 6 to 7 by @dependabot[bot] in https://github.com/humblebeeai/script-common/pull/20
+### ✨ Features
+* Bump markdownlint-cli to v0.50.0 and update Python version to 3.11 by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/22
+### 💬 Other
+* chore(deps): bump https://github.com/gitleaks/gitleaks from v8.28.0 to 8.30.1 by @dependabot[bot] in https://github.com/humblebeeai/script-common/pull/16
+* chore(deps): bump https://github.com/igorshubovych/markdownlint-cli from v0.48.0 to 0.49.0 by @dependabot[bot] in https://github.com/humblebeeai/script-common/pull/18
+* chore(deps): bump https://github.com/igorshubovych/markdownlint-cli from v0.49.0 to 0.49.1 by @dependabot[bot] in https://github.com/humblebeeai/script-common/pull/19
+* chore(deps): bump https://github.com/igorshubovych/markdownlint-cli from v0.49.1 to 0.50.0 by @dependabot[bot] in https://github.com/humblebeeai/script-common/pull/21
+
+## New Contributors
+* @dependabot[bot] made their first contribution in https://github.com/humblebeeai/script-common/pull/16
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.3.1-260317...v1.4.0-261111
+
 ## v1.3.1-260317 (2026-03-17)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

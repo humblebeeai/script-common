@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.4.1-261111 (2026-11-11)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### 🐛 Fixes
+* fix: improve NvChad setup script to remove old configurations and enh… by @bybatkhuu in https://github.com/humblebeeai/script-common/pull/23
+
+
+**Full Changelog**: https://github.com/humblebeeai/script-common/compare/v1.4.0-261111...v1.4.1-261111
+
 ## v1.4.0-261111 (2026-11-11)
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

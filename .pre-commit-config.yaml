@@ -1,6 +1,6 @@
 fail_fast: true
 default_language_version:
-  python: python3.10
+  python: python3.11
 exclude: |
   (?x)^(
       \.git/.*
@@ -95,7 +95,7 @@ repos:
 
   # --- Markdown ---
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.49.1
+    rev: v0.50.0
     hooks:
       - id: markdownlint
         name: "📝 markdownlint - Lint markdown files"

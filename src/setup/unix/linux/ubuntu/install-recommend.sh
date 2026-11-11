@@ -136,15 +136,6 @@ main()
 	rm -fv "q_${_q_version}_linux_${_ARCH_DPKG}.deb" || exit 2
 	echo "[OK]: Done."
 
-	echo "[INFO]: Installing 'bat'..."
-	local _bat_version
-	_bat_version=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
-	rm -fv "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
-	wget "https://github.com/sharkdp/bat/releases/download/v${_bat_version}/bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
-	${_SUDO} env DEBIAN_FRONTEND=noninteractive dpkg -i "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
-	rm -fv "bat_${_bat_version}_${_ARCH_DPKG}.deb" || exit 2
-	echo "[OK]: Done."
-
 	echo "[INFO]: Installing 'fd'..."
 	local _fd_version
 	_fd_version=$(curl -s https://api.github.com/repos/sharkdp/fd/releases/latest | grep "tag_name" | cut -d\" -f4 | sed 's/^v//')
@@ -202,6 +193,12 @@ main()
 		${_SUDO} apt-get update && \
 		${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install gh -y && \
 		rm -fv "${_tmp_file}" || exit 2
+	echo "[OK]: Done."
+
+	echo "[INFO]: Installing 'infisical' (Infisical CLI)..."
+	curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | ${_SUDO} env DEBIAN_FRONTEND=noninteractive bash && \
+		${_SUDO} apt-get update &&
+		${_SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y infisical
 	echo "[OK]: Done."
 
 	echo "[INFO]: Installing 'Tailscale'..."

@@ -98,7 +98,6 @@ main()
 		yq \
 		fd \
 		lsd \
-		bat \
 		duf \
 		witr \
 		tlrc \

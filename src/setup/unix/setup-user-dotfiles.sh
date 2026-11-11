@@ -43,17 +43,6 @@ umask 0002
 EOF
 )
 
-_LESS_COLOR_ENV=$(cat <<'EOF'
-export LESS_TERMCAP_mb=$'\e[1;32m'
-export LESS_TERMCAP_md=$'\e[1;32m'
-export LESS_TERMCAP_me=$'\e[0m'
-export LESS_TERMCAP_se=$'\e[0m'
-export LESS_TERMCAP_so=$'\e[01;33m'
-export LESS_TERMCAP_ue=$'\e[0m'
-export LESS_TERMCAP_us=$'\e[1;4;31m'
-EOF
-)
-
 _LINUX_LS_ALIAS=$(cat <<'EOF'
 alias ls='ls -aF --group-directories-first --color=auto'
 alias l='ls'
@@ -100,8 +89,6 @@ alias tree='lsd -aF --group-dirs first --tree'
 EOF
 )
 
-_BAT_ALIAS="alias bat='bat --theme=ansi'"
-
 _NEOVIM_ALIAS=$(cat <<'EOF'
 alias vi='nvim'
 alias vim='nvim'
@@ -143,8 +130,6 @@ main()
 		echo "" >> "${HOME}/.bashrc" || exit 2
 		echo "${_CUSTOM_CONFIGS}" >> "${HOME}/.bashrc" || exit 2
 		echo "" >> "${HOME}/.bashrc" || exit 2
-		echo "${_LESS_COLOR_ENV}" >> "${HOME}/.bashrc" || exit 2
-		echo "" >> "${HOME}/.bashrc" || exit 2
 
 		if [ "${_OS}" = "Linux" ]; then
 			echo "${_LINUX_LS_ALIAS}" >> "${HOME}/.bashrc" || exit 2
@@ -165,11 +150,6 @@ main()
 				echo "${_MACOS_TREE_ALIAS}" >> "${HOME}/.bashrc" || exit 2
 				echo "" >> "${HOME}/.bashrc" || exit 2
 			fi
-		fi
-
-		if command -v bat >/dev/null 2>&1; then
-			echo "${_BAT_ALIAS}" >> "${HOME}/.bashrc" || exit 2
-			echo "" >> "${HOME}/.bashrc" || exit 2
 		fi
 
 		if command -v nvim >/dev/null 2>&1; then
@@ -209,8 +189,6 @@ main()
 			echo "[INFO]: Updating '.zshrc' file..."
 			echo "${_CUSTOM_CONFIGS}" >> "${HOME}/.zshrc" || exit 2
 			echo "" >> "${HOME}/.zshrc" || exit 2
-			echo "${_LESS_COLOR_ENV}" >> "${HOME}/.zshrc" || exit 2
-			echo "" >> "${HOME}/.zshrc" || exit 2
 
 			if command -v lsd >/dev/null 2>&1 && [ "$(id -u)" -ne 0 ]; then
 				echo "${_LSD_ALIAS}" >> "${HOME}/.zshrc" || exit 2
@@ -236,11 +214,6 @@ main()
 						echo "" >> "${HOME}/.zshrc" || exit 2
 					fi
 				fi
-			fi
-
-			if command -v bat >/dev/null 2>&1; then
-				echo "${_BAT_ALIAS}" >> "${HOME}/.zshrc" || exit 2
-				echo "" >> "${HOME}/.zshrc" || exit 2
 			fi
 
 			if command -v nvim >/dev/null 2>&1; then
